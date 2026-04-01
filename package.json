@@ -1,0 +1,30 @@
+{
+  "name": "forest-of-ascii",
+  "version": "0.1.0",
+  "description": "ASCII art search API for agents",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "mcp": "tsx src/mcp.ts"
+  },
+  "keywords": [
+    "ascii-art",
+    "terminal",
+    "mcp",
+    "agent"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@hono/node-server": "^1.19.12",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "hono": "^4.12.9",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  }
+}

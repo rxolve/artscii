@@ -1,0 +1,72 @@
+[
+  {
+    "id": "cat",
+    "name": "Cat",
+    "category": "animals",
+    "tags": ["cat", "pet", "animal", "cute"],
+    "file": "animals/cat.txt"
+  },
+  {
+    "id": "bird",
+    "name": "Bird",
+    "category": "animals",
+    "tags": ["bird", "animal", "fly"],
+    "file": "animals/bird.txt"
+  },
+  {
+    "id": "fish",
+    "name": "Fish",
+    "category": "animals",
+    "tags": ["fish", "animal", "sea", "ocean", "water"],
+    "file": "animals/fish.txt"
+  },
+  {
+    "id": "tree",
+    "name": "Tree",
+    "category": "nature",
+    "tags": ["tree", "nature", "forest", "plant"],
+    "file": "nature/tree.txt"
+  },
+  {
+    "id": "mountain",
+    "name": "Mountain",
+    "category": "nature",
+    "tags": ["mountain", "nature", "landscape"],
+    "file": "nature/mountain.txt"
+  },
+  {
+    "id": "sun",
+    "name": "Sun",
+    "category": "nature",
+    "tags": ["sun", "nature", "sky", "weather"],
+    "file": "nature/sun.txt"
+  },
+  {
+    "id": "coffee",
+    "name": "Coffee",
+    "category": "objects",
+    "tags": ["coffee", "cup", "drink", "mug"],
+    "file": "objects/coffee.txt"
+  },
+  {
+    "id": "book",
+    "name": "Book",
+    "category": "objects",
+    "tags": ["book", "read", "library"],
+    "file": "objects/book.txt"
+  },
+  {
+    "id": "heart",
+    "name": "Heart",
+    "category": "symbols",
+    "tags": ["heart", "love", "symbol"],
+    "file": "symbols/heart.txt"
+  },
+  {
+    "id": "star",
+    "name": "Star",
+    "category": "symbols",
+    "tags": ["star", "symbol", "sky", "night"],
+    "file": "symbols/star.txt"
+  }
+]
