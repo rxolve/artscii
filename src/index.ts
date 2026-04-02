@@ -10,7 +10,7 @@ app.use('*', cors());
 
 app.get('/', (c) =>
   c.json({
-    name: 'forest-of-ascii',
+    name: 'artscii',
     version: '0.1.0',
     endpoints: {
       search: 'GET /search?q={query}',
@@ -60,13 +60,13 @@ app.get('/categories/:name', async (c) => {
 });
 
 app.get('/list', (c) => {
-  return c.json(listAll().map(({ id, name, category, tags }) => ({ id, name, category, tags })));
+  return c.json(listAll().map(({ id, name, category, tags, width, height }) => ({ id, name, category, tags, width, height })));
 });
 
 async function main() {
   await loadIndex();
   const port = Number(process.env.PORT) || 3001;
-  console.log(`forest-of-ascii listening on http://localhost:${port}`);
+  console.log(`artscii listening on http://localhost:${port}`);
   serve({ fetch: app.fetch, port });
 }
 

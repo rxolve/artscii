@@ -4,6 +4,8 @@ export interface ArtEntry {
   category: string;
   tags: string[];
   file: string;
+  width: number;
+  height: number;
 }
 
 export interface ArtResult {

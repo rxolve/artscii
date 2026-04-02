@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { loadIndex, search, getById, getRandom, listCategories, toResult } from './store.js';
 
 const server = new McpServer({
-  name: 'forest-of-ascii',
+  name: 'artscii',
   version: '0.1.0',
 });
 
