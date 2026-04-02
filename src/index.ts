@@ -2,7 +2,9 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
-import { loadIndex, search, getById, getByCategory, getRandom, listCategories, listAll, toResult } from './store.js';
+import { loadIndex, search, getById, getByCategory, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
+import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS } from './constants.js';
+import { RATE_LIMIT_PER_MIN } from './constants.js';
 import type { ArtWidth } from './types.js';
 
 const app = new Hono();
@@ -11,6 +13,26 @@ app.use('*', cors());
 
 function parseWidth(raw: string | undefined): ArtWidth {
   return raw === '32' ? 32 : 64;
+}
+
+// Rate limit: IP -> timestamps within the last minute
+const rateLimitMap = new Map<string, number[]>();
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const window = 60_000;
+  const timestamps = (rateLimitMap.get(ip) ?? []).filter((t) => now - t < window);
+  if (timestamps.length >= RATE_LIMIT_PER_MIN) {
+    rateLimitMap.set(ip, timestamps);
+    return false;
+  }
+  timestamps.push(now);
+  rateLimitMap.set(ip, timestamps);
+  return true;
+}
+
+function getClientIp(c: { req: { header: (name: string) => string | undefined } }): string {
+  return c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1';
 }
 
 app.get('/', (c) =>
@@ -82,6 +104,52 @@ app.get('/list', (c) => {
     width32: e.width32,
     height32: e.height32,
   })));
+});
+
+app.post('/art', async (c) => {
+  const ip = getClientIp(c);
+  if (!checkRateLimit(ip)) return c.json({ error: 'Rate limit exceeded (5/min)' }, 429);
+
+  const body = await c.req.json().catch(() => null);
+  if (!body) return c.json({ error: 'Invalid JSON body' }, 400);
+
+  const { name, category, tags, art, art32 } = body;
+
+  if (typeof name !== 'string' || !name.trim()) return c.json({ error: '"name" is required' }, 400);
+  if (name.length > MAX_NAME_LENGTH) return c.json({ error: `"name" exceeds ${MAX_NAME_LENGTH} characters` }, 400);
+  if (typeof category !== 'string' || !category.trim()) return c.json({ error: '"category" is required' }, 400);
+  if (category.length > MAX_NAME_LENGTH) return c.json({ error: `"category" exceeds ${MAX_NAME_LENGTH} characters` }, 400);
+  if (!Array.isArray(tags)) return c.json({ error: '"tags" must be an array' }, 400);
+  if (tags.length > MAX_TAGS) return c.json({ error: `Max ${MAX_TAGS} tags allowed` }, 400);
+  if (tags.some((t: unknown) => typeof t !== 'string' || t.length > MAX_TAG_LENGTH)) {
+    return c.json({ error: `Each tag must be a string of max ${MAX_TAG_LENGTH} chars` }, 400);
+  }
+  if (typeof art !== 'string' || !art.trim()) return c.json({ error: '"art" is required' }, 400);
+  if (art32 !== undefined && typeof art32 !== 'string') return c.json({ error: '"art32" must be a string' }, 400);
+
+  try {
+    const entry = await addArt({ name: name.trim(), category: category.trim().toLowerCase(), tags, art, art32 });
+    const result = await toResult(entry);
+    return c.json(result, 201);
+  } catch (err: unknown) {
+    const e = err as { status?: number; message?: string };
+    return c.json({ error: e.message ?? 'Unknown error' }, (e.status as 400) ?? 500);
+  }
+});
+
+app.delete('/art/:id', async (c) => {
+  const ip = getClientIp(c);
+  if (!checkRateLimit(ip)) return c.json({ error: 'Rate limit exceeded (5/min)' }, 429);
+
+  const id = c.req.param('id');
+  try {
+    const deleted = await deleteArt(id);
+    if (!deleted) return c.json({ error: 'Not found' }, 404);
+    return c.body(null, 204);
+  } catch (err: unknown) {
+    const e = err as { status?: number; message?: string };
+    return c.json({ error: e.message ?? 'Unknown error' }, (e.status as 403) ?? 500);
+  }
 });
 
 async function main() {

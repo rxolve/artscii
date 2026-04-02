@@ -9,6 +9,7 @@ export interface ArtEntry {
   file32: string;
   width32: number;
   height32: number;
+  userSubmitted?: boolean;
 }
 
 export type ArtWidth = 64 | 32;

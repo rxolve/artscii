@@ -2,7 +2,8 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 
-import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult } from './store.js';
+import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
+import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS } from './constants.js';
 import type { ArtWidth } from './types.js';
 
 const server = new McpServer({
@@ -68,6 +69,45 @@ server.tool('categories', 'List all categories.', {}, async () => {
   const cats = listCategories();
   return { content: [{ type: 'text', text: cats.join(', ') }] };
 });
+
+server.tool(
+  'submit',
+  'Submit a new ASCII art. Art must fit within 64x32 chars (64w) and optionally 32x16 chars (32w).',
+  {
+    name: z.string().max(MAX_NAME_LENGTH).describe('Art name (max 30 chars)'),
+    category: z.string().max(MAX_NAME_LENGTH).describe('Category (e.g. "animals", "nature")'),
+    tags: z.array(z.string().max(MAX_TAG_LENGTH)).max(MAX_TAGS).describe('Tags (max 5, each max 20 chars)'),
+    art: z.string().describe('ASCII art content (max 64 chars wide, 32 lines tall)'),
+    art32: z.string().optional().describe('Optional 32w compact variant (max 32 chars wide, 16 lines tall)'),
+  },
+  async ({ name, category, tags, art, art32 }) => {
+    try {
+      const entry = await addArt({ name, category: category.toLowerCase(), tags, art, art32 });
+      return { content: [{ type: 'text', text: `Submitted "${entry.name}" as "${entry.id}" [${entry.width}x${entry.height}]` }] };
+    } catch (err: unknown) {
+      const e = err as { message?: string };
+      return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Unknown error'}` }], isError: true };
+    }
+  }
+);
+
+server.tool(
+  'delete',
+  'Delete a user-submitted ASCII art by ID. Built-in arts cannot be deleted.',
+  { id: z.string().describe('Art ID to delete') },
+  async ({ id }) => {
+    try {
+      const deleted = await deleteArt(id);
+      if (!deleted) {
+        return { content: [{ type: 'text', text: `Art "${id}" not found` }], isError: true };
+      }
+      return { content: [{ type: 'text', text: `Deleted "${deleted.name}" (${id})` }] };
+    } catch (err: unknown) {
+      const e = err as { message?: string };
+      return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Unknown error'}` }], isError: true };
+    }
+  }
+);
 
 async function main() {
   await loadIndex();

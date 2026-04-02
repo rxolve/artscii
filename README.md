@@ -1,6 +1,6 @@
 # artscii
 
-ASCII art search API for AI agents. 10 silhouette-based arts in two sizes (64w / 32w), served via REST API and MCP.
+ASCII art search API for AI agents. Built-in silhouette arts in two sizes (64w / 32w), served via REST API and MCP. Users can submit their own arts via POST.
 
 ```
               :%%:
@@ -42,6 +42,8 @@ All content endpoints accept `?width=32` for the compact variant (default: 64).
 | `GET /categories` | List categories |
 | `GET /categories/:name?width=64\|32` | Arts in category |
 | `GET /list` | All arts with metadata |
+| `POST /art` | Submit new art (JSON body) |
+| `DELETE /art/:id` | Delete user-submitted art |
 
 ### Example
 
@@ -66,6 +68,41 @@ Response (`GET /art/cat`):
   "art": "..."
 }
 ```
+
+### Submitting Art
+
+```bash
+curl -X POST http://localhost:3001/art \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Robot",
+    "category": "objects",
+    "tags": ["robot", "tech"],
+    "art": "  [o_o]\n  /| |\\\n   d b"
+  }'
+```
+
+Response: `201` with `ArtResult` JSON.
+
+**Constraints:**
+- `name`: max 30 chars
+- `tags`: max 5, each max 20 chars
+- `art`: max 64 chars wide, 32 lines tall
+- `art32` (optional): max 32 chars wide, 16 lines tall
+- Rate limit: 5 requests/min per IP
+- Max 100 user-submitted arts total
+
+**Errors:** `400` (validation), `409` (duplicate ID), `429` (rate limit), `507` (limit reached)
+
+### Deleting Art
+
+```bash
+curl -X DELETE http://localhost:3001/art/robot
+```
+
+- `204`: deleted
+- `403`: cannot delete built-in art
+- `404`: not found
 
 ## MCP Server
 
@@ -92,6 +129,8 @@ Add to your MCP client config:
 | `random` | `width?` | Random art |
 | `list` | — | List all arts with metadata |
 | `categories` | — | List categories |
+| `submit` | `name`, `category`, `tags`, `art`, `art32?` | Submit new art |
+| `delete` | `id` | Delete user-submitted art |
 
 `width` accepts `"64"` (default) or `"32"` (compact).
 
