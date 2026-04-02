@@ -165,5 +165,175 @@
     "file32": "symbols/star.32w.txt",
     "width32": 32,
     "height32": 15
+  },
+  {
+    "id": "smiley",
+    "name": "Smiley",
+    "category": "emoji",
+    "tags": [
+      "smiley",
+      "happy",
+      "face",
+      "emoji"
+    ],
+    "file": "emoji/smiley.txt",
+    "width": 61,
+    "height": 32,
+    "file32": "emoji/smiley.32w.txt",
+    "width32": 32,
+    "height32": 16
+  },
+  {
+    "id": "skull",
+    "name": "Skull",
+    "category": "emoji",
+    "tags": [
+      "skull",
+      "death",
+      "danger",
+      "emoji"
+    ],
+    "file": "emoji/skull.txt",
+    "width": 55,
+    "height": 32,
+    "file32": "emoji/skull.32w.txt",
+    "width32": 27,
+    "height32": 16
+  },
+  {
+    "id": "ghost",
+    "name": "Ghost",
+    "category": "emoji",
+    "tags": [
+      "ghost",
+      "spooky",
+      "halloween",
+      "emoji"
+    ],
+    "file": "emoji/ghost.txt",
+    "width": 47,
+    "height": 32,
+    "file32": "emoji/ghost.32w.txt",
+    "width32": 23,
+    "height32": 16
+  },
+  {
+    "id": "alien",
+    "name": "Alien",
+    "category": "emoji",
+    "tags": [
+      "alien",
+      "space",
+      "ufo",
+      "emoji"
+    ],
+    "file": "emoji/alien.txt",
+    "width": 52,
+    "height": 32,
+    "file32": "emoji/alien.32w.txt",
+    "width32": 26,
+    "height32": 16
+  },
+  {
+    "id": "angry",
+    "name": "Angry",
+    "category": "emoji",
+    "tags": [
+      "angry",
+      "mad",
+      "face",
+      "emoji"
+    ],
+    "file": "emoji/angry.txt",
+    "width": 61,
+    "height": 32,
+    "file32": "emoji/angry.32w.txt",
+    "width32": 32,
+    "height32": 16
+  },
+  {
+    "id": "thumbsup",
+    "name": "Thumbs Up",
+    "category": "emoji",
+    "tags": [
+      "thumbsup",
+      "like",
+      "good",
+      "emoji"
+    ],
+    "file": "emoji/thumbsup.txt",
+    "width": 64,
+    "height": 32,
+    "file32": "emoji/thumbsup.32w.txt",
+    "width32": 32,
+    "height32": 16
+  },
+  {
+    "id": "lightning",
+    "name": "Lightning",
+    "category": "emoji",
+    "tags": [
+      "lightning",
+      "bolt",
+      "thunder",
+      "emoji"
+    ],
+    "file": "emoji/lightning.txt",
+    "width": 40,
+    "height": 32,
+    "file32": "emoji/lightning.32w.txt",
+    "width32": 20,
+    "height32": 16
+  },
+  {
+    "id": "masks",
+    "name": "Theater Masks",
+    "category": "emoji",
+    "tags": [
+      "masks",
+      "theater",
+      "drama",
+      "emoji"
+    ],
+    "file": "emoji/masks.txt",
+    "width": 64,
+    "height": 25,
+    "file32": "emoji/masks.32w.txt",
+    "width32": 32,
+    "height32": 12
+  },
+  {
+    "id": "fire",
+    "name": "Fire",
+    "category": "emoji",
+    "tags": [
+      "fire",
+      "flame",
+      "hot",
+      "emoji"
+    ],
+    "file": "emoji/fire.txt",
+    "width": 47,
+    "height": 32,
+    "file32": "emoji/fire.32w.txt",
+    "width32": 23,
+    "height32": 16
+  },
+  {
+    "id": "poop",
+    "name": "Poop",
+    "category": "emoji",
+    "tags": [
+      "poop",
+      "poo",
+      "funny",
+      "emoji"
+    ],
+    "file": "emoji/poop.txt",
+    "width": 64,
+    "height": 32,
+    "file32": "emoji/poop.32w.txt",
+    "width32": 32,
+    "height32": 16
   }
 ]
