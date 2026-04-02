@@ -1,5 +1,5 @@
 {
-  "name": "forest-of-ascii",
+  "name": "artscii",
   "version": "0.1.0",
   "description": "ASCII art search API for agents",
   "type": "module",
@@ -7,7 +7,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "mcp": "tsx src/mcp.ts"
+    "mcp": "tsx src/mcp.ts",
+    "convert": "python3 scripts/convert_all.py"
   },
   "keywords": [
     "ascii-art",
