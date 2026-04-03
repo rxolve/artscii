@@ -9,3 +9,7 @@ export const MAX_NAME_LENGTH = 30;
 export const MAX_TAG_LENGTH = 20;
 export const MAX_TAGS = 5;
 export const MAX_DESCRIPTION_LENGTH = 200;
+
+export const CONVERT_RATE_LIMIT_PER_MIN = 3;
+export const MAX_BASE64_SIZE = 10 * 1024 * 1024; // 10 MB
+export const MAX_FETCH_SIZE = 20 * 1024 * 1024; // 20 MB

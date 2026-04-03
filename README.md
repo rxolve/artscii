@@ -43,6 +43,7 @@ All content endpoints accept `?width=32` for the compact variant (default: 64).
 | `GET /categories/:name?width=64\|32` | Arts in category |
 | `GET /list` | All arts with metadata |
 | `POST /art` | Submit new art (JSON body) |
+| `POST /convert` | Convert image to ASCII art |
 | `DELETE /art/:id` | Delete user-submitted art |
 
 ### Example
@@ -93,6 +94,31 @@ Response: `201` with `ArtResult` JSON.
 - Max 100 user-submitted arts total
 
 **Errors:** `400` (validation), `409` (duplicate ID), `429` (rate limit), `507` (limit reached)
+
+### Converting Images
+
+Convert an image URL or base64 data to ASCII art at runtime (no Python required).
+
+```bash
+curl -X POST http://localhost:3001/convert \
+  -H 'Content-Type: application/json' \
+  -d '{"url": "https://example.com/photo.jpg"}'
+```
+
+Body parameters:
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `url` | string | — | Image URL (one of `url`/`base64` required) |
+| `base64` | string | — | Base64 or data-URI encoded image |
+| `invert` | boolean | `false` | Invert brightness |
+| `contrast` | boolean | `true` | Apply auto-contrast |
+| `gamma` | number | `1.0` | Gamma correction (>1 brighter, <1 darker) |
+| `save` | object | — | Save result: `{ name, description?, category, tags }` |
+
+Response returns `art64`, `art32` and their dimensions. With `save`, also returns `saved: { id, name }` (status `201`).
+
+Rate limit: 3 requests/min per IP.
 
 ### Deleting Art
 
@@ -146,6 +172,7 @@ Add to your MCP client config:
 | `list` | — | List all arts with metadata |
 | `categories` | — | List categories |
 | `submit` | `name`, `category`, `tags`, `art`, `art32?` | Submit new art |
+| `convert` | `url?`, `base64?`, `invert?`, `contrast?`, `gamma?`, `save?` | Convert image to ASCII art |
 | `delete` | `id` | Delete user-submitted art |
 
 `width` accepts `"64"` (default) or `"32"` (compact).
@@ -165,9 +192,15 @@ Add to your MCP client config:
 | heart | symbols | 64x30 | 32x15 |
 | star | symbols | 64x30 | 32x15 |
 
-## Regenerating Arts
+## Image Conversion
 
-Arts are converted from public domain silhouette images using Pillow.
+### Runtime (Node.js / sharp)
+
+The `POST /convert` endpoint and MCP `convert` tool handle image-to-ASCII conversion at runtime — no Python needed. Just `npm install` and go.
+
+### Batch (Python / Pillow)
+
+The original batch scripts are still available for regenerating the built-in arts:
 
 ```bash
 pip3 install Pillow

@@ -32,15 +32,24 @@
     "url": "https://github.com/rxolve/artscii.git"
   },
   "license": "MIT",
+  "engines": {
+    "node": ">=18.17.0"
+  },
   "dependencies": {
     "@hono/node-server": "^1.19.12",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "hono": "^4.12.9",
+    "sharp": "^0.34.5",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   }
 }

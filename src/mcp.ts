@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
 import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH } from './constants.js';
+import { resolveImageInput, convertBothSizes } from './converter.js';
 import type { ArtWidth } from './types.js';
 
 const server = new McpServer({
@@ -113,6 +114,53 @@ server.tool(
     } catch (err: unknown) {
       const e = err as { message?: string };
       return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Unknown error'}` }], isError: true };
+    }
+  }
+);
+
+server.tool(
+  'convert',
+  'Convert an image (URL or base64) to ASCII art.',
+  {
+    url: z.string().url().optional().describe('Image URL to convert'),
+    base64: z.string().optional().describe('Base64-encoded image data (with or without data URI prefix)'),
+    invert: z.boolean().default(false).describe('Invert brightness'),
+    contrast: z.boolean().default(true).describe('Apply auto-contrast'),
+    gamma: z.number().min(0.1).max(5).default(1.0).describe('Gamma correction (>1 brighter, <1 darker)'),
+    save: z.object({
+      name: z.string().max(MAX_NAME_LENGTH),
+      description: z.string().max(MAX_DESCRIPTION_LENGTH).optional(),
+      category: z.string().max(MAX_NAME_LENGTH),
+      tags: z.array(z.string().max(MAX_TAG_LENGTH)).max(MAX_TAGS),
+    }).optional().describe('Save the converted art to the store'),
+  },
+  async ({ url, base64, invert, contrast, gamma, save }) => {
+    if (!url && !base64) {
+      return { content: [{ type: 'text', text: 'Error: provide either "url" or "base64"' }], isError: true };
+    }
+    try {
+      const source = (url ?? base64)!;
+      const buf = await resolveImageInput(source);
+      const result = await convertBothSizes(buf, { invert, contrast, gamma });
+
+      let savedMsg = '';
+      if (save) {
+        const entry = await addArt({
+          name: save.name,
+          description: save.description,
+          category: save.category.toLowerCase(),
+          tags: save.tags,
+          art: result.art64,
+          art32: result.art32,
+        });
+        savedMsg = `\n\nSaved as "${entry.id}" [${entry.width}x${entry.height}]`;
+      }
+
+      const text = `--- 64w [${result.width64}x${result.height64}] ---\n${result.art64}\n\n--- 32w [${result.width32}x${result.height32}] ---\n${result.art32}${savedMsg}`;
+      return { content: [{ type: 'text', text }] };
+    } catch (err: unknown) {
+      const e = err as { message?: string };
+      return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Conversion failed'}` }], isError: true };
     }
   }
 );

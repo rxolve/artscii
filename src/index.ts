@@ -3,8 +3,8 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
 import { loadIndex, search, getById, getByCategory, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
-import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH } from './constants.js';
-import { RATE_LIMIT_PER_MIN } from './constants.js';
+import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONVERT_RATE_LIMIT_PER_MIN, RATE_LIMIT_PER_MIN } from './constants.js';
+import { resolveImageInput, convertBothSizes, ConvertInputError } from './converter.js';
 import type { ArtWidth } from './types.js';
 
 const app = new Hono();
@@ -48,6 +48,7 @@ app.get('/', (c) =>
       categories: 'GET /categories',
       category: 'GET /categories/:name?width=64|32',
       list: 'GET /list',
+      convert: 'POST /convert { url?, base64?, invert?, contrast?, gamma?, save? }',
     },
   })
 );
@@ -152,6 +153,92 @@ app.delete('/art/:id', async (c) => {
   } catch (err: unknown) {
     const e = err as { status?: number; message?: string };
     return c.json({ error: e.message ?? 'Unknown error' }, (e.status as 403) ?? 500);
+  }
+});
+
+// Separate rate limiter for convert (CPU-intensive)
+const convertRateLimitMap = new Map<string, number[]>();
+
+function checkConvertRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const window = 60_000;
+  const timestamps = (convertRateLimitMap.get(ip) ?? []).filter((t) => now - t < window);
+  if (timestamps.length >= CONVERT_RATE_LIMIT_PER_MIN) {
+    convertRateLimitMap.set(ip, timestamps);
+    return false;
+  }
+  timestamps.push(now);
+  convertRateLimitMap.set(ip, timestamps);
+  return true;
+}
+
+app.post('/convert', async (c) => {
+  const ip = getClientIp(c);
+  if (!checkConvertRateLimit(ip)) return c.json({ error: 'Rate limit exceeded (3/min)' }, 429);
+
+  const body = await c.req.json().catch(() => null);
+  if (!body) return c.json({ error: 'Invalid JSON body' }, 400);
+
+  const { url, base64, invert, contrast, gamma, save } = body;
+
+  if (url !== undefined && typeof url !== 'string') return c.json({ error: '"url" must be a string' }, 400);
+  if (base64 !== undefined && typeof base64 !== 'string') return c.json({ error: '"base64" must be a string' }, 400);
+  if (!url && !base64) return c.json({ error: '"url" or "base64" is required' }, 400);
+  if (invert !== undefined && typeof invert !== 'boolean') return c.json({ error: '"invert" must be a boolean' }, 400);
+  if (contrast !== undefined && typeof contrast !== 'boolean') return c.json({ error: '"contrast" must be a boolean' }, 400);
+  if (gamma !== undefined && (typeof gamma !== 'number' || gamma < 0.1 || gamma > 5)) return c.json({ error: '"gamma" must be a number between 0.1 and 5' }, 400);
+
+  // Validate save fields upfront
+  if (save && typeof save === 'object') {
+    const { name, description, category, tags } = save as Record<string, unknown>;
+    if (typeof name !== 'string' || !name.trim()) return c.json({ error: 'save.name is required' }, 400);
+    if ((name as string).length > MAX_NAME_LENGTH) return c.json({ error: `save.name exceeds ${MAX_NAME_LENGTH} characters` }, 400);
+    if (description !== undefined && typeof description !== 'string') return c.json({ error: 'save.description must be a string' }, 400);
+    if (typeof description === 'string' && description.length > MAX_DESCRIPTION_LENGTH) return c.json({ error: `save.description exceeds ${MAX_DESCRIPTION_LENGTH} characters` }, 400);
+    if (typeof category !== 'string' || !category.trim()) return c.json({ error: 'save.category is required' }, 400);
+    if ((category as string).length > MAX_NAME_LENGTH) return c.json({ error: `save.category exceeds ${MAX_NAME_LENGTH} characters` }, 400);
+    if (!Array.isArray(tags)) return c.json({ error: 'save.tags must be an array' }, 400);
+    if ((tags as unknown[]).length > MAX_TAGS) return c.json({ error: `save.tags: max ${MAX_TAGS} tags allowed` }, 400);
+    if ((tags as unknown[]).some((t) => typeof t !== 'string' || (t as string).length > MAX_TAG_LENGTH)) {
+      return c.json({ error: `save.tags: each tag must be a string of max ${MAX_TAG_LENGTH} chars` }, 400);
+    }
+  }
+
+  try {
+    const source = (url ?? base64) as string;
+    const buf = await resolveImageInput(source);
+    const result = await convertBothSizes(buf, {
+      invert: invert ?? false,
+      contrast: contrast ?? true,
+      gamma: gamma ?? 1.0,
+    });
+
+    // Optionally save to store
+    if (save && typeof save === 'object') {
+      const { name, description, category, tags } = save as {
+        name: string;
+        description?: string;
+        category: string;
+        tags: string[];
+      };
+      const entry = await addArt({
+        name: name.trim(),
+        description: description?.trim(),
+        category: category.trim().toLowerCase(),
+        tags,
+        art: result.art64,
+        art32: result.art32,
+      });
+      return c.json({ ...result, saved: { id: entry.id, name: entry.name } }, 201);
+    }
+
+    return c.json(result);
+  } catch (err: unknown) {
+    if (err instanceof ConvertInputError) {
+      return c.json({ error: err.message }, 400);
+    }
+    const e = err as { status?: number; message?: string };
+    return c.json({ error: e.message ?? 'Conversion failed' }, (e.status as 400) ?? 500);
   }
 });
 
