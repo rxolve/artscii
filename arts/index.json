@@ -335,5 +335,165 @@
     "file32": "emoji/poop.32w.txt",
     "width32": 32,
     "height32": 16
+  },
+  {
+    "id": "dog",
+    "name": "Dog",
+    "category": "animals",
+    "tags": [
+      "dog",
+      "pet",
+      "animal"
+    ],
+    "file": "animals/dog.txt",
+    "width": 64,
+    "height": 32,
+    "file32": "animals/dog.32w.txt",
+    "width32": 32,
+    "height32": 16
+  },
+  {
+    "id": "horse",
+    "name": "Horse",
+    "category": "animals",
+    "tags": [
+      "horse",
+      "animal",
+      "ride"
+    ],
+    "file": "animals/horse.txt",
+    "width": 64,
+    "height": 28,
+    "file32": "animals/horse.32w.txt",
+    "width32": 32,
+    "height32": 14
+  },
+  {
+    "id": "spider",
+    "name": "Spider",
+    "category": "animals",
+    "tags": [
+      "spider",
+      "insect",
+      "web"
+    ],
+    "file": "animals/spider.txt",
+    "width": 64,
+    "height": 28,
+    "file32": "animals/spider.32w.txt",
+    "width32": 32,
+    "height32": 14
+  },
+  {
+    "id": "dove",
+    "name": "Dove",
+    "category": "animals",
+    "tags": [
+      "dove",
+      "bird",
+      "peace"
+    ],
+    "file": "animals/dove.txt",
+    "width": 64,
+    "height": 32,
+    "file32": "animals/dove.32w.txt",
+    "width32": 32,
+    "height32": 16
+  },
+  {
+    "id": "dragon",
+    "name": "Dragon",
+    "category": "animals",
+    "tags": [
+      "dragon",
+      "fantasy",
+      "myth"
+    ],
+    "file": "animals/dragon.txt",
+    "width": 64,
+    "height": 25,
+    "file32": "animals/dragon.32w.txt",
+    "width32": 32,
+    "height32": 12
+  },
+  {
+    "id": "frog",
+    "name": "Frog",
+    "category": "animals",
+    "tags": [
+      "frog",
+      "animal",
+      "amphibian"
+    ],
+    "file": "animals/frog.txt",
+    "width": 64,
+    "height": 27,
+    "file32": "animals/frog.32w.txt",
+    "width32": 32,
+    "height32": 14
+  },
+  {
+    "id": "crow",
+    "name": "Crow",
+    "category": "animals",
+    "tags": [
+      "crow",
+      "bird",
+      "raven"
+    ],
+    "file": "animals/crow.txt",
+    "width": 64,
+    "height": 25,
+    "file32": "animals/crow.32w.txt",
+    "width32": 32,
+    "height32": 12
+  },
+  {
+    "id": "moon",
+    "name": "Moon",
+    "category": "nature",
+    "tags": [
+      "moon",
+      "night",
+      "sky"
+    ],
+    "file": "nature/moon.txt",
+    "width": 61,
+    "height": 32,
+    "file32": "nature/moon.32w.txt",
+    "width32": 31,
+    "height32": 16
+  },
+  {
+    "id": "rocket",
+    "name": "Rocket",
+    "category": "objects",
+    "tags": [
+      "rocket",
+      "space",
+      "launch"
+    ],
+    "file": "objects/rocket.txt",
+    "width": 64,
+    "height": 32,
+    "file32": "objects/rocket.32w.txt",
+    "width32": 32,
+    "height32": 16
+  },
+  {
+    "id": "user",
+    "name": "User",
+    "category": "people",
+    "tags": [
+      "user",
+      "person",
+      "profile"
+    ],
+    "file": "people/user.txt",
+    "width": 55,
+    "height": 32,
+    "file32": "people/user.32w.txt",
+    "width32": 27,
+    "height32": 16
   }
 ]
