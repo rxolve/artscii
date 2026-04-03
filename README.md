@@ -113,12 +113,28 @@ Add to your MCP client config:
   "mcpServers": {
     "artscii": {
       "command": "npx",
+      "args": ["-y", "artscii"]
+    }
+  }
+}
+```
+
+<details>
+<summary>Local development (from source)</summary>
+
+```json
+{
+  "mcpServers": {
+    "artscii": {
+      "command": "npx",
       "args": ["tsx", "src/mcp.ts"],
       "cwd": "/path/to/artscii"
     }
   }
 }
 ```
+
+</details>
 
 ### Tools
 

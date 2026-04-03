@@ -3,12 +3,23 @@
   "version": "0.1.0",
   "description": "ASCII art search API for agents",
   "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "artscii": "dist/mcp.js"
+  },
+  "files": [
+    "dist/",
+    "arts/",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "mcp": "tsx src/mcp.ts",
-    "convert": "python3 scripts/convert_all.py"
+    "convert": "python3 scripts/convert_all.py",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "ascii-art",
@@ -16,6 +27,10 @@
     "mcp",
     "agent"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rxolve/artscii.git"
+  },
   "license": "MIT",
   "dependencies": {
     "@hono/node-server": "^1.19.12",
