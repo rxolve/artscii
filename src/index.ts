@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
 import { loadIndex, search, getById, getByCategory, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
-import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS } from './constants.js';
+import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH } from './constants.js';
 import { RATE_LIMIT_PER_MIN } from './constants.js';
 import type { ArtWidth } from './types.js';
 
@@ -97,6 +97,7 @@ app.get('/list', (c) => {
   return c.json(listAll().map((e) => ({
     id: e.id,
     name: e.name,
+    ...(e.description && { description: e.description }),
     category: e.category,
     tags: e.tags,
     width: e.width,
@@ -113,10 +114,12 @@ app.post('/art', async (c) => {
   const body = await c.req.json().catch(() => null);
   if (!body) return c.json({ error: 'Invalid JSON body' }, 400);
 
-  const { name, category, tags, art, art32 } = body;
+  const { name, description, category, tags, art, art32 } = body;
 
   if (typeof name !== 'string' || !name.trim()) return c.json({ error: '"name" is required' }, 400);
   if (name.length > MAX_NAME_LENGTH) return c.json({ error: `"name" exceeds ${MAX_NAME_LENGTH} characters` }, 400);
+  if (description !== undefined && typeof description !== 'string') return c.json({ error: '"description" must be a string' }, 400);
+  if (typeof description === 'string' && description.length > MAX_DESCRIPTION_LENGTH) return c.json({ error: `"description" exceeds ${MAX_DESCRIPTION_LENGTH} characters` }, 400);
   if (typeof category !== 'string' || !category.trim()) return c.json({ error: '"category" is required' }, 400);
   if (category.length > MAX_NAME_LENGTH) return c.json({ error: `"category" exceeds ${MAX_NAME_LENGTH} characters` }, 400);
   if (!Array.isArray(tags)) return c.json({ error: '"tags" must be an array' }, 400);
@@ -128,7 +131,7 @@ app.post('/art', async (c) => {
   if (art32 !== undefined && typeof art32 !== 'string') return c.json({ error: '"art32" must be a string' }, 400);
 
   try {
-    const entry = await addArt({ name: name.trim(), category: category.trim().toLowerCase(), tags, art, art32 });
+    const entry = await addArt({ name: name.trim(), description: description?.trim(), category: category.trim().toLowerCase(), tags, art, art32 });
     const result = await toResult(entry);
     return c.json(result, 201);
   } catch (err: unknown) {

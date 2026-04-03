@@ -2,12 +2,14 @@
   {
     "id": "cat",
     "name": "Cat",
+    "description": "Use when mentioning cats, pets, or cozy vibes",
     "category": "animals",
     "tags": [
       "cat",
       "pet",
       "animal",
-      "cute"
+      "cute",
+      "kitten"
     ],
     "file": "animals/cat.txt",
     "width": 58,
@@ -19,11 +21,14 @@
   {
     "id": "bird",
     "name": "Bird",
+    "description": "Use for freedom, flying, or nature themes",
     "category": "animals",
     "tags": [
       "bird",
       "animal",
-      "fly"
+      "fly",
+      "wings",
+      "freedom"
     ],
     "file": "animals/bird.txt",
     "width": 64,
@@ -35,6 +40,7 @@
   {
     "id": "fish",
     "name": "Fish",
+    "description": "Use for ocean, aquatic, or underwater themes",
     "category": "animals",
     "tags": [
       "fish",
@@ -53,12 +59,14 @@
   {
     "id": "tree",
     "name": "Tree",
+    "description": "Use for nature, growth, environment, or stability themes",
     "category": "nature",
     "tags": [
       "tree",
       "nature",
       "forest",
-      "plant"
+      "plant",
+      "growth"
     ],
     "file": "nature/tree.txt",
     "width": 53,
@@ -70,11 +78,14 @@
   {
     "id": "mountain",
     "name": "Mountain",
+    "description": "Use for challenges, adventure, or overcoming obstacles",
     "category": "nature",
     "tags": [
       "mountain",
       "nature",
-      "landscape"
+      "landscape",
+      "adventure",
+      "climb"
     ],
     "file": "nature/mountain.txt",
     "width": 64,
@@ -86,12 +97,14 @@
   {
     "id": "sun",
     "name": "Sun",
+    "description": "Use for positivity, new beginnings, good morning, or bright mood",
     "category": "nature",
     "tags": [
       "sun",
       "nature",
       "sky",
-      "weather"
+      "weather",
+      "bright"
     ],
     "file": "nature/sun.txt",
     "width": 63,
@@ -103,12 +116,14 @@
   {
     "id": "coffee",
     "name": "Coffee",
+    "description": "Use for morning greetings, breaks, or coding sessions",
     "category": "objects",
     "tags": [
       "coffee",
       "cup",
       "drink",
-      "mug"
+      "mug",
+      "morning"
     ],
     "file": "objects/coffee.txt",
     "width": 62,
@@ -120,11 +135,14 @@
   {
     "id": "book",
     "name": "Book",
+    "description": "Use for learning, documentation, knowledge sharing, or study",
     "category": "objects",
     "tags": [
       "book",
       "read",
-      "library"
+      "library",
+      "study",
+      "knowledge"
     ],
     "file": "objects/book.txt",
     "width": 58,
@@ -136,11 +154,14 @@
   {
     "id": "heart",
     "name": "Heart",
+    "description": "Use for love, gratitude, appreciation, or thank you messages",
     "category": "symbols",
     "tags": [
       "heart",
       "love",
-      "symbol"
+      "symbol",
+      "thanks",
+      "gratitude"
     ],
     "file": "symbols/heart.txt",
     "width": 64,
@@ -152,12 +173,14 @@
   {
     "id": "star",
     "name": "Star",
+    "description": "Use for excellence, ratings, favorites, or nighttime themes",
     "category": "symbols",
     "tags": [
       "star",
       "symbol",
       "sky",
-      "night"
+      "night",
+      "favorite"
     ],
     "file": "symbols/star.txt",
     "width": 64,
@@ -169,12 +192,14 @@
   {
     "id": "smiley",
     "name": "Smiley",
+    "description": "Use for happiness, greeting, friendly tone, or good news",
     "category": "emoji",
     "tags": [
       "smiley",
       "happy",
       "face",
-      "emoji"
+      "emoji",
+      "greeting"
     ],
     "file": "emoji/smiley.txt",
     "width": 61,
@@ -186,12 +211,14 @@
   {
     "id": "skull",
     "name": "Skull",
+    "description": "Use for danger warnings, fatal errors, or spooky themes",
     "category": "emoji",
     "tags": [
       "skull",
       "death",
       "danger",
-      "emoji"
+      "emoji",
+      "warning"
     ],
     "file": "emoji/skull.txt",
     "width": 55,
@@ -203,12 +230,14 @@
   {
     "id": "ghost",
     "name": "Ghost",
+    "description": "Use for halloween, spooky, or playful mysterious themes",
     "category": "emoji",
     "tags": [
       "ghost",
       "spooky",
       "halloween",
-      "emoji"
+      "emoji",
+      "mystery"
     ],
     "file": "emoji/ghost.txt",
     "width": 47,
@@ -220,12 +249,14 @@
   {
     "id": "alien",
     "name": "Alien",
+    "description": "Use for sci-fi, space, unknown, or weird/quirky themes",
     "category": "emoji",
     "tags": [
       "alien",
       "space",
       "ufo",
-      "emoji"
+      "emoji",
+      "scifi"
     ],
     "file": "emoji/alien.txt",
     "width": 52,
@@ -237,12 +268,14 @@
   {
     "id": "angry",
     "name": "Angry",
+    "description": "Use for frustration, errors, rage, or disapproval",
     "category": "emoji",
     "tags": [
       "angry",
       "mad",
       "face",
-      "emoji"
+      "emoji",
+      "frustration"
     ],
     "file": "emoji/angry.txt",
     "width": 61,
@@ -254,12 +287,14 @@
   {
     "id": "thumbsup",
     "name": "Thumbs Up",
+    "description": "Use for approval, agreement, good job, or confirmation",
     "category": "emoji",
     "tags": [
       "thumbsup",
       "like",
       "good",
-      "emoji"
+      "emoji",
+      "approval"
     ],
     "file": "emoji/thumbsup.txt",
     "width": 64,
@@ -271,12 +306,14 @@
   {
     "id": "lightning",
     "name": "Lightning",
+    "description": "Use for speed, power, energy, or sudden events",
     "category": "emoji",
     "tags": [
       "lightning",
       "bolt",
       "thunder",
-      "emoji"
+      "emoji",
+      "energy"
     ],
     "file": "emoji/lightning.txt",
     "width": 40,
@@ -288,12 +325,14 @@
   {
     "id": "masks",
     "name": "Theater Masks",
+    "description": "Use for drama, arts, performance, or mixed emotions",
     "category": "emoji",
     "tags": [
       "masks",
       "theater",
       "drama",
-      "emoji"
+      "emoji",
+      "performance"
     ],
     "file": "emoji/masks.txt",
     "width": 64,
@@ -305,12 +344,14 @@
   {
     "id": "fire",
     "name": "Fire",
+    "description": "Use for trending, hot topics, urgency, or excitement",
     "category": "emoji",
     "tags": [
       "fire",
       "flame",
       "hot",
-      "emoji"
+      "emoji",
+      "trending"
     ],
     "file": "emoji/fire.txt",
     "width": 47,
@@ -322,12 +363,14 @@
   {
     "id": "poop",
     "name": "Poop",
+    "description": "Use for humor, bad code, bugs, or playful disgust",
     "category": "emoji",
     "tags": [
       "poop",
       "poo",
       "funny",
-      "emoji"
+      "emoji",
+      "humor"
     ],
     "file": "emoji/poop.txt",
     "width": 64,
@@ -339,11 +382,14 @@
   {
     "id": "dog",
     "name": "Dog",
+    "description": "Use for loyalty, pets, companionship, or friendly themes",
     "category": "animals",
     "tags": [
       "dog",
       "pet",
-      "animal"
+      "animal",
+      "puppy",
+      "loyal"
     ],
     "file": "animals/dog.txt",
     "width": 64,
@@ -355,11 +401,14 @@
   {
     "id": "horse",
     "name": "Horse",
+    "description": "Use for speed, strength, racing, or wild/free themes",
     "category": "animals",
     "tags": [
       "horse",
       "animal",
-      "ride"
+      "ride",
+      "speed",
+      "wild"
     ],
     "file": "animals/horse.txt",
     "width": 64,
@@ -371,11 +420,14 @@
   {
     "id": "spider",
     "name": "Spider",
+    "description": "Use for web, creepy, halloween, or coding/network themes",
     "category": "animals",
     "tags": [
       "spider",
       "insect",
-      "web"
+      "web",
+      "creepy",
+      "halloween"
     ],
     "file": "animals/spider.txt",
     "width": 64,
@@ -387,11 +439,14 @@
   {
     "id": "dove",
     "name": "Dove",
+    "description": "Use for peace, harmony, hope, or calm themes",
     "category": "animals",
     "tags": [
       "dove",
       "bird",
-      "peace"
+      "peace",
+      "harmony",
+      "hope"
     ],
     "file": "animals/dove.txt",
     "width": 64,
@@ -403,11 +458,14 @@
   {
     "id": "dragon",
     "name": "Dragon",
+    "description": "Use for fantasy, power, epic, or mythical themes",
     "category": "animals",
     "tags": [
       "dragon",
       "fantasy",
-      "myth"
+      "myth",
+      "epic",
+      "power"
     ],
     "file": "animals/dragon.txt",
     "width": 64,
@@ -419,11 +477,14 @@
   {
     "id": "frog",
     "name": "Frog",
+    "description": "Use for transformation, nature, or playful themes",
     "category": "animals",
     "tags": [
       "frog",
       "animal",
-      "amphibian"
+      "amphibian",
+      "pond",
+      "nature"
     ],
     "file": "animals/frog.txt",
     "width": 64,
@@ -435,11 +496,14 @@
   {
     "id": "crow",
     "name": "Crow",
+    "description": "Use for mystery, intelligence, dark themes, or ominous vibes",
     "category": "animals",
     "tags": [
       "crow",
       "bird",
-      "raven"
+      "raven",
+      "dark",
+      "mystery"
     ],
     "file": "animals/crow.txt",
     "width": 64,
@@ -451,11 +515,14 @@
   {
     "id": "moon",
     "name": "Moon",
+    "description": "Use for nighttime, sleep, dreams, or calm/quiet themes",
     "category": "nature",
     "tags": [
       "moon",
       "night",
-      "sky"
+      "sky",
+      "sleep",
+      "dream"
     ],
     "file": "nature/moon.txt",
     "width": 61,
@@ -467,11 +534,14 @@
   {
     "id": "rocket",
     "name": "Rocket",
+    "description": "Use for launches, startups, deployment, or ambitious goals",
     "category": "objects",
     "tags": [
       "rocket",
       "space",
-      "launch"
+      "launch",
+      "startup",
+      "deploy"
     ],
     "file": "objects/rocket.txt",
     "width": 64,
@@ -483,11 +553,14 @@
   {
     "id": "user",
     "name": "User",
+    "description": "Use for profiles, accounts, identity, or person references",
     "category": "people",
     "tags": [
       "user",
       "person",
-      "profile"
+      "profile",
+      "account",
+      "avatar"
     ],
     "file": "people/user.txt",
     "width": 55,

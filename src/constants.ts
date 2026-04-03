@@ -8,3 +8,4 @@ export const RATE_LIMIT_PER_MIN = 5;
 export const MAX_NAME_LENGTH = 30;
 export const MAX_TAG_LENGTH = 20;
 export const MAX_TAGS = 5;
+export const MAX_DESCRIPTION_LENGTH = 200;

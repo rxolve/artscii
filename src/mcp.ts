@@ -4,7 +4,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 
 import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
-import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS } from './constants.js';
+import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH } from './constants.js';
 import type { ArtWidth } from './types.js';
 
 const server = new McpServer({
@@ -25,7 +25,10 @@ server.tool(
       return { content: [{ type: 'text', text: `No ASCII art found for "${query}"` }] };
     }
     const arts = await Promise.all(results.map((e) => toResult(e, w)));
-    const text = arts.map((a) => `--- ${a.name} (${a.id}) [${a.width}x${a.height}] ---\n${a.art}`).join('\n\n');
+    const text = arts.map((a) => {
+      const desc = a.description ? `\n${a.description}` : '';
+      return `--- ${a.name} (${a.id}) [${a.width}x${a.height}] ---${desc}\n${a.art}`;
+    }).join('\n\n');
     return { content: [{ type: 'text', text }] };
   }
 );
@@ -61,7 +64,10 @@ server.tool(
   'List all available ASCII arts with metadata.',
   {},
   async () => {
-    const items = listAll().map((e) => `${e.id} — ${e.name} [${e.category}] (64w: ${e.width}x${e.height}, 32w: ${e.width32}x${e.height32})`);
+    const items = listAll().map((e) => {
+      const desc = e.description ? ` — ${e.description}` : '';
+      return `${e.id} — ${e.name} [${e.category}] (64w: ${e.width}x${e.height}, 32w: ${e.width32}x${e.height32})${desc}`;
+    });
     return { content: [{ type: 'text', text: items.join('\n') }] };
   }
 );
@@ -76,14 +82,15 @@ server.tool(
   'Submit a new ASCII art. Art must fit within 64x32 chars (64w) and optionally 32x16 chars (32w).',
   {
     name: z.string().max(MAX_NAME_LENGTH).describe('Art name (max 30 chars)'),
+    description: z.string().max(MAX_DESCRIPTION_LENGTH).optional().describe('When to use this art (e.g. "Use when celebrating success")'),
     category: z.string().max(MAX_NAME_LENGTH).describe('Category (e.g. "animals", "nature")'),
     tags: z.array(z.string().max(MAX_TAG_LENGTH)).max(MAX_TAGS).describe('Tags (max 5, each max 20 chars)'),
     art: z.string().describe('ASCII art content (max 64 chars wide, 32 lines tall)'),
     art32: z.string().optional().describe('Optional 32w compact variant (max 32 chars wide, 16 lines tall)'),
   },
-  async ({ name, category, tags, art, art32 }) => {
+  async ({ name, description, category, tags, art, art32 }) => {
     try {
-      const entry = await addArt({ name, category: category.toLowerCase(), tags, art, art32 });
+      const entry = await addArt({ name, description, category: category.toLowerCase(), tags, art, art32 });
       return { content: [{ type: 'text', text: `Submitted "${entry.name}" as "${entry.id}" [${entry.width}x${entry.height}]` }] };
     } catch (err: unknown) {
       const e = err as { message?: string };

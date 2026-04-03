@@ -51,7 +51,8 @@ export function search(query: string): ArtEntry[] {
       e.id.includes(q) ||
       e.name.toLowerCase().includes(q) ||
       e.category.includes(q) ||
-      e.tags.some((t) => t.includes(q))
+      e.tags.some((t) => t.includes(q)) ||
+      e.description?.toLowerCase().includes(q)
   );
 }
 
@@ -97,6 +98,7 @@ export async function saveIndex(): Promise<void> {
 
 export async function addArt(input: {
   name: string;
+  description?: string;
   category: string;
   tags: string[];
   art: string;
@@ -140,6 +142,7 @@ export async function addArt(input: {
   const entry: ArtEntry = {
     id,
     name: input.name,
+    ...(input.description && { description: input.description }),
     category: input.category,
     tags: input.tags,
     file,
@@ -177,6 +180,7 @@ export async function toResult(entry: ArtEntry, width: ArtWidth = 64): Promise<A
   return {
     id: entry.id,
     name: entry.name,
+    ...(entry.description && { description: entry.description }),
     category: entry.category,
     tags: entry.tags,
     width: w,

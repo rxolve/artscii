@@ -1,6 +1,7 @@
 export interface ArtEntry {
   id: string;
   name: string;
+  description?: string;
   category: string;
   tags: string[];
   file: string;
@@ -17,6 +18,7 @@ export type ArtWidth = 64 | 32;
 export interface ArtResult {
   id: string;
   name: string;
+  description?: string;
   category: string;
   tags: string[];
   width: number;
