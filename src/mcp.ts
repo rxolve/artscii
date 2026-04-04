@@ -8,6 +8,7 @@ import { loadKaomoji, searchKaomoji, getRandomKaomoji, listKaomojiCategories, ge
 import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
 import { resolveImageInput } from './resolve.js';
 import { convertImage } from './converter.js';
+import { renderBanner, BANNER_FONTS } from './banner.js';
 import type { ArtSize } from './types.js';
 
 const server = new McpServer({
@@ -91,6 +92,19 @@ server.tool('categories', 'List all categories.', {}, async () => {
   const cats = listCategories();
   return { content: [{ type: 'text', text: cats.join(', ') }] };
 });
+
+server.tool(
+  'banner',
+  'Render text as a large ASCII banner using FIGlet fonts. Great for CLI headers, welcome messages, and titles.',
+  {
+    text: z.string().max(50).describe('Text to render (max 50 chars)'),
+    font: z.enum(BANNER_FONTS).default('Standard').describe('Font: Standard (default), Small (compact), Slant (italic), Big (bold), Mini (minimal)'),
+  },
+  async ({ text, font }) => {
+    const banner = renderBanner(text, font);
+    return { content: [{ type: 'text', text: banner }] };
+  }
+);
 
 server.tool(
   'kaomoji',

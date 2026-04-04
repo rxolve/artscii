@@ -9,6 +9,7 @@ import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONV
 import { resolveImageInput, ConvertInputError } from './resolve.js';
 import { convertImage } from './converter.js';
 import { createRateLimiter } from './rate-limit.js';
+import { renderBanner, listBannerFonts, BANNER_FONTS, type BannerFont } from './banner.js';
 import type { ArtSize } from './types.js';
 
 const app = new Hono();
@@ -35,6 +36,8 @@ app.get('/', (c) =>
       category: 'GET /categories/:name',
       list: 'GET /list',
       convert: 'POST /convert { url?, base64?, size?, invert?, contrast?, gamma?, save? }',
+      banner: 'GET /banner?text={text}&font=Standard|Small|Slant|Big|Mini',
+      bannerFonts: 'GET /banner/fonts',
       kaomoji: 'GET /kaomoji?q={query}',
       kaomojiRandom: 'GET /kaomoji/random',
       kaomojiCategories: 'GET /kaomoji/categories',
@@ -148,6 +151,24 @@ app.delete('/art/:id', async (c) => {
     const e = err as { status?: number; message?: string };
     return c.json({ error: e.message ?? 'Unknown error' }, (e.status ?? 500) as ContentfulStatusCode);
   }
+});
+
+// --- Banner endpoints ---
+
+app.get('/banner', (c) => {
+  const text = c.req.query('text');
+  if (!text) return c.json({ error: 'query parameter "text" is required' }, 400);
+  if (text.length > 50) return c.json({ error: '"text" must be 50 chars or less' }, 400);
+  const fontParam = c.req.query('font') ?? 'Standard';
+  if (!BANNER_FONTS.includes(fontParam as BannerFont)) {
+    return c.json({ error: `Invalid font. Available: ${BANNER_FONTS.join(', ')}` }, 400);
+  }
+  const banner = renderBanner(text, fontParam as BannerFont);
+  return c.text(banner);
+});
+
+app.get('/banner/fonts', (c) => {
+  return c.json(listBannerFonts());
 });
 
 // --- Kaomoji endpoints ---

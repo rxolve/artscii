@@ -39,11 +39,13 @@
   "dependencies": {
     "@hono/node-server": "^1.19.12",
     "@modelcontextprotocol/sdk": "^1.29.0",
+    "figlet": "^1.11.0",
     "hono": "^4.12.9",
     "sharp": "^0.34.5",
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/figlet": "^1.7.0",
     "@types/node": "^25.5.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
