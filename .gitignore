@@ -4,3 +4,6 @@ dist
 scripts/images/
 __pycache__/
 .npmrc
+.mcpregistry_github_token
+.mcpregistry_registry_token
+mcp-publisher
