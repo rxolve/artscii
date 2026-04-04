@@ -11,8 +11,8 @@ export function matchQuery<T extends Searchable>(entries: T[], query: string, ex
     (e) =>
       e.id.includes(q) ||
       e.name.toLowerCase().includes(q) ||
-      e.category.includes(q) ||
-      e.tags.some((t) => t.includes(q)) ||
+      e.category.toLowerCase().includes(q) ||
+      e.tags.some((t) => t.toLowerCase().includes(q)) ||
       extraMatch?.(e, q)
   );
 }
@@ -26,6 +26,7 @@ export function filterByCategory<T extends Searchable>(entries: T[], category: s
 }
 
 export function pickRandom<T>(entries: T[]): T {
+  if (entries.length === 0) throw new Error('No entries available');
   return entries[Math.floor(Math.random() * entries.length)];
 }
 

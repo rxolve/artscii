@@ -1,9 +1,10 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
 import { loadIndex, search, getById, getByCategory, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
-import { loadKaomoji, searchKaomoji, getKaomojiById, getKaomojiByCategory, getRandomKaomoji, listKaomojiCategories, listAllKaomoji, toKaomojiResult } from './kaomoji.js';
+import { loadKaomoji, searchKaomoji, getKaomojiByCategory, getRandomKaomoji, listKaomojiCategories, listAllKaomoji, toKaomojiResult } from './kaomoji.js';
 import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONVERT_RATE_LIMIT_PER_MIN, RATE_LIMIT_PER_MIN, SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
 import { resolveImageInput, ConvertInputError } from './resolve.js';
 import { convertImage } from './converter.js';
@@ -130,7 +131,7 @@ app.post('/art', async (c) => {
     return c.json(result, 201);
   } catch (err: unknown) {
     const e = err as { status?: number; message?: string };
-    return c.json({ error: e.message ?? 'Unknown error' }, (e.status as 400) ?? 500);
+    return c.json({ error: e.message ?? 'Unknown error' }, (e.status ?? 500) as ContentfulStatusCode);
   }
 });
 
@@ -145,7 +146,7 @@ app.delete('/art/:id', async (c) => {
     return c.body(null, 204);
   } catch (err: unknown) {
     const e = err as { status?: number; message?: string };
-    return c.json({ error: e.message ?? 'Unknown error' }, (e.status as 403) ?? 500);
+    return c.json({ error: e.message ?? 'Unknown error' }, (e.status ?? 500) as ContentfulStatusCode);
   }
 });
 
@@ -251,7 +252,7 @@ app.post('/convert', async (c) => {
       return c.json({ error: err.message }, 400);
     }
     const e = err as { status?: number; message?: string };
-    return c.json({ error: e.message ?? 'Conversion failed' }, (e.status as 400) ?? 500);
+    return c.json({ error: e.message ?? 'Conversion failed' }, (e.status ?? 500) as ContentfulStatusCode);
   }
 });
 
