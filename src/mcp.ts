@@ -5,16 +5,16 @@ import { z } from 'zod';
 
 import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
 import { loadKaomoji, searchKaomoji, getRandomKaomoji, listKaomojiCategories, getKaomojiByCategory, toKaomojiResult } from './kaomoji.js';
-import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH } from './constants.js';
-import { resolveImageInput, convertBothSizes } from './converter.js';
-import type { ArtWidth } from './types.js';
+import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
+import { resolveImageInput, convertImage } from './converter.js';
+import type { ArtSize } from './types.js';
 
 const server = new McpServer({
   name: 'artscii',
-  version: '0.1.0',
+  version: '0.3.0',
 });
 
-const widthSchema = z.enum(['64', '32']).default('64').describe('Art width: "64" (default) or "32" (compact)');
+const sizeSchema = z.enum(['16', '32', '64']).default(String(DEFAULT_SIZE) as '16').describe('Art size tier: "16" (simple, default), "32" (medium), "64" (detailed)');
 
 server.tool(
   'search',
@@ -22,18 +22,16 @@ server.tool(
   {
     query: z.string().describe('Search keyword (matches id, name, category, tags)'),
     type: z.enum(['art', 'kaomoji', 'all']).default('all').describe('Filter by type: "art", "kaomoji", or "all"'),
-    width: widthSchema,
   },
-  async ({ query, type, width }) => {
+  async ({ query, type }) => {
     const parts: string[] = [];
 
     if (type !== 'kaomoji') {
-      const w = Number(width) as ArtWidth;
       const results = search(query);
-      const arts = await Promise.all(results.map((e) => toResult(e, w)));
+      const arts = await Promise.all(results.map((e) => toResult(e)));
       const text = arts.map((a) => {
         const desc = a.description ? `\n${a.description}` : '';
-        return `--- ${a.name} (${a.id}) [${a.width}x${a.height}] ---${desc}\n${a.art}`;
+        return `--- ${a.name} (${a.id}) [${a.size}w ${a.width}x${a.height}] ---${desc}\n${a.art}`;
       }).join('\n\n');
       if (text) parts.push(text);
     }
@@ -54,14 +52,13 @@ server.tool(
 server.tool(
   'get',
   'Get ASCII art by ID.',
-  { id: z.string().describe('Art ID (e.g. "cat", "sun", "heart")'), width: widthSchema },
-  async ({ id, width }) => {
-    const w = Number(width) as ArtWidth;
+  { id: z.string().describe('Art ID (e.g. "cat", "sun", "heart")') },
+  async ({ id }) => {
     const entry = getById(id);
     if (!entry) {
       return { content: [{ type: 'text', text: `ASCII art "${id}" not found` }] };
     }
-    const result = await toResult(entry, w);
+    const result = await toResult(entry);
     return { content: [{ type: 'text', text: result.art }] };
   }
 );
@@ -69,11 +66,10 @@ server.tool(
 server.tool(
   'random',
   'Get a random ASCII art.',
-  { width: widthSchema },
-  async ({ width }) => {
-    const w = Number(width) as ArtWidth;
-    const result = await toResult(getRandom(), w);
-    return { content: [{ type: 'text', text: `--- ${result.name} [${result.width}x${result.height}] ---\n${result.art}` }] };
+  {},
+  async () => {
+    const result = await toResult(getRandom());
+    return { content: [{ type: 'text', text: `--- ${result.name} [${result.size}w ${result.width}x${result.height}] ---\n${result.art}` }] };
   }
 );
 
@@ -84,7 +80,7 @@ server.tool(
   async () => {
     const items = listAll().map((e) => {
       const desc = e.description ? ` — ${e.description}` : '';
-      return `${e.id} — ${e.name} [${e.category}] (64w: ${e.width}x${e.height}, 32w: ${e.width32}x${e.height32})${desc}`;
+      return `${e.id} — ${e.name} [${e.category}] (${e.size}w: ${e.width}x${e.height})${desc}`;
     });
     return { content: [{ type: 'text', text: items.join('\n') }] };
   }
@@ -127,19 +123,20 @@ server.tool(
 
 server.tool(
   'submit',
-  'Submit a new ASCII art. Art must fit within 64x32 chars (64w) and optionally 32x16 chars (32w).',
+  'Submit a new ASCII art. Size tiers: 16w (16x8), 32w (32x16), 64w (64x32).',
   {
     name: z.string().max(MAX_NAME_LENGTH).describe('Art name (max 30 chars)'),
-    description: z.string().max(MAX_DESCRIPTION_LENGTH).optional().describe('When to use this art (e.g. "Use when celebrating success")'),
+    description: z.string().max(MAX_DESCRIPTION_LENGTH).optional().describe('When to use this art'),
     category: z.string().max(MAX_NAME_LENGTH).describe('Category (e.g. "animals", "nature")'),
     tags: z.array(z.string().max(MAX_TAG_LENGTH)).max(MAX_TAGS).describe('Tags (max 5, each max 20 chars)'),
-    art: z.string().describe('ASCII art content (max 64 chars wide, 32 lines tall)'),
-    art32: z.string().optional().describe('Optional 32w compact variant (max 32 chars wide, 16 lines tall)'),
+    size: sizeSchema,
+    art: z.string().describe('ASCII art content'),
   },
-  async ({ name, description, category, tags, art, art32 }) => {
+  async ({ name, description, category, tags, size, art }) => {
     try {
-      const entry = await addArt({ name, description, category: category.toLowerCase(), tags, art, art32 });
-      return { content: [{ type: 'text', text: `Submitted "${entry.name}" as "${entry.id}" [${entry.width}x${entry.height}]` }] };
+      const s = Number(size) as ArtSize;
+      const entry = await addArt({ name, description, category: category.toLowerCase(), tags, size: s, art });
+      return { content: [{ type: 'text', text: `Submitted "${entry.name}" as "${entry.id}" [${entry.size}w ${entry.width}x${entry.height}]` }] };
     } catch (err: unknown) {
       const e = err as { message?: string };
       return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Unknown error'}` }], isError: true };
@@ -167,13 +164,14 @@ server.tool(
 
 server.tool(
   'convert',
-  'Convert an image (URL or base64) to ASCII art.',
+  'Convert an image (URL or base64) to ASCII art at a specific size tier.',
   {
     url: z.string().url().optional().describe('Image URL to convert'),
-    base64: z.string().optional().describe('Base64-encoded image data (with or without data URI prefix)'),
+    base64: z.string().optional().describe('Base64-encoded image data'),
+    size: sizeSchema,
     invert: z.boolean().default(false).describe('Invert brightness'),
     contrast: z.boolean().default(true).describe('Apply auto-contrast'),
-    gamma: z.number().min(0.1).max(5).default(1.0).describe('Gamma correction (>1 brighter, <1 darker)'),
+    gamma: z.number().min(0.1).max(5).default(1.0).describe('Gamma correction'),
     save: z.object({
       name: z.string().max(MAX_NAME_LENGTH),
       description: z.string().max(MAX_DESCRIPTION_LENGTH).optional(),
@@ -181,14 +179,20 @@ server.tool(
       tags: z.array(z.string().max(MAX_TAG_LENGTH)).max(MAX_TAGS),
     }).optional().describe('Save the converted art to the store'),
   },
-  async ({ url, base64, invert, contrast, gamma, save }) => {
+  async ({ url, base64, size, invert, contrast, gamma, save }) => {
     if (!url && !base64) {
       return { content: [{ type: 'text', text: 'Error: provide either "url" or "base64"' }], isError: true };
     }
     try {
+      const s = Number(size) as ArtSize;
+      const { width: maxW, height: maxH } = SIZE_LIMITS[s];
       const source = (url ?? base64)!;
       const buf = await resolveImageInput(source);
-      const result = await convertBothSizes(buf, { invert, contrast, gamma });
+      const art = await convertImage(buf, { width: maxW, height: maxH, invert, contrast, gamma });
+
+      const lines = art.split('\n');
+      const artWidth = Math.max(...lines.map((l) => l.length), 0);
+      const artHeight = lines.length;
 
       let savedMsg = '';
       if (save) {
@@ -197,13 +201,13 @@ server.tool(
           description: save.description,
           category: save.category.toLowerCase(),
           tags: save.tags,
-          art: result.art64,
-          art32: result.art32,
+          size: s,
+          art,
         });
-        savedMsg = `\n\nSaved as "${entry.id}" [${entry.width}x${entry.height}]`;
+        savedMsg = `\n\nSaved as "${entry.id}" [${entry.size}w ${entry.width}x${entry.height}]`;
       }
 
-      const text = `--- 64w [${result.width64}x${result.height64}] ---\n${result.art64}\n\n--- 32w [${result.width32}x${result.height32}] ---\n${result.art32}${savedMsg}`;
+      const text = `--- ${s}w [${artWidth}x${artHeight}] ---\n${art}${savedMsg}`;
       return { content: [{ type: 'text', text }] };
     } catch (err: unknown) {
       const e = err as { message?: string };

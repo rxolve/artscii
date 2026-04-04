@@ -4,16 +4,18 @@ import { cors } from 'hono/cors';
 
 import { loadIndex, search, getById, getByCategory, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
 import { loadKaomoji, searchKaomoji, getKaomojiById, getKaomojiByCategory, getRandomKaomoji, listKaomojiCategories, listAllKaomoji, toKaomojiResult } from './kaomoji.js';
-import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONVERT_RATE_LIMIT_PER_MIN, RATE_LIMIT_PER_MIN } from './constants.js';
-import { resolveImageInput, convertBothSizes, ConvertInputError } from './converter.js';
-import type { ArtWidth } from './types.js';
+import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONVERT_RATE_LIMIT_PER_MIN, RATE_LIMIT_PER_MIN, SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
+import { resolveImageInput, convertImage, ConvertInputError } from './converter.js';
+import type { ArtSize } from './types.js';
 
 const app = new Hono();
 
 app.use('*', cors());
 
-function parseWidth(raw: string | undefined): ArtWidth {
-  return raw === '32' ? 32 : 64;
+function parseSize(raw: string | undefined): ArtSize {
+  const n = Number(raw);
+  if (n === 16 || n === 32 || n === 64) return n;
+  return DEFAULT_SIZE;
 }
 
 // Rate limit: IP -> timestamps within the last minute
@@ -39,17 +41,17 @@ function getClientIp(c: { req: { header: (name: string) => string | undefined } 
 app.get('/', (c) =>
   c.json({
     name: 'artscii',
-    version: '0.1.0',
-    description: 'ASCII art & kaomoji search API. Use ?type=art|kaomoji to filter, ?width=32 for compact art.',
+    version: '0.3.0',
+    description: 'ASCII art & kaomoji search API. Arts are sized by complexity: 16w (simple), 32w (medium), 64w (detailed).',
     endpoints: {
-      search: 'GET /search?q={query}&type=art|kaomoji&width=64|32',
-      art: 'GET /art/:id?width=64|32',
-      artRaw: 'GET /art/:id/raw?width=64|32',
-      random: 'GET /random?width=64|32',
+      search: 'GET /search?q={query}&type=art|kaomoji',
+      art: 'GET /art/:id',
+      artRaw: 'GET /art/:id/raw',
+      random: 'GET /random',
       categories: 'GET /categories',
-      category: 'GET /categories/:name?width=64|32',
+      category: 'GET /categories/:name',
       list: 'GET /list',
-      convert: 'POST /convert { url?, base64?, invert?, contrast?, gamma?, save? }',
+      convert: 'POST /convert { url?, base64?, size?, invert?, contrast?, gamma?, save? }',
       kaomoji: 'GET /kaomoji?q={query}',
       kaomojiRandom: 'GET /kaomoji/random',
       kaomojiCategories: 'GET /kaomoji/categories',
@@ -62,17 +64,16 @@ app.get('/search', async (c) => {
   const q = c.req.query('q');
   if (!q) return c.json({ error: 'query parameter "q" is required' }, 400);
   const type = c.req.query('type');
-  const w = parseWidth(c.req.query('width'));
 
   if (type === 'kaomoji') {
     return c.json(searchKaomoji(q).map(toKaomojiResult));
   }
   if (type === 'art') {
-    const arts = await Promise.all(search(q).map((e) => toResult(e, w)));
+    const arts = await Promise.all(search(q).map((e) => toResult(e)));
     return c.json(arts);
   }
   // No type filter: return both
-  const arts = await Promise.all(search(q).map((e) => toResult(e, w)));
+  const arts = await Promise.all(search(q).map((e) => toResult(e)));
   const kaomoji = searchKaomoji(q).map(toKaomojiResult);
   return c.json([...arts, ...kaomoji]);
 });
@@ -80,21 +81,18 @@ app.get('/search', async (c) => {
 app.get('/art/:id', async (c) => {
   const entry = getById(c.req.param('id'));
   if (!entry) return c.json({ error: 'not found' }, 404);
-  const w = parseWidth(c.req.query('width'));
-  return c.json(await toResult(entry, w));
+  return c.json(await toResult(entry));
 });
 
 app.get('/art/:id/raw', async (c) => {
   const entry = getById(c.req.param('id'));
   if (!entry) return c.text('not found', 404);
-  const w = parseWidth(c.req.query('width'));
-  const result = await toResult(entry, w);
+  const result = await toResult(entry);
   return c.text(result.art);
 });
 
 app.get('/random', async (c) => {
-  const w = parseWidth(c.req.query('width'));
-  return c.json(await toResult(getRandom(), w));
+  return c.json(await toResult(getRandom()));
 });
 
 app.get('/categories', (c) => {
@@ -104,8 +102,7 @@ app.get('/categories', (c) => {
 app.get('/categories/:name', async (c) => {
   const results = getByCategory(c.req.param('name'));
   if (results.length === 0) return c.json({ error: 'category not found' }, 404);
-  const w = parseWidth(c.req.query('width'));
-  const arts = await Promise.all(results.map((e) => toResult(e, w)));
+  const arts = await Promise.all(results.map((e) => toResult(e)));
   return c.json(arts);
 });
 
@@ -116,10 +113,9 @@ app.get('/list', (c) => {
     ...(e.description && { description: e.description }),
     category: e.category,
     tags: e.tags,
+    size: e.size,
     width: e.width,
     height: e.height,
-    width32: e.width32,
-    height32: e.height32,
   })));
 });
 
@@ -130,7 +126,7 @@ app.post('/art', async (c) => {
   const body = await c.req.json().catch(() => null);
   if (!body) return c.json({ error: 'Invalid JSON body' }, 400);
 
-  const { name, description, category, tags, art, art32 } = body;
+  const { name, description, category, tags, size, art } = body;
 
   if (typeof name !== 'string' || !name.trim()) return c.json({ error: '"name" is required' }, 400);
   if (name.length > MAX_NAME_LENGTH) return c.json({ error: `"name" exceeds ${MAX_NAME_LENGTH} characters` }, 400);
@@ -143,11 +139,11 @@ app.post('/art', async (c) => {
   if (tags.some((t: unknown) => typeof t !== 'string' || t.length > MAX_TAG_LENGTH)) {
     return c.json({ error: `Each tag must be a string of max ${MAX_TAG_LENGTH} chars` }, 400);
   }
+  if (size !== undefined && ![16, 32, 64].includes(size)) return c.json({ error: '"size" must be 16, 32, or 64' }, 400);
   if (typeof art !== 'string' || !art.trim()) return c.json({ error: '"art" is required' }, 400);
-  if (art32 !== undefined && typeof art32 !== 'string') return c.json({ error: '"art32" must be a string' }, 400);
 
   try {
-    const entry = await addArt({ name: name.trim(), description: description?.trim(), category: category.trim().toLowerCase(), tags, art, art32 });
+    const entry = await addArt({ name: name.trim(), description: description?.trim(), category: category.trim().toLowerCase(), tags, size, art });
     const result = await toResult(entry);
     return c.json(result, 201);
   } catch (err: unknown) {
@@ -218,14 +214,18 @@ app.post('/convert', async (c) => {
   const body = await c.req.json().catch(() => null);
   if (!body) return c.json({ error: 'Invalid JSON body' }, 400);
 
-  const { url, base64, invert, contrast, gamma, save } = body;
+  const { url, base64, size: rawSize, invert, contrast, gamma, save } = body;
 
   if (url !== undefined && typeof url !== 'string') return c.json({ error: '"url" must be a string' }, 400);
   if (base64 !== undefined && typeof base64 !== 'string') return c.json({ error: '"base64" must be a string' }, 400);
   if (!url && !base64) return c.json({ error: '"url" or "base64" is required' }, 400);
+  if (rawSize !== undefined && ![16, 32, 64].includes(rawSize)) return c.json({ error: '"size" must be 16, 32, or 64' }, 400);
   if (invert !== undefined && typeof invert !== 'boolean') return c.json({ error: '"invert" must be a boolean' }, 400);
   if (contrast !== undefined && typeof contrast !== 'boolean') return c.json({ error: '"contrast" must be a boolean' }, 400);
   if (gamma !== undefined && (typeof gamma !== 'number' || gamma < 0.1 || gamma > 5)) return c.json({ error: '"gamma" must be a number between 0.1 and 5' }, 400);
+
+  const size: ArtSize = rawSize ?? DEFAULT_SIZE;
+  const { width: maxW, height: maxH } = SIZE_LIMITS[size];
 
   // Validate save fields upfront
   if (save && typeof save === 'object') {
@@ -246,11 +246,17 @@ app.post('/convert', async (c) => {
   try {
     const source = (url ?? base64) as string;
     const buf = await resolveImageInput(source);
-    const result = await convertBothSizes(buf, {
+    const art = await convertImage(buf, {
+      width: maxW,
+      height: maxH,
       invert: invert ?? false,
       contrast: contrast ?? true,
       gamma: gamma ?? 1.0,
     });
+
+    const lines = art.split('\n');
+    const artWidth = Math.max(...lines.map((l) => l.length), 0);
+    const artHeight = lines.length;
 
     // Optionally save to store
     if (save && typeof save === 'object') {
@@ -265,13 +271,13 @@ app.post('/convert', async (c) => {
         description: description?.trim(),
         category: category.trim().toLowerCase(),
         tags,
-        art: result.art64,
-        art32: result.art32,
+        size,
+        art,
       });
-      return c.json({ ...result, saved: { id: entry.id, name: entry.name } }, 201);
+      return c.json({ art, size, width: artWidth, height: artHeight, saved: { id: entry.id, name: entry.name } }, 201);
     }
 
-    return c.json(result);
+    return c.json({ art, size, width: artWidth, height: artHeight });
   } catch (err: unknown) {
     if (err instanceof ConvertInputError) {
       return c.json({ error: err.message }, 400);

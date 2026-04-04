@@ -12,14 +12,6 @@ export interface ConvertOptions {
   gamma?: number;
 }
 
-export interface ConvertResult {
-  art64: string;
-  art32: string;
-  width64: number;
-  height64: number;
-  width32: number;
-  height32: number;
-}
 
 /** Error thrown for invalid user input (bad image, bad URL, etc.) */
 export class ConvertInputError extends Error {
@@ -200,29 +192,3 @@ export async function resolveImageInput(source: string): Promise<Buffer> {
   return decodeBase64Image(source);
 }
 
-/**
- * Convert image at both 64w and 32w sizes.
- */
-export async function convertBothSizes(
-  input: Buffer,
-  opts: ConvertOptions = {},
-): Promise<ConvertResult> {
-  const baseOpts = { invert: opts.invert, contrast: opts.contrast, gamma: opts.gamma };
-
-  const [art64, art32] = await Promise.all([
-    convertImage(input, { ...baseOpts, width: 64, height: 32 }),
-    convertImage(input, { ...baseOpts, width: 32, height: 16 }),
-  ]);
-
-  const lines64 = art64.split('\n');
-  const lines32 = art32.split('\n');
-
-  return {
-    art64,
-    art32,
-    width64: Math.max(...lines64.map((l) => l.length), 0),
-    height64: lines64.length,
-    width32: Math.max(...lines32.map((l) => l.length), 0),
-    height32: lines32.length,
-  };
-}

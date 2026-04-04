@@ -1,4 +1,5 @@
 export type ArtType = 'art' | 'kaomoji';
+export type ArtSize = 16 | 32 | 64;
 
 export interface ArtEntry {
   id: string;
@@ -7,12 +8,10 @@ export interface ArtEntry {
   description?: string;
   category: string;
   tags: string[];
+  size: ArtSize;
   file: string;
   width: number;
   height: number;
-  file32: string;
-  width32: number;
-  height32: number;
   userSubmitted?: boolean;
 }
 
@@ -25,8 +24,6 @@ export interface KaomojiEntry {
   text: string;
 }
 
-export type ArtWidth = 64 | 32;
-
 export interface ArtResult {
   id: string;
   type?: ArtType;
@@ -34,6 +31,7 @@ export interface ArtResult {
   description?: string;
   category: string;
   tags: string[];
+  size: ArtSize;
   width: number;
   height: number;
   art: string;

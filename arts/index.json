@@ -11,12 +11,10 @@
       "cute",
       "kitten"
     ],
+    "size": 32,
     "file": "animals/cat.txt",
-    "width": 58,
-    "height": 29,
-    "file32": "animals/cat.32w.txt",
-    "width32": 29,
-    "height32": 15
+    "width": 29,
+    "height": 15
   },
   {
     "id": "bird",
@@ -30,12 +28,10 @@
       "wings",
       "freedom"
     ],
+    "size": 32,
     "file": "animals/bird.txt",
-    "width": 64,
-    "height": 21,
-    "file32": "animals/bird.32w.txt",
-    "width32": 32,
-    "height32": 10
+    "width": 32,
+    "height": 10
   },
   {
     "id": "fish",
@@ -49,12 +45,10 @@
       "ocean",
       "water"
     ],
+    "size": 32,
     "file": "animals/fish.txt",
-    "width": 62,
-    "height": 23,
-    "file32": "animals/fish.32w.txt",
-    "width32": 31,
-    "height32": 11
+    "width": 31,
+    "height": 11
   },
   {
     "id": "tree",
@@ -68,12 +62,10 @@
       "plant",
       "growth"
     ],
+    "size": 32,
     "file": "nature/tree.txt",
-    "width": 53,
-    "height": 32,
-    "file32": "nature/tree.32w.txt",
-    "width32": 26,
-    "height32": 16
+    "width": 26,
+    "height": 16
   },
   {
     "id": "mountain",
@@ -87,12 +79,10 @@
       "adventure",
       "climb"
     ],
+    "size": 32,
     "file": "nature/mountain.txt",
-    "width": 64,
-    "height": 14,
-    "file32": "nature/mountain.32w.txt",
-    "width32": 32,
-    "height32": 7
+    "width": 32,
+    "height": 7
   },
   {
     "id": "sun",
@@ -106,12 +96,10 @@
       "weather",
       "bright"
     ],
+    "size": 32,
     "file": "nature/sun.txt",
-    "width": 63,
-    "height": 32,
-    "file32": "nature/sun.32w.txt",
-    "width32": 32,
-    "height32": 16
+    "width": 32,
+    "height": 16
   },
   {
     "id": "coffee",
@@ -125,12 +113,10 @@
       "mug",
       "morning"
     ],
+    "size": 32,
     "file": "objects/coffee.txt",
-    "width": 62,
-    "height": 25,
-    "file32": "objects/coffee.32w.txt",
-    "width32": 31,
-    "height32": 12
+    "width": 31,
+    "height": 12
   },
   {
     "id": "book",
@@ -144,12 +130,10 @@
       "study",
       "knowledge"
     ],
+    "size": 32,
     "file": "objects/book.txt",
-    "width": 58,
-    "height": 25,
-    "file32": "objects/book.32w.txt",
-    "width32": 29,
-    "height32": 13
+    "width": 29,
+    "height": 13
   },
   {
     "id": "heart",
@@ -163,12 +147,10 @@
       "thanks",
       "gratitude"
     ],
+    "size": 32,
     "file": "symbols/heart.txt",
-    "width": 64,
-    "height": 30,
-    "file32": "symbols/heart.32w.txt",
-    "width32": 32,
-    "height32": 15
+    "width": 32,
+    "height": 15
   },
   {
     "id": "star",
@@ -182,12 +164,10 @@
       "night",
       "favorite"
     ],
+    "size": 32,
     "file": "symbols/star.txt",
-    "width": 64,
-    "height": 30,
-    "file32": "symbols/star.32w.txt",
-    "width32": 32,
-    "height32": 15
+    "width": 32,
+    "height": 15
   },
   {
     "id": "smiley",
@@ -201,12 +181,10 @@
       "emoji",
       "greeting"
     ],
+    "size": 32,
     "file": "emoji/smiley.txt",
-    "width": 61,
-    "height": 32,
-    "file32": "emoji/smiley.32w.txt",
-    "width32": 32,
-    "height32": 16
+    "width": 32,
+    "height": 16
   },
   {
     "id": "skull",
@@ -220,12 +198,10 @@
       "emoji",
       "warning"
     ],
+    "size": 32,
     "file": "emoji/skull.txt",
-    "width": 55,
-    "height": 32,
-    "file32": "emoji/skull.32w.txt",
-    "width32": 27,
-    "height32": 16
+    "width": 27,
+    "height": 16
   },
   {
     "id": "ghost",
@@ -239,12 +215,10 @@
       "emoji",
       "mystery"
     ],
+    "size": 32,
     "file": "emoji/ghost.txt",
-    "width": 47,
-    "height": 32,
-    "file32": "emoji/ghost.32w.txt",
-    "width32": 23,
-    "height32": 16
+    "width": 23,
+    "height": 16
   },
   {
     "id": "alien",
@@ -258,12 +232,10 @@
       "emoji",
       "scifi"
     ],
+    "size": 32,
     "file": "emoji/alien.txt",
-    "width": 52,
-    "height": 32,
-    "file32": "emoji/alien.32w.txt",
-    "width32": 26,
-    "height32": 16
+    "width": 26,
+    "height": 16
   },
   {
     "id": "angry",
@@ -277,12 +249,10 @@
       "emoji",
       "frustration"
     ],
+    "size": 32,
     "file": "emoji/angry.txt",
-    "width": 61,
-    "height": 32,
-    "file32": "emoji/angry.32w.txt",
-    "width32": 32,
-    "height32": 16
+    "width": 32,
+    "height": 16
   },
   {
     "id": "thumbsup",
@@ -296,12 +266,10 @@
       "emoji",
       "approval"
     ],
+    "size": 32,
     "file": "emoji/thumbsup.txt",
-    "width": 64,
-    "height": 32,
-    "file32": "emoji/thumbsup.32w.txt",
-    "width32": 32,
-    "height32": 16
+    "width": 32,
+    "height": 16
   },
   {
     "id": "lightning",
@@ -315,12 +283,10 @@
       "emoji",
       "energy"
     ],
+    "size": 32,
     "file": "emoji/lightning.txt",
-    "width": 40,
-    "height": 32,
-    "file32": "emoji/lightning.32w.txt",
-    "width32": 20,
-    "height32": 16
+    "width": 20,
+    "height": 16
   },
   {
     "id": "masks",
@@ -334,12 +300,10 @@
       "emoji",
       "performance"
     ],
+    "size": 32,
     "file": "emoji/masks.txt",
-    "width": 64,
-    "height": 25,
-    "file32": "emoji/masks.32w.txt",
-    "width32": 32,
-    "height32": 12
+    "width": 32,
+    "height": 12
   },
   {
     "id": "fire",
@@ -353,12 +317,10 @@
       "emoji",
       "trending"
     ],
+    "size": 32,
     "file": "emoji/fire.txt",
-    "width": 47,
-    "height": 32,
-    "file32": "emoji/fire.32w.txt",
-    "width32": 23,
-    "height32": 16
+    "width": 23,
+    "height": 16
   },
   {
     "id": "poop",
@@ -372,12 +334,10 @@
       "emoji",
       "humor"
     ],
+    "size": 32,
     "file": "emoji/poop.txt",
-    "width": 64,
-    "height": 32,
-    "file32": "emoji/poop.32w.txt",
-    "width32": 32,
-    "height32": 16
+    "width": 32,
+    "height": 16
   },
   {
     "id": "dog",
@@ -391,12 +351,10 @@
       "puppy",
       "loyal"
     ],
+    "size": 32,
     "file": "animals/dog.txt",
-    "width": 64,
-    "height": 32,
-    "file32": "animals/dog.32w.txt",
-    "width32": 32,
-    "height32": 16
+    "width": 32,
+    "height": 16
   },
   {
     "id": "horse",
@@ -410,12 +368,10 @@
       "speed",
       "wild"
     ],
+    "size": 32,
     "file": "animals/horse.txt",
-    "width": 64,
-    "height": 28,
-    "file32": "animals/horse.32w.txt",
-    "width32": 32,
-    "height32": 14
+    "width": 32,
+    "height": 14
   },
   {
     "id": "spider",
@@ -429,12 +385,10 @@
       "creepy",
       "halloween"
     ],
+    "size": 32,
     "file": "animals/spider.txt",
-    "width": 64,
-    "height": 28,
-    "file32": "animals/spider.32w.txt",
-    "width32": 32,
-    "height32": 14
+    "width": 32,
+    "height": 14
   },
   {
     "id": "dove",
@@ -448,12 +402,10 @@
       "harmony",
       "hope"
     ],
+    "size": 32,
     "file": "animals/dove.txt",
-    "width": 64,
-    "height": 32,
-    "file32": "animals/dove.32w.txt",
-    "width32": 32,
-    "height32": 16
+    "width": 32,
+    "height": 16
   },
   {
     "id": "dragon",
@@ -467,12 +419,10 @@
       "epic",
       "power"
     ],
+    "size": 32,
     "file": "animals/dragon.txt",
-    "width": 64,
-    "height": 25,
-    "file32": "animals/dragon.32w.txt",
-    "width32": 32,
-    "height32": 12
+    "width": 32,
+    "height": 12
   },
   {
     "id": "frog",
@@ -486,12 +436,10 @@
       "pond",
       "nature"
     ],
+    "size": 32,
     "file": "animals/frog.txt",
-    "width": 64,
-    "height": 27,
-    "file32": "animals/frog.32w.txt",
-    "width32": 32,
-    "height32": 14
+    "width": 32,
+    "height": 14
   },
   {
     "id": "crow",
@@ -505,12 +453,10 @@
       "dark",
       "mystery"
     ],
+    "size": 32,
     "file": "animals/crow.txt",
-    "width": 64,
-    "height": 25,
-    "file32": "animals/crow.32w.txt",
-    "width32": 32,
-    "height32": 12
+    "width": 32,
+    "height": 12
   },
   {
     "id": "moon",
@@ -524,12 +470,10 @@
       "sleep",
       "dream"
     ],
+    "size": 32,
     "file": "nature/moon.txt",
-    "width": 61,
-    "height": 32,
-    "file32": "nature/moon.32w.txt",
-    "width32": 31,
-    "height32": 16
+    "width": 31,
+    "height": 16
   },
   {
     "id": "rocket",
@@ -543,12 +487,10 @@
       "startup",
       "deploy"
     ],
+    "size": 32,
     "file": "objects/rocket.txt",
-    "width": 64,
-    "height": 32,
-    "file32": "objects/rocket.32w.txt",
-    "width32": 32,
-    "height32": 16
+    "width": 32,
+    "height": 16
   },
   {
     "id": "user",
@@ -562,11 +504,9 @@
       "account",
       "avatar"
     ],
+    "size": 32,
     "file": "people/user.txt",
-    "width": 55,
-    "height": 32,
-    "file32": "people/user.32w.txt",
-    "width32": 27,
-    "height32": 16
+    "width": 27,
+    "height": 16
   }
 ]

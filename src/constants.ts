@@ -1,7 +1,12 @@
-export const MAX_WIDTH = 64;
-export const MAX_HEIGHT = 32;
-export const COMPACT_WIDTH = 32;
-export const COMPACT_HEIGHT = 16;
+import type { ArtSize } from './types.js';
+
+export const SIZE_LIMITS: Record<ArtSize, { width: number; height: number }> = {
+  16: { width: 16, height: 8 },
+  32: { width: 32, height: 16 },
+  64: { width: 64, height: 32 },
+};
+
+export const DEFAULT_SIZE: ArtSize = 16;
 
 export const MAX_USER_ARTS = 100;
 export const RATE_LIMIT_PER_MIN = 5;
