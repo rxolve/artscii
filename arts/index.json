@@ -508,5 +508,425 @@
     "file": "people/user.txt",
     "width": 27,
     "height": 16
+  },
+  {
+    "id": "apple",
+    "name": "Apple",
+    "category": "food",
+    "tags": [
+      "apple",
+      "fruit",
+      "food",
+      "healthy"
+    ],
+    "size": 16,
+    "file": "food/apple.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "pizza",
+    "name": "Pizza",
+    "category": "food",
+    "tags": [
+      "pizza",
+      "food",
+      "slice",
+      "italian"
+    ],
+    "size": 16,
+    "file": "food/pizza.txt",
+    "width": 15,
+    "height": 7
+  },
+  {
+    "id": "cake",
+    "name": "Cake",
+    "category": "food",
+    "tags": [
+      "cake",
+      "dessert",
+      "food",
+      "birthday"
+    ],
+    "size": 16,
+    "file": "food/cake.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "ice-cream",
+    "name": "Ice Cream",
+    "category": "food",
+    "tags": [
+      "ice cream",
+      "dessert",
+      "food",
+      "sweet"
+    ],
+    "size": 16,
+    "file": "food/ice-cream.txt",
+    "width": 11,
+    "height": 7
+  },
+  {
+    "id": "hamburger",
+    "name": "Hamburger",
+    "category": "food",
+    "tags": [
+      "hamburger",
+      "burger",
+      "food",
+      "fast food"
+    ],
+    "size": 16,
+    "file": "food/hamburger.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "car",
+    "name": "Car",
+    "category": "transport",
+    "tags": [
+      "car",
+      "vehicle",
+      "drive",
+      "transport"
+    ],
+    "size": 16,
+    "file": "transport/car.txt",
+    "width": 16,
+    "height": 6
+  },
+  {
+    "id": "airplane",
+    "name": "Paper Plane",
+    "category": "transport",
+    "tags": [
+      "airplane",
+      "plane",
+      "fly",
+      "paper"
+    ],
+    "size": 16,
+    "file": "transport/airplane.txt",
+    "width": 15,
+    "height": 7
+  },
+  {
+    "id": "boat",
+    "name": "Boat",
+    "category": "transport",
+    "tags": [
+      "boat",
+      "ship",
+      "sea",
+      "fishing"
+    ],
+    "size": 16,
+    "file": "transport/boat.txt",
+    "width": 16,
+    "height": 7
+  },
+  {
+    "id": "cloud",
+    "name": "Cloud",
+    "category": "weather",
+    "tags": [
+      "cloud",
+      "sky",
+      "weather",
+      "fluffy"
+    ],
+    "size": 16,
+    "file": "weather/cloud.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "rain",
+    "name": "Rain",
+    "category": "weather",
+    "tags": [
+      "rain",
+      "weather",
+      "water",
+      "storm"
+    ],
+    "size": 16,
+    "file": "weather/rain.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "snowflake",
+    "name": "Snowflake",
+    "category": "weather",
+    "tags": [
+      "snow",
+      "winter",
+      "cold",
+      "ice"
+    ],
+    "size": 16,
+    "file": "weather/snowflake.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "umbrella",
+    "name": "Umbrella",
+    "category": "weather",
+    "tags": [
+      "umbrella",
+      "rain",
+      "weather",
+      "protection"
+    ],
+    "size": 16,
+    "file": "weather/umbrella.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "laptop",
+    "name": "Laptop",
+    "category": "tech",
+    "tags": [
+      "laptop",
+      "computer",
+      "tech",
+      "work"
+    ],
+    "size": 16,
+    "file": "tech/laptop.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "phone",
+    "name": "Phone",
+    "category": "tech",
+    "tags": [
+      "phone",
+      "mobile",
+      "tech",
+      "device"
+    ],
+    "size": 16,
+    "file": "tech/phone.txt",
+    "width": 12,
+    "height": 8
+  },
+  {
+    "id": "camera",
+    "name": "Camera",
+    "category": "tech",
+    "tags": [
+      "camera",
+      "photo",
+      "tech",
+      "picture"
+    ],
+    "size": 16,
+    "file": "tech/camera.txt",
+    "width": 16,
+    "height": 7
+  },
+  {
+    "id": "soccer",
+    "name": "Soccer Ball",
+    "category": "sports",
+    "tags": [
+      "soccer",
+      "football",
+      "ball",
+      "sports"
+    ],
+    "size": 16,
+    "file": "sports/soccer.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "trophy",
+    "name": "Trophy",
+    "category": "sports",
+    "tags": [
+      "trophy",
+      "win",
+      "champion",
+      "award"
+    ],
+    "size": 16,
+    "file": "sports/trophy.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "medal",
+    "name": "Medal",
+    "category": "sports",
+    "tags": [
+      "medal",
+      "award",
+      "achievement",
+      "prize"
+    ],
+    "size": 16,
+    "file": "sports/medal.txt",
+    "width": 12,
+    "height": 8
+  },
+  {
+    "id": "guitar",
+    "name": "Guitar",
+    "category": "music",
+    "tags": [
+      "guitar",
+      "music",
+      "instrument",
+      "rock"
+    ],
+    "size": 16,
+    "file": "music/guitar.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "hammer",
+    "name": "Hammer",
+    "category": "tools",
+    "tags": [
+      "hammer",
+      "tool",
+      "build",
+      "fix"
+    ],
+    "size": 16,
+    "file": "tools/hammer.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "scissors",
+    "name": "Scissors",
+    "category": "tools",
+    "tags": [
+      "scissors",
+      "cut",
+      "tool",
+      "craft"
+    ],
+    "size": 16,
+    "file": "tools/scissors.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "crown",
+    "name": "Crown",
+    "category": "misc",
+    "tags": [
+      "crown",
+      "king",
+      "royal",
+      "power"
+    ],
+    "size": 16,
+    "file": "misc/crown.txt",
+    "width": 16,
+    "height": 7
+  },
+  {
+    "id": "key",
+    "name": "Key",
+    "category": "misc",
+    "tags": [
+      "key",
+      "lock",
+      "security",
+      "access"
+    ],
+    "size": 16,
+    "file": "misc/key.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "lightbulb",
+    "name": "Lightbulb",
+    "category": "misc",
+    "tags": [
+      "light",
+      "idea",
+      "bulb",
+      "bright"
+    ],
+    "size": 16,
+    "file": "misc/lightbulb.txt",
+    "width": 13,
+    "height": 8
+  },
+  {
+    "id": "gift",
+    "name": "Gift",
+    "category": "misc",
+    "tags": [
+      "gift",
+      "present",
+      "surprise",
+      "box"
+    ],
+    "size": 16,
+    "file": "misc/gift.txt",
+    "width": 15,
+    "height": 7
+  },
+  {
+    "id": "flag",
+    "name": "Flag",
+    "category": "misc",
+    "tags": [
+      "flag",
+      "banner",
+      "wave",
+      "signal"
+    ],
+    "size": 16,
+    "file": "misc/flag.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "bolt",
+    "name": "Lightning Bolt",
+    "category": "misc",
+    "tags": [
+      "lightning",
+      "bolt",
+      "electric",
+      "power"
+    ],
+    "size": 16,
+    "file": "misc/bolt.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "swords",
+    "name": "Crossed Swords",
+    "category": "misc",
+    "tags": [
+      "sword",
+      "battle",
+      "fight",
+      "weapon"
+    ],
+    "size": 16,
+    "file": "misc/swords.txt",
+    "width": 15,
+    "height": 8
   }
 ]
