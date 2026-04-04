@@ -3,6 +3,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
 import { loadIndex, search, getById, getByCategory, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
+import { loadKaomoji, searchKaomoji, getKaomojiById, getKaomojiByCategory, getRandomKaomoji, listKaomojiCategories, listAllKaomoji, toKaomojiResult } from './kaomoji.js';
 import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONVERT_RATE_LIMIT_PER_MIN, RATE_LIMIT_PER_MIN } from './constants.js';
 import { resolveImageInput, convertBothSizes, ConvertInputError } from './converter.js';
 import type { ArtWidth } from './types.js';
@@ -39,9 +40,9 @@ app.get('/', (c) =>
   c.json({
     name: 'artscii',
     version: '0.1.0',
-    description: 'ASCII art search API. Use ?width=32 for compact variant.',
+    description: 'ASCII art & kaomoji search API. Use ?type=art|kaomoji to filter, ?width=32 for compact art.',
     endpoints: {
-      search: 'GET /search?q={query}&width=64|32',
+      search: 'GET /search?q={query}&type=art|kaomoji&width=64|32',
       art: 'GET /art/:id?width=64|32',
       artRaw: 'GET /art/:id/raw?width=64|32',
       random: 'GET /random?width=64|32',
@@ -49,6 +50,10 @@ app.get('/', (c) =>
       category: 'GET /categories/:name?width=64|32',
       list: 'GET /list',
       convert: 'POST /convert { url?, base64?, invert?, contrast?, gamma?, save? }',
+      kaomoji: 'GET /kaomoji?q={query}',
+      kaomojiRandom: 'GET /kaomoji/random',
+      kaomojiCategories: 'GET /kaomoji/categories',
+      kaomojiCategory: 'GET /kaomoji/categories/:name',
     },
   })
 );
@@ -56,10 +61,20 @@ app.get('/', (c) =>
 app.get('/search', async (c) => {
   const q = c.req.query('q');
   if (!q) return c.json({ error: 'query parameter "q" is required' }, 400);
+  const type = c.req.query('type');
   const w = parseWidth(c.req.query('width'));
-  const results = search(q);
-  const arts = await Promise.all(results.map((e) => toResult(e, w)));
-  return c.json(arts);
+
+  if (type === 'kaomoji') {
+    return c.json(searchKaomoji(q).map(toKaomojiResult));
+  }
+  if (type === 'art') {
+    const arts = await Promise.all(search(q).map((e) => toResult(e, w)));
+    return c.json(arts);
+  }
+  // No type filter: return both
+  const arts = await Promise.all(search(q).map((e) => toResult(e, w)));
+  const kaomoji = searchKaomoji(q).map(toKaomojiResult);
+  return c.json([...arts, ...kaomoji]);
 });
 
 app.get('/art/:id', async (c) => {
@@ -156,6 +171,30 @@ app.delete('/art/:id', async (c) => {
   }
 });
 
+// --- Kaomoji endpoints ---
+
+app.get('/kaomoji', (c) => {
+  const q = c.req.query('q');
+  if (q) {
+    return c.json(searchKaomoji(q).map(toKaomojiResult));
+  }
+  return c.json(listAllKaomoji().map(toKaomojiResult));
+});
+
+app.get('/kaomoji/random', (c) => {
+  return c.json(toKaomojiResult(getRandomKaomoji()));
+});
+
+app.get('/kaomoji/categories', (c) => {
+  return c.json(listKaomojiCategories());
+});
+
+app.get('/kaomoji/categories/:name', (c) => {
+  const results = getKaomojiByCategory(c.req.param('name'));
+  if (results.length === 0) return c.json({ error: 'category not found' }, 404);
+  return c.json(results.map(toKaomojiResult));
+});
+
 // Separate rate limiter for convert (CPU-intensive)
 const convertRateLimitMap = new Map<string, number[]>();
 
@@ -243,7 +282,7 @@ app.post('/convert', async (c) => {
 });
 
 async function main() {
-  await loadIndex();
+  await Promise.all([loadIndex(), loadKaomoji()]);
   const port = Number(process.env.PORT) || 3001;
   console.log(`artscii listening on http://localhost:${port}`);
   serve({ fetch: app.fetch, port });

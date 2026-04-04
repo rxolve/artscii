@@ -4,6 +4,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 
 import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
+import { loadKaomoji, searchKaomoji, getRandomKaomoji, listKaomojiCategories, getKaomojiByCategory, toKaomojiResult } from './kaomoji.js';
 import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH } from './constants.js';
 import { resolveImageInput, convertBothSizes } from './converter.js';
 import type { ArtWidth } from './types.js';
@@ -17,20 +18,36 @@ const widthSchema = z.enum(['64', '32']).default('64').describe('Art width: "64"
 
 server.tool(
   'search',
-  'Search ASCII art by keyword. Returns matching arts with content.',
-  { query: z.string().describe('Search keyword (matches id, name, category, tags)'), width: widthSchema },
-  async ({ query, width }) => {
-    const w = Number(width) as ArtWidth;
-    const results = search(query);
-    if (results.length === 0) {
-      return { content: [{ type: 'text', text: `No ASCII art found for "${query}"` }] };
+  'Search ASCII art and kaomoji by keyword. Use type to filter results.',
+  {
+    query: z.string().describe('Search keyword (matches id, name, category, tags)'),
+    type: z.enum(['art', 'kaomoji', 'all']).default('all').describe('Filter by type: "art", "kaomoji", or "all"'),
+    width: widthSchema,
+  },
+  async ({ query, type, width }) => {
+    const parts: string[] = [];
+
+    if (type !== 'kaomoji') {
+      const w = Number(width) as ArtWidth;
+      const results = search(query);
+      const arts = await Promise.all(results.map((e) => toResult(e, w)));
+      const text = arts.map((a) => {
+        const desc = a.description ? `\n${a.description}` : '';
+        return `--- ${a.name} (${a.id}) [${a.width}x${a.height}] ---${desc}\n${a.art}`;
+      }).join('\n\n');
+      if (text) parts.push(text);
     }
-    const arts = await Promise.all(results.map((e) => toResult(e, w)));
-    const text = arts.map((a) => {
-      const desc = a.description ? `\n${a.description}` : '';
-      return `--- ${a.name} (${a.id}) [${a.width}x${a.height}] ---${desc}\n${a.art}`;
-    }).join('\n\n');
-    return { content: [{ type: 'text', text }] };
+
+    if (type !== 'art') {
+      const kaomoji = searchKaomoji(query);
+      const text = kaomoji.map((k) => `${k.text}  — ${k.name} [${k.category}]`).join('\n');
+      if (text) parts.push(text);
+    }
+
+    if (parts.length === 0) {
+      return { content: [{ type: 'text', text: `No results found for "${query}"` }] };
+    }
+    return { content: [{ type: 'text', text: parts.join('\n\n') }] };
   }
 );
 
@@ -77,6 +94,36 @@ server.tool('categories', 'List all categories.', {}, async () => {
   const cats = listCategories();
   return { content: [{ type: 'text', text: cats.join(', ') }] };
 });
+
+server.tool(
+  'kaomoji',
+  'Get a kaomoji (Japanese text emoticon) by emotion or keyword. Perfect for inline text expressions.',
+  {
+    query: z.string().optional().describe('Emotion or keyword (e.g. "happy", "sad", "cat", "shrug"). Omit for random.'),
+    category: z.string().optional().describe('Filter by category (e.g. "happy", "animals", "table-flip")'),
+  },
+  async ({ query, category }) => {
+    if (!query && !category) {
+      const k = getRandomKaomoji();
+      return { content: [{ type: 'text', text: `${k.text}  — ${k.name}` }] };
+    }
+
+    let results = query ? searchKaomoji(query) : [];
+    if (category) {
+      const byCategory = getKaomojiByCategory(category);
+      results = results.length > 0
+        ? results.filter((r) => r.category === category)
+        : byCategory;
+    }
+
+    if (results.length === 0) {
+      return { content: [{ type: 'text', text: `No kaomoji found. Categories: ${listKaomojiCategories().join(', ')}` }] };
+    }
+
+    const text = results.map((k) => `${k.text}  — ${k.name} [${k.category}]`).join('\n');
+    return { content: [{ type: 'text', text }] };
+  }
+);
 
 server.tool(
   'submit',
@@ -166,7 +213,7 @@ server.tool(
 );
 
 async function main() {
-  await loadIndex();
+  await Promise.all([loadIndex(), loadKaomoji()]);
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }

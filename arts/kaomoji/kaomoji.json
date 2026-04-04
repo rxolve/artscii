@@ -1,0 +1,879 @@
+[
+  {
+    "id": "k001",
+    "name": "Happy Face",
+    "category": "happy",
+    "tags": [
+      "joy",
+      "smile",
+      "happy"
+    ],
+    "text": "ʘ‿ʘ"
+  },
+  {
+    "id": "k002",
+    "name": "Big Smile",
+    "category": "happy",
+    "tags": [
+      "joy",
+      "smile",
+      "happy"
+    ],
+    "text": "◉‿◉"
+  },
+  {
+    "id": "k003",
+    "name": "Cheerful",
+    "category": "happy",
+    "tags": [
+      "joy",
+      "smile",
+      "happy"
+    ],
+    "text": "(⊙ᗜ⊙)"
+  },
+  {
+    "id": "k004",
+    "name": "Joy",
+    "category": "happy",
+    "tags": [
+      "joy",
+      "smile",
+      "happy"
+    ],
+    "text": "(◕‿◕)"
+  },
+  {
+    "id": "k005",
+    "name": "Grinning",
+    "category": "happy",
+    "tags": [
+      "joy",
+      "smile",
+      "happy"
+    ],
+    "text": "(≧◡≦)"
+  },
+  {
+    "id": "k006",
+    "name": "Crying",
+    "category": "sad",
+    "tags": [
+      "cry",
+      "upset",
+      "sad"
+    ],
+    "text": "(ಥ﹏ಥ)"
+  },
+  {
+    "id": "k007",
+    "name": "Sad Face",
+    "category": "sad",
+    "tags": [
+      "cry",
+      "upset",
+      "sad"
+    ],
+    "text": "╥﹏╥"
+  },
+  {
+    "id": "k008",
+    "name": "Tears",
+    "category": "sad",
+    "tags": [
+      "cry",
+      "upset",
+      "sad"
+    ],
+    "text": "(;﹏;)"
+  },
+  {
+    "id": "k009",
+    "name": "Sobbing",
+    "category": "sad",
+    "tags": [
+      "cry",
+      "upset",
+      "sad"
+    ],
+    "text": "(ㄒoㄒ)"
+  },
+  {
+    "id": "k010",
+    "name": "Heartbroken",
+    "category": "sad",
+    "tags": [
+      "cry",
+      "upset",
+      "sad"
+    ],
+    "text": "ಠ╭╮ಠ"
+  },
+  {
+    "id": "k011",
+    "name": "Glare",
+    "category": "angry",
+    "tags": [
+      "mad",
+      "rage",
+      "angry"
+    ],
+    "text": "ಠ_ಠ"
+  },
+  {
+    "id": "k012",
+    "name": "Annoyed",
+    "category": "angry",
+    "tags": [
+      "mad",
+      "rage",
+      "angry"
+    ],
+    "text": "(¬_¬)"
+  },
+  {
+    "id": "k013",
+    "name": "Furious",
+    "category": "angry",
+    "tags": [
+      "mad",
+      "rage",
+      "angry"
+    ],
+    "text": "(ノಠ益ಠ)ノ"
+  },
+  {
+    "id": "k014",
+    "name": "Grumpy",
+    "category": "angry",
+    "tags": [
+      "mad",
+      "rage",
+      "angry"
+    ],
+    "text": "⋋_⋌"
+  },
+  {
+    "id": "k015",
+    "name": "Side Eye",
+    "category": "angry",
+    "tags": [
+      "mad",
+      "rage",
+      "angry"
+    ],
+    "text": "눈_눈"
+  },
+  {
+    "id": "k016",
+    "name": "Heart Eyes",
+    "category": "love",
+    "tags": [
+      "heart",
+      "affection",
+      "love"
+    ],
+    "text": "♡＾▽＾♡"
+  },
+  {
+    "id": "k017",
+    "name": "Love",
+    "category": "love",
+    "tags": [
+      "heart",
+      "affection",
+      "love"
+    ],
+    "text": "✿♥‿♥✿"
+  },
+  {
+    "id": "k018",
+    "name": "Adore",
+    "category": "love",
+    "tags": [
+      "heart",
+      "affection",
+      "love"
+    ],
+    "text": "(•ө•)♡"
+  },
+  {
+    "id": "k019",
+    "name": "Kiss",
+    "category": "love",
+    "tags": [
+      "heart",
+      "affection",
+      "love"
+    ],
+    "text": "( ˘ ³˘)♥"
+  },
+  {
+    "id": "k020",
+    "name": "Heart",
+    "category": "love",
+    "tags": [
+      "heart",
+      "affection",
+      "love"
+    ],
+    "text": "♡ඩ⌔ඩ♡"
+  },
+  {
+    "id": "k021",
+    "name": "Shocked",
+    "category": "surprised",
+    "tags": [
+      "shock",
+      "amazed",
+      "surprised"
+    ],
+    "text": "(°o°)"
+  },
+  {
+    "id": "k022",
+    "name": "Jaw Drop",
+    "category": "surprised",
+    "tags": [
+      "shock",
+      "amazed",
+      "surprised"
+    ],
+    "text": "（◎0◎）"
+  },
+  {
+    "id": "k023",
+    "name": "Wide Eyed",
+    "category": "surprised",
+    "tags": [
+      "shock",
+      "amazed",
+      "surprised"
+    ],
+    "text": "⊙▂⊙"
+  },
+  {
+    "id": "k024",
+    "name": "Amazed",
+    "category": "surprised",
+    "tags": [
+      "shock",
+      "amazed",
+      "surprised"
+    ],
+    "text": "Σ(°△°|||)"
+  },
+  {
+    "id": "k025",
+    "name": "Gasp",
+    "category": "surprised",
+    "tags": [
+      "shock",
+      "amazed",
+      "surprised"
+    ],
+    "text": "(⊙_⊙)"
+  },
+  {
+    "id": "k026",
+    "name": "Shrug",
+    "category": "confused",
+    "tags": [
+      "puzzled",
+      "unsure",
+      "confused"
+    ],
+    "text": "¯\\_(ツ)_/¯"
+  },
+  {
+    "id": "k027",
+    "name": "Thinking",
+    "category": "confused",
+    "tags": [
+      "puzzled",
+      "unsure",
+      "confused"
+    ],
+    "text": "◔_◔"
+  },
+  {
+    "id": "k028",
+    "name": "Hmm",
+    "category": "confused",
+    "tags": [
+      "puzzled",
+      "unsure",
+      "confused"
+    ],
+    "text": "┐(´～｀)┌"
+  },
+  {
+    "id": "k029",
+    "name": "What",
+    "category": "confused",
+    "tags": [
+      "puzzled",
+      "unsure",
+      "confused"
+    ],
+    "text": "╮(╯_╰)╭"
+  },
+  {
+    "id": "k030",
+    "name": "Puzzled",
+    "category": "confused",
+    "tags": [
+      "puzzled",
+      "unsure",
+      "confused"
+    ],
+    "text": "(・・?)"
+  },
+  {
+    "id": "k031",
+    "name": "Woohoo",
+    "category": "excited",
+    "tags": [
+      "enthusiasm",
+      "energy",
+      "excited"
+    ],
+    "text": "≧ω≦"
+  },
+  {
+    "id": "k032",
+    "name": "Pumped",
+    "category": "excited",
+    "tags": [
+      "enthusiasm",
+      "energy",
+      "excited"
+    ],
+    "text": "(≧∀≦)"
+  },
+  {
+    "id": "k033",
+    "name": "Yay",
+    "category": "excited",
+    "tags": [
+      "enthusiasm",
+      "energy",
+      "excited"
+    ],
+    "text": "ヽ(>∀<☆)ノ"
+  },
+  {
+    "id": "k034",
+    "name": "Fired Up",
+    "category": "excited",
+    "tags": [
+      "enthusiasm",
+      "energy",
+      "excited"
+    ],
+    "text": "(ง •̀_•́)ง"
+  },
+  {
+    "id": "k035",
+    "name": "Let's Go",
+    "category": "excited",
+    "tags": [
+      "enthusiasm",
+      "energy",
+      "excited"
+    ],
+    "text": "(●≧ω≦)9"
+  },
+  {
+    "id": "k036",
+    "name": "Hello",
+    "category": "greeting",
+    "tags": [
+      "hello",
+      "bye",
+      "wave",
+      "greeting"
+    ],
+    "text": "(^o^)/"
+  },
+  {
+    "id": "k037",
+    "name": "Hi There",
+    "category": "greeting",
+    "tags": [
+      "hello",
+      "bye",
+      "wave",
+      "greeting"
+    ],
+    "text": "(￣▽￣)ノ"
+  },
+  {
+    "id": "k038",
+    "name": "Wave",
+    "category": "greeting",
+    "tags": [
+      "hello",
+      "bye",
+      "wave",
+      "greeting"
+    ],
+    "text": "ヾ(＾∇＾)"
+  },
+  {
+    "id": "k039",
+    "name": "Welcome",
+    "category": "greeting",
+    "tags": [
+      "hello",
+      "bye",
+      "wave",
+      "greeting"
+    ],
+    "text": "(ノ^∇^)ノ"
+  },
+  {
+    "id": "k040",
+    "name": "Bye",
+    "category": "greeting",
+    "tags": [
+      "hello",
+      "bye",
+      "wave",
+      "greeting"
+    ],
+    "text": "(ﾉ´∀`)ﾉ"
+  },
+  {
+    "id": "k041",
+    "name": "Sparkles",
+    "category": "celebrate",
+    "tags": [
+      "party",
+      "success",
+      "celebrate"
+    ],
+    "text": "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
+  },
+  {
+    "id": "k042",
+    "name": "Stars",
+    "category": "celebrate",
+    "tags": [
+      "party",
+      "success",
+      "celebrate"
+    ],
+    "text": "＼(★^∀^★)／"
+  },
+  {
+    "id": "k043",
+    "name": "Thumbs Up",
+    "category": "celebrate",
+    "tags": [
+      "party",
+      "success",
+      "celebrate"
+    ],
+    "text": "(＾＾)ｂ"
+  },
+  {
+    "id": "k044",
+    "name": "Victory",
+    "category": "celebrate",
+    "tags": [
+      "party",
+      "success",
+      "celebrate"
+    ],
+    "text": "(･ω･)v"
+  },
+  {
+    "id": "k045",
+    "name": "Cheers",
+    "category": "celebrate",
+    "tags": [
+      "party",
+      "success",
+      "celebrate"
+    ],
+    "text": "☆=(ゝω･)/"
+  },
+  {
+    "id": "k046",
+    "name": "Hug",
+    "category": "hug",
+    "tags": [
+      "comfort",
+      "warm",
+      "hug"
+    ],
+    "text": "⊂(◉‿◉)つ"
+  },
+  {
+    "id": "k047",
+    "name": "Come Here",
+    "category": "hug",
+    "tags": [
+      "comfort",
+      "warm",
+      "hug"
+    ],
+    "text": "ლ(・ヮ・ლ)"
+  },
+  {
+    "id": "k048",
+    "name": "Embrace",
+    "category": "hug",
+    "tags": [
+      "comfort",
+      "warm",
+      "hug"
+    ],
+    "text": "⊂(・ヮ・⊂)"
+  },
+  {
+    "id": "k049",
+    "name": "Reach Out",
+    "category": "hug",
+    "tags": [
+      "comfort",
+      "warm",
+      "hug"
+    ],
+    "text": "(っಠ‿ಠ)っ"
+  },
+  {
+    "id": "k050",
+    "name": "Bear",
+    "category": "animals",
+    "tags": [
+      "cute",
+      "creature",
+      "animals"
+    ],
+    "text": "ʕ•ᴥ•ʔ"
+  },
+  {
+    "id": "k051",
+    "name": "Cat",
+    "category": "animals",
+    "tags": [
+      "cute",
+      "creature",
+      "animals"
+    ],
+    "text": "ฅ•ω•ฅ"
+  },
+  {
+    "id": "k052",
+    "name": "Bunny",
+    "category": "animals",
+    "tags": [
+      "cute",
+      "creature",
+      "animals"
+    ],
+    "text": "(•ㅅ•)"
+  },
+  {
+    "id": "k053",
+    "name": "Dog",
+    "category": "animals",
+    "tags": [
+      "cute",
+      "creature",
+      "animals"
+    ],
+    "text": "U・ᴥ・U"
+  },
+  {
+    "id": "k054",
+    "name": "Bear Cub",
+    "category": "animals",
+    "tags": [
+      "cute",
+      "creature",
+      "animals"
+    ],
+    "text": "ʕ·ᴥ·ʔ"
+  },
+  {
+    "id": "k055",
+    "name": "Kitten",
+    "category": "animals",
+    "tags": [
+      "cute",
+      "creature",
+      "animals"
+    ],
+    "text": "චᆽච"
+  },
+  {
+    "id": "k056",
+    "name": "Rabbit",
+    "category": "animals",
+    "tags": [
+      "cute",
+      "creature",
+      "animals"
+    ],
+    "text": "(⁎˃ᆺ˂)"
+  },
+  {
+    "id": "k057",
+    "name": "Table Flip",
+    "category": "table-flip",
+    "tags": [
+      "rage",
+      "flip",
+      "frustration",
+      "table-flip"
+    ],
+    "text": "(╯°□°)╯︵ ┻━┻"
+  },
+  {
+    "id": "k058",
+    "name": "Angry Flip",
+    "category": "table-flip",
+    "tags": [
+      "rage",
+      "flip",
+      "frustration",
+      "table-flip"
+    ],
+    "text": "(ﾉ｀□´)ﾉ⌒┻━┻"
+  },
+  {
+    "id": "k059",
+    "name": "Put It Back",
+    "category": "table-flip",
+    "tags": [
+      "rage",
+      "flip",
+      "frustration",
+      "table-flip"
+    ],
+    "text": "┬─┬ノ(ಠ_ಠノ)"
+  },
+  {
+    "id": "k060",
+    "name": "Sleepy",
+    "category": "sleepy",
+    "tags": [
+      "tired",
+      "rest",
+      "sleepy"
+    ],
+    "text": "(*-ω-)"
+  },
+  {
+    "id": "k061",
+    "name": "Zzz",
+    "category": "sleepy",
+    "tags": [
+      "tired",
+      "rest",
+      "sleepy"
+    ],
+    "text": "(︶｡︶✽)"
+  },
+  {
+    "id": "k062",
+    "name": "Drowsy",
+    "category": "sleepy",
+    "tags": [
+      "tired",
+      "rest",
+      "sleepy"
+    ],
+    "text": "(ᴗ˳ᴗ)"
+  },
+  {
+    "id": "k063",
+    "name": "Yawn",
+    "category": "sleepy",
+    "tags": [
+      "tired",
+      "rest",
+      "sleepy"
+    ],
+    "text": "(´～`)"
+  },
+  {
+    "id": "k064",
+    "name": "Nervous Sweat",
+    "category": "nervous",
+    "tags": [
+      "anxious",
+      "worried",
+      "nervous"
+    ],
+    "text": "(；^ω^)"
+  },
+  {
+    "id": "k065",
+    "name": "Scared",
+    "category": "nervous",
+    "tags": [
+      "anxious",
+      "worried",
+      "nervous"
+    ],
+    "text": "(⊃д⊂)"
+  },
+  {
+    "id": "k066",
+    "name": "Hiding",
+    "category": "nervous",
+    "tags": [
+      "anxious",
+      "worried",
+      "nervous"
+    ],
+    "text": "(/ω＼)"
+  },
+  {
+    "id": "k067",
+    "name": "Worried",
+    "category": "nervous",
+    "tags": [
+      "anxious",
+      "worried",
+      "nervous"
+    ],
+    "text": "(´；ω；`)"
+  },
+  {
+    "id": "k068",
+    "name": "Wink",
+    "category": "wink",
+    "tags": [
+      "playful",
+      "flirt",
+      "wink"
+    ],
+    "text": "(^_-)"
+  },
+  {
+    "id": "k069",
+    "name": "Sly",
+    "category": "wink",
+    "tags": [
+      "playful",
+      "flirt",
+      "wink"
+    ],
+    "text": "ಠ‿↼"
+  },
+  {
+    "id": "k070",
+    "name": "Playful",
+    "category": "wink",
+    "tags": [
+      "playful",
+      "flirt",
+      "wink"
+    ],
+    "text": "(・ω<)"
+  },
+  {
+    "id": "k071",
+    "name": "Cast Spell",
+    "category": "magic",
+    "tags": [
+      "sparkle",
+      "spell",
+      "magic"
+    ],
+    "text": "(∩^o^)⊃━☆゜.*"
+  },
+  {
+    "id": "k072",
+    "name": "Magic Wand",
+    "category": "magic",
+    "tags": [
+      "sparkle",
+      "spell",
+      "magic"
+    ],
+    "text": "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
+  },
+  {
+    "id": "k073",
+    "name": "Fire",
+    "category": "magic",
+    "tags": [
+      "sparkle",
+      "spell",
+      "magic"
+    ],
+    "text": "(`･Д･)ノ=☆"
+  },
+  {
+    "id": "k074",
+    "name": "Laughing",
+    "category": "laughing",
+    "tags": [
+      "lol",
+      "funny",
+      "laughing"
+    ],
+    "text": "（⌒▽⌒）"
+  },
+  {
+    "id": "k075",
+    "name": "LOL",
+    "category": "laughing",
+    "tags": [
+      "lol",
+      "funny",
+      "laughing"
+    ],
+    "text": "(ಡ艸ಡ)"
+  },
+  {
+    "id": "k076",
+    "name": "Hehe",
+    "category": "laughing",
+    "tags": [
+      "lol",
+      "funny",
+      "laughing"
+    ],
+    "text": "(＾艸＾)"
+  },
+  {
+    "id": "k077",
+    "name": "Fight",
+    "category": "determined",
+    "tags": [
+      "focus",
+      "fighting",
+      "determined"
+    ],
+    "text": "(ง •̀ω•́)ง"
+  },
+  {
+    "id": "k078",
+    "name": "Determined",
+    "category": "determined",
+    "tags": [
+      "focus",
+      "fighting",
+      "determined"
+    ],
+    "text": "(•̀ᴗ•́)و"
+  },
+  {
+    "id": "k079",
+    "name": "Salute",
+    "category": "determined",
+    "tags": [
+      "focus",
+      "fighting",
+      "determined"
+    ],
+    "text": "(￣^￣)ゞ"
+  }
+]

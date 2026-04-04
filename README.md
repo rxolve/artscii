@@ -1,6 +1,6 @@
 # artscii
 
-ASCII art search API for AI agents. Built-in silhouette arts in two sizes (64w / 32w), served via REST API and MCP. Users can submit their own arts via POST.
+ASCII art & kaomoji search API for AI agents. Built-in silhouette arts in two sizes (64w / 32w) and 79 curated kaomoji across 18 emotion categories, served via REST API and MCP.
 
 ```
               :%%:
@@ -31,43 +31,54 @@ npm run start    # REST API on :3001
 
 ## REST API
 
-All content endpoints accept `?width=32` for the compact variant (default: 64).
+All content endpoints accept `?width=32` for the compact variant (default: 64). Search accepts `?type=art|kaomoji` to filter results.
 
 | Endpoint | Description |
 |---|---|
-| `GET /search?q={query}&width=64\|32` | Search by keyword |
+| `GET /search?q={query}&type=art\|kaomoji&width=64\|32` | Unified search (art + kaomoji) |
 | `GET /art/:id?width=64\|32` | Get art by ID (JSON) |
 | `GET /art/:id/raw?width=64\|32` | Get raw ASCII text |
 | `GET /random?width=64\|32` | Random art |
-| `GET /categories` | List categories |
+| `GET /categories` | List art categories |
 | `GET /categories/:name?width=64\|32` | Arts in category |
 | `GET /list` | All arts with metadata |
 | `POST /art` | Submit new art (JSON body) |
 | `POST /convert` | Convert image to ASCII art |
 | `DELETE /art/:id` | Delete user-submitted art |
+| `GET /kaomoji?q={query}` | Search kaomoji (or list all) |
+| `GET /kaomoji/random` | Random kaomoji |
+| `GET /kaomoji/categories` | List kaomoji categories |
+| `GET /kaomoji/categories/:name` | Kaomoji in category |
 
 ### Example
 
 ```bash
-# 64w (default)
+# ASCII art
 curl http://localhost:3001/art/cat/raw
-
-# 32w compact
 curl 'http://localhost:3001/art/cat/raw?width=32'
+
+# Kaomoji
+curl 'http://localhost:3001/kaomoji?q=happy'
+curl http://localhost:3001/kaomoji/random
+
+# Unified search (returns both art and kaomoji)
+curl 'http://localhost:3001/search?q=cat'
+curl 'http://localhost:3001/search?q=sad&type=kaomoji'
 ```
 
-Response (`GET /art/cat`):
+Response (`GET /kaomoji?q=bear`):
 
 ```json
-{
-  "id": "cat",
-  "name": "Cat",
-  "category": "animals",
-  "tags": ["cat", "pet", "animal", "cute"],
-  "width": 58,
-  "height": 29,
-  "art": "..."
-}
+[
+  {
+    "id": "k050",
+    "type": "kaomoji",
+    "name": "Bear",
+    "category": "animals",
+    "tags": ["cute", "creature", "animals"],
+    "text": "ʕ•ᴥ•ʔ"
+  }
+]
 ```
 
 ### Submitting Art
@@ -166,11 +177,12 @@ Add to your MCP client config:
 
 | Tool | Parameters | Description |
 |---|---|---|
-| `search` | `query`, `width?` | Search arts by keyword |
+| `search` | `query`, `type?`, `width?` | Unified search (art + kaomoji). `type`: `"art"`, `"kaomoji"`, or `"all"` |
+| `kaomoji` | `query?`, `category?` | Get kaomoji by emotion/keyword. Omit both for random |
 | `get` | `id`, `width?` | Get art by ID |
 | `random` | `width?` | Random art |
 | `list` | — | List all arts with metadata |
-| `categories` | — | List categories |
+| `categories` | — | List art categories |
 | `submit` | `name`, `category`, `tags`, `art`, `art32?` | Submit new art |
 | `convert` | `url?`, `base64?`, `invert?`, `contrast?`, `gamma?`, `save?` | Convert image to ASCII art |
 | `delete` | `id` | Delete user-submitted art |
@@ -191,6 +203,23 @@ Add to your MCP client config:
 | book | objects | 58x25 | 29x13 |
 | heart | symbols | 64x30 | 32x15 |
 | star | symbols | 64x30 | 32x15 |
+
+## Kaomoji
+
+79 curated kaomoji across 18 emotion/situation categories. Data sourced from [kao.moji](https://github.com/bnookala/kao.moji) (MIT).
+
+| Category | Examples |
+|---|---|
+| happy | `(◕‿◕)` `◉‿◉` `(≧◡≦)` |
+| sad | `(ಥ﹏ಥ)` `╥﹏╥` `(;﹏;)` |
+| angry | `ಠ_ಠ` `(¬_¬)` `눈_눈` |
+| love | `♡＾▽＾♡` `(•ө•)♡` `✿♥‿♥✿` |
+| confused | `¯\_(ツ)_/¯` `◔_◔` `(・・?)` |
+| excited | `(≧∀≦)` `ヽ(>∀<☆)ノ` `(ง •̀_•́)ง` |
+| animals | `ʕ•ᴥ•ʔ` `ฅ•ω•ฅ` `(•ㅅ•)` |
+| table-flip | `(╯°□°)╯︵ ┻━┻` `┬─┬ノ(ಠ_ಠノ)` |
+| celebrate | `(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧` `(＾＾)ｂ` |
+| + 9 more | greeting, hug, surprised, sleepy, nervous, wink, magic, laughing, determined |
 
 ## Image Conversion
 
