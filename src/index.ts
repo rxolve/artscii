@@ -5,34 +5,16 @@ import { cors } from 'hono/cors';
 import { loadIndex, search, getById, getByCategory, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
 import { loadKaomoji, searchKaomoji, getKaomojiById, getKaomojiByCategory, getRandomKaomoji, listKaomojiCategories, listAllKaomoji, toKaomojiResult } from './kaomoji.js';
 import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONVERT_RATE_LIMIT_PER_MIN, RATE_LIMIT_PER_MIN, SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
-import { resolveImageInput, convertImage, ConvertInputError } from './converter.js';
+import { resolveImageInput, ConvertInputError } from './resolve.js';
+import { convertImage } from './converter.js';
+import { createRateLimiter } from './rate-limit.js';
 import type { ArtSize } from './types.js';
 
 const app = new Hono();
 
 app.use('*', cors());
 
-function parseSize(raw: string | undefined): ArtSize {
-  const n = Number(raw);
-  if (n === 16 || n === 32 || n === 64) return n;
-  return DEFAULT_SIZE;
-}
-
-// Rate limit: IP -> timestamps within the last minute
-const rateLimitMap = new Map<string, number[]>();
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const window = 60_000;
-  const timestamps = (rateLimitMap.get(ip) ?? []).filter((t) => now - t < window);
-  if (timestamps.length >= RATE_LIMIT_PER_MIN) {
-    rateLimitMap.set(ip, timestamps);
-    return false;
-  }
-  timestamps.push(now);
-  rateLimitMap.set(ip, timestamps);
-  return true;
-}
+const checkRateLimit = createRateLimiter(RATE_LIMIT_PER_MIN);
 
 function getClientIp(c: { req: { header: (name: string) => string | undefined } }): string {
   return c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1';
@@ -191,21 +173,7 @@ app.get('/kaomoji/categories/:name', (c) => {
   return c.json(results.map(toKaomojiResult));
 });
 
-// Separate rate limiter for convert (CPU-intensive)
-const convertRateLimitMap = new Map<string, number[]>();
-
-function checkConvertRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const window = 60_000;
-  const timestamps = (convertRateLimitMap.get(ip) ?? []).filter((t) => now - t < window);
-  if (timestamps.length >= CONVERT_RATE_LIMIT_PER_MIN) {
-    convertRateLimitMap.set(ip, timestamps);
-    return false;
-  }
-  timestamps.push(now);
-  convertRateLimitMap.set(ip, timestamps);
-  return true;
-}
+const checkConvertRateLimit = createRateLimiter(CONVERT_RATE_LIMIT_PER_MIN);
 
 app.post('/convert', async (c) => {
   const ip = getClientIp(c);

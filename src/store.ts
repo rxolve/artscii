@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { SIZE_LIMITS, DEFAULT_SIZE, MAX_USER_ARTS } from './constants.js';
+import { matchQuery, findById, filterByCategory, pickRandom, uniqueCategories } from './searchable.js';
 import type { ArtEntry, ArtResult, ArtSize } from './types.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -35,31 +36,23 @@ export async function readArt(entry: ArtEntry): Promise<string> {
 }
 
 export function search(query: string): ArtEntry[] {
-  const q = query.toLowerCase();
-  return entries.filter(
-    (e) =>
-      e.id.includes(q) ||
-      e.name.toLowerCase().includes(q) ||
-      e.category.includes(q) ||
-      e.tags.some((t) => t.includes(q)) ||
-      e.description?.toLowerCase().includes(q)
-  );
+  return matchQuery(entries, query, (e, q) => e.description?.toLowerCase().includes(q) ?? false);
 }
 
 export function getById(id: string): ArtEntry | undefined {
-  return entries.find((e) => e.id === id);
+  return findById(entries, id);
 }
 
 export function getByCategory(category: string): ArtEntry[] {
-  return entries.filter((e) => e.category === category);
+  return filterByCategory(entries, category);
 }
 
 export function getRandom(): ArtEntry {
-  return entries[Math.floor(Math.random() * entries.length)];
+  return pickRandom(entries);
 }
 
 export function listCategories(): string[] {
-  return [...new Set(entries.map((e) => e.category))];
+  return uniqueCategories(entries);
 }
 
 export function listAll(): ArtEntry[] {

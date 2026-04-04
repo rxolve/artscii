@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import { matchQuery, findById, filterByCategory, pickRandom, uniqueCategories } from './searchable.js';
 import type { KaomojiEntry, KaomojiResult } from './types.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -16,30 +17,23 @@ export async function loadKaomoji(): Promise<void> {
 }
 
 export function searchKaomoji(query: string): KaomojiEntry[] {
-  const q = query.toLowerCase();
-  return entries.filter(
-    (e) =>
-      e.id.includes(q) ||
-      e.name.toLowerCase().includes(q) ||
-      e.category.includes(q) ||
-      e.tags.some((t) => t.includes(q))
-  );
+  return matchQuery(entries, query);
 }
 
 export function getKaomojiById(id: string): KaomojiEntry | undefined {
-  return entries.find((e) => e.id === id);
+  return findById(entries, id);
 }
 
 export function getKaomojiByCategory(category: string): KaomojiEntry[] {
-  return entries.filter((e) => e.category === category);
+  return filterByCategory(entries, category);
 }
 
 export function getRandomKaomoji(): KaomojiEntry {
-  return entries[Math.floor(Math.random() * entries.length)];
+  return pickRandom(entries);
 }
 
 export function listKaomojiCategories(): string[] {
-  return [...new Set(entries.map((e) => e.category))];
+  return uniqueCategories(entries);
 }
 
 export function listAllKaomoji(): KaomojiEntry[] {

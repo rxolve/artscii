@@ -6,7 +6,8 @@ import { z } from 'zod';
 import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
 import { loadKaomoji, searchKaomoji, getRandomKaomoji, listKaomojiCategories, getKaomojiByCategory, toKaomojiResult } from './kaomoji.js';
 import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
-import { resolveImageInput, convertImage } from './converter.js';
+import { resolveImageInput } from './resolve.js';
+import { convertImage } from './converter.js';
 import type { ArtSize } from './types.js';
 
 const server = new McpServer({
