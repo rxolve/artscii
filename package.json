@@ -1,6 +1,6 @@
 {
   "name": "artscii",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "ASCII art & kaomoji search MCP server for AI agents",
   "mcpName": "io.github.rxolve/artscii",
   "type": "module",
