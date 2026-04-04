@@ -3,3 +3,4 @@ dist
 .env
 scripts/images/
 __pycache__/
+.npmrc
