@@ -4,9 +4,16 @@
     "name": "Happy Face",
     "category": "happy",
     "tags": [
+      "cheerful",
+      "cool",
+      "glad",
+      "good",
+      "happy",
       "joy",
-      "smile",
-      "happy"
+      "nice",
+      "pleased",
+      "proud",
+      "smile"
     ],
     "text": "ʘ‿ʘ"
   },
@@ -15,9 +22,16 @@
     "name": "Big Smile",
     "category": "happy",
     "tags": [
+      "cheerful",
+      "cool",
+      "glad",
+      "good",
+      "happy",
       "joy",
-      "smile",
-      "happy"
+      "nice",
+      "pleased",
+      "proud",
+      "smile"
     ],
     "text": "◉‿◉"
   },
@@ -26,9 +40,16 @@
     "name": "Cheerful",
     "category": "happy",
     "tags": [
+      "cheerful",
+      "cool",
+      "glad",
+      "good",
+      "happy",
       "joy",
-      "smile",
-      "happy"
+      "nice",
+      "pleased",
+      "proud",
+      "smile"
     ],
     "text": "(⊙ᗜ⊙)"
   },
@@ -37,9 +58,16 @@
     "name": "Joy",
     "category": "happy",
     "tags": [
+      "cheerful",
+      "cool",
+      "glad",
+      "good",
+      "happy",
       "joy",
-      "smile",
-      "happy"
+      "nice",
+      "pleased",
+      "proud",
+      "smile"
     ],
     "text": "(◕‿◕)"
   },
@@ -48,9 +76,16 @@
     "name": "Grinning",
     "category": "happy",
     "tags": [
+      "cheerful",
+      "cool",
+      "glad",
+      "good",
+      "happy",
       "joy",
-      "smile",
-      "happy"
+      "nice",
+      "pleased",
+      "proud",
+      "smile"
     ],
     "text": "(≧◡≦)"
   },
@@ -59,9 +94,15 @@
     "name": "Crying",
     "category": "sad",
     "tags": [
+      "apologize",
       "cry",
-      "upset",
-      "sad"
+      "depressed",
+      "disappointed",
+      "down",
+      "miss",
+      "sad",
+      "sorry",
+      "upset"
     ],
     "text": "(ಥ﹏ಥ)"
   },
@@ -70,9 +111,15 @@
     "name": "Sad Face",
     "category": "sad",
     "tags": [
+      "apologize",
       "cry",
-      "upset",
-      "sad"
+      "depressed",
+      "disappointed",
+      "down",
+      "miss",
+      "sad",
+      "sorry",
+      "upset"
     ],
     "text": "╥﹏╥"
   },
@@ -81,9 +128,15 @@
     "name": "Tears",
     "category": "sad",
     "tags": [
+      "apologize",
       "cry",
-      "upset",
-      "sad"
+      "depressed",
+      "disappointed",
+      "down",
+      "miss",
+      "sad",
+      "sorry",
+      "upset"
     ],
     "text": "(;﹏;)"
   },
@@ -92,9 +145,15 @@
     "name": "Sobbing",
     "category": "sad",
     "tags": [
+      "apologize",
       "cry",
-      "upset",
-      "sad"
+      "depressed",
+      "disappointed",
+      "down",
+      "miss",
+      "sad",
+      "sorry",
+      "upset"
     ],
     "text": "(ㄒoㄒ)"
   },
@@ -103,9 +162,15 @@
     "name": "Heartbroken",
     "category": "sad",
     "tags": [
+      "apologize",
       "cry",
-      "upset",
-      "sad"
+      "depressed",
+      "disappointed",
+      "down",
+      "miss",
+      "sad",
+      "sorry",
+      "upset"
     ],
     "text": "ಠ╭╮ಠ"
   },
@@ -114,9 +179,13 @@
     "name": "Glare",
     "category": "angry",
     "tags": [
+      "angry",
+      "annoyed",
+      "disapproval",
+      "furious",
+      "irritated",
       "mad",
-      "rage",
-      "angry"
+      "rage"
     ],
     "text": "ಠ_ಠ"
   },
@@ -125,9 +194,13 @@
     "name": "Annoyed",
     "category": "angry",
     "tags": [
+      "angry",
+      "annoyed",
+      "disapproval",
+      "furious",
+      "irritated",
       "mad",
-      "rage",
-      "angry"
+      "rage"
     ],
     "text": "(¬_¬)"
   },
@@ -136,9 +209,13 @@
     "name": "Furious",
     "category": "angry",
     "tags": [
+      "angry",
+      "annoyed",
+      "disapproval",
+      "furious",
+      "irritated",
       "mad",
-      "rage",
-      "angry"
+      "rage"
     ],
     "text": "(ノಠ益ಠ)ノ"
   },
@@ -147,9 +224,13 @@
     "name": "Grumpy",
     "category": "angry",
     "tags": [
+      "angry",
+      "annoyed",
+      "disapproval",
+      "furious",
+      "irritated",
       "mad",
-      "rage",
-      "angry"
+      "rage"
     ],
     "text": "⋋_⋌"
   },
@@ -158,9 +239,13 @@
     "name": "Side Eye",
     "category": "angry",
     "tags": [
+      "angry",
+      "annoyed",
+      "disapproval",
+      "furious",
+      "irritated",
       "mad",
-      "rage",
-      "angry"
+      "rage"
     ],
     "text": "눈_눈"
   },
@@ -169,9 +254,16 @@
     "name": "Heart Eyes",
     "category": "love",
     "tags": [
-      "heart",
+      "adore",
       "affection",
-      "love"
+      "appreciate",
+      "crush",
+      "grateful",
+      "heart",
+      "like",
+      "love",
+      "romance",
+      "thank"
     ],
     "text": "♡＾▽＾♡"
   },
@@ -180,9 +272,16 @@
     "name": "Love",
     "category": "love",
     "tags": [
-      "heart",
+      "adore",
       "affection",
-      "love"
+      "appreciate",
+      "crush",
+      "grateful",
+      "heart",
+      "like",
+      "love",
+      "romance",
+      "thank"
     ],
     "text": "✿♥‿♥✿"
   },
@@ -191,9 +290,16 @@
     "name": "Adore",
     "category": "love",
     "tags": [
-      "heart",
+      "adore",
       "affection",
-      "love"
+      "appreciate",
+      "crush",
+      "grateful",
+      "heart",
+      "like",
+      "love",
+      "romance",
+      "thank"
     ],
     "text": "(•ө•)♡"
   },
@@ -202,9 +308,18 @@
     "name": "Kiss",
     "category": "love",
     "tags": [
-      "heart",
+      "adore",
       "affection",
-      "love"
+      "appreciate",
+      "crush",
+      "grateful",
+      "heart",
+      "like",
+      "love",
+      "mwah",
+      "romance",
+      "smooch",
+      "thank"
     ],
     "text": "( ˘ ³˘)♥"
   },
@@ -213,9 +328,16 @@
     "name": "Heart",
     "category": "love",
     "tags": [
-      "heart",
+      "adore",
       "affection",
-      "love"
+      "appreciate",
+      "crush",
+      "grateful",
+      "heart",
+      "like",
+      "love",
+      "romance",
+      "thank"
     ],
     "text": "♡ඩ⌔ඩ♡"
   },
@@ -224,9 +346,12 @@
     "name": "Shocked",
     "category": "surprised",
     "tags": [
-      "shock",
       "amazed",
-      "surprised"
+      "omg",
+      "shock",
+      "surprised",
+      "unexpected",
+      "wow"
     ],
     "text": "(°o°)"
   },
@@ -235,9 +360,12 @@
     "name": "Jaw Drop",
     "category": "surprised",
     "tags": [
-      "shock",
       "amazed",
-      "surprised"
+      "omg",
+      "shock",
+      "surprised",
+      "unexpected",
+      "wow"
     ],
     "text": "（◎0◎）"
   },
@@ -246,9 +374,12 @@
     "name": "Wide Eyed",
     "category": "surprised",
     "tags": [
-      "shock",
       "amazed",
-      "surprised"
+      "omg",
+      "shock",
+      "surprised",
+      "unexpected",
+      "wow"
     ],
     "text": "⊙▂⊙"
   },
@@ -257,9 +388,12 @@
     "name": "Amazed",
     "category": "surprised",
     "tags": [
-      "shock",
       "amazed",
-      "surprised"
+      "omg",
+      "shock",
+      "surprised",
+      "unexpected",
+      "wow"
     ],
     "text": "Σ(°△°|||)"
   },
@@ -268,9 +402,12 @@
     "name": "Gasp",
     "category": "surprised",
     "tags": [
-      "shock",
       "amazed",
-      "surprised"
+      "omg",
+      "shock",
+      "surprised",
+      "unexpected",
+      "wow"
     ],
     "text": "(⊙_⊙)"
   },
@@ -279,9 +416,13 @@
     "name": "Shrug",
     "category": "confused",
     "tags": [
+      "confused",
+      "dunno",
+      "idk",
       "puzzled",
+      "thinking",
       "unsure",
-      "confused"
+      "whatever"
     ],
     "text": "¯\\_(ツ)_/¯"
   },
@@ -290,9 +431,13 @@
     "name": "Thinking",
     "category": "confused",
     "tags": [
+      "confused",
+      "dunno",
+      "idk",
       "puzzled",
+      "thinking",
       "unsure",
-      "confused"
+      "whatever"
     ],
     "text": "◔_◔"
   },
@@ -301,9 +446,13 @@
     "name": "Hmm",
     "category": "confused",
     "tags": [
+      "confused",
+      "dunno",
+      "idk",
       "puzzled",
+      "thinking",
       "unsure",
-      "confused"
+      "whatever"
     ],
     "text": "┐(´～｀)┌"
   },
@@ -312,9 +461,13 @@
     "name": "What",
     "category": "confused",
     "tags": [
+      "confused",
+      "dunno",
+      "idk",
       "puzzled",
+      "thinking",
       "unsure",
-      "confused"
+      "whatever"
     ],
     "text": "╮(╯_╰)╭"
   },
@@ -323,9 +476,13 @@
     "name": "Puzzled",
     "category": "confused",
     "tags": [
+      "confused",
+      "dunno",
+      "idk",
       "puzzled",
+      "thinking",
       "unsure",
-      "confused"
+      "whatever"
     ],
     "text": "(・・?)"
   },
@@ -334,9 +491,14 @@
     "name": "Woohoo",
     "category": "excited",
     "tags": [
-      "enthusiasm",
+      "amazing",
+      "awesome",
+      "cool",
       "energy",
-      "excited"
+      "enthusiasm",
+      "excited",
+      "hype",
+      "yay"
     ],
     "text": "≧ω≦"
   },
@@ -345,9 +507,14 @@
     "name": "Pumped",
     "category": "excited",
     "tags": [
-      "enthusiasm",
+      "amazing",
+      "awesome",
+      "cool",
       "energy",
-      "excited"
+      "enthusiasm",
+      "excited",
+      "hype",
+      "yay"
     ],
     "text": "(≧∀≦)"
   },
@@ -356,9 +523,16 @@
     "name": "Yay",
     "category": "excited",
     "tags": [
-      "enthusiasm",
+      "amazing",
+      "awesome",
+      "cool",
       "energy",
-      "excited"
+      "enthusiasm",
+      "excited",
+      "hooray",
+      "hurray",
+      "hype",
+      "yay"
     ],
     "text": "ヽ(>∀<☆)ノ"
   },
@@ -367,9 +541,17 @@
     "name": "Fired Up",
     "category": "excited",
     "tags": [
-      "enthusiasm",
+      "amazing",
+      "awesome",
+      "cool",
+      "determination",
       "energy",
-      "excited"
+      "enthusiasm",
+      "excited",
+      "fighting",
+      "hype",
+      "strong",
+      "yay"
     ],
     "text": "(ง •̀_•́)ง"
   },
@@ -378,9 +560,14 @@
     "name": "Let's Go",
     "category": "excited",
     "tags": [
-      "enthusiasm",
+      "amazing",
+      "awesome",
+      "cool",
       "energy",
-      "excited"
+      "enthusiasm",
+      "excited",
+      "hype",
+      "yay"
     ],
     "text": "(●≧ω≦)9"
   },
@@ -389,10 +576,15 @@
     "name": "Hello",
     "category": "greeting",
     "tags": [
-      "hello",
       "bye",
+      "goodnight",
+      "greeting",
+      "hello",
+      "hey",
+      "hi",
+      "morning",
       "wave",
-      "greeting"
+      "welcome"
     ],
     "text": "(^o^)/"
   },
@@ -401,10 +593,15 @@
     "name": "Hi There",
     "category": "greeting",
     "tags": [
-      "hello",
       "bye",
+      "goodnight",
+      "greeting",
+      "hello",
+      "hey",
+      "hi",
+      "morning",
       "wave",
-      "greeting"
+      "welcome"
     ],
     "text": "(￣▽￣)ノ"
   },
@@ -413,10 +610,15 @@
     "name": "Wave",
     "category": "greeting",
     "tags": [
-      "hello",
       "bye",
+      "goodnight",
+      "greeting",
+      "hello",
+      "hey",
+      "hi",
+      "morning",
       "wave",
-      "greeting"
+      "welcome"
     ],
     "text": "ヾ(＾∇＾)"
   },
@@ -425,10 +627,15 @@
     "name": "Welcome",
     "category": "greeting",
     "tags": [
-      "hello",
       "bye",
+      "goodnight",
+      "greeting",
+      "hello",
+      "hey",
+      "hi",
+      "morning",
       "wave",
-      "greeting"
+      "welcome"
     ],
     "text": "(ノ^∇^)ノ"
   },
@@ -437,10 +644,17 @@
     "name": "Bye",
     "category": "greeting",
     "tags": [
-      "hello",
       "bye",
+      "goodbye",
+      "goodnight",
+      "greeting",
+      "hello",
+      "hey",
+      "hi",
+      "morning",
+      "see you",
       "wave",
-      "greeting"
+      "welcome"
     ],
     "text": "(ﾉ´∀`)ﾉ"
   },
@@ -449,9 +663,16 @@
     "name": "Sparkles",
     "category": "celebrate",
     "tags": [
+      "achievement",
+      "applause",
+      "bravo",
+      "celebrate",
+      "cheers",
+      "congrats",
+      "congratulations",
       "party",
       "success",
-      "celebrate"
+      "well done"
     ],
     "text": "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
   },
@@ -460,9 +681,16 @@
     "name": "Stars",
     "category": "celebrate",
     "tags": [
+      "achievement",
+      "applause",
+      "bravo",
+      "celebrate",
+      "cheers",
+      "congrats",
+      "congratulations",
       "party",
       "success",
-      "celebrate"
+      "well done"
     ],
     "text": "＼(★^∀^★)／"
   },
@@ -471,9 +699,21 @@
     "name": "Thumbs Up",
     "category": "celebrate",
     "tags": [
+      "achievement",
+      "agree",
+      "applause",
+      "approve",
+      "bravo",
+      "celebrate",
+      "cheers",
+      "congrats",
+      "congratulations",
+      "good",
+      "nice",
+      "ok",
       "party",
       "success",
-      "celebrate"
+      "well done"
     ],
     "text": "(＾＾)ｂ"
   },
@@ -482,9 +722,18 @@
     "name": "Victory",
     "category": "celebrate",
     "tags": [
+      "achievement",
+      "applause",
+      "bravo",
+      "celebrate",
+      "cheers",
+      "congrats",
+      "congratulations",
       "party",
+      "peace",
       "success",
-      "celebrate"
+      "well done",
+      "win"
     ],
     "text": "(･ω･)v"
   },
@@ -493,9 +742,16 @@
     "name": "Cheers",
     "category": "celebrate",
     "tags": [
+      "achievement",
+      "applause",
+      "bravo",
+      "celebrate",
+      "cheers",
+      "congrats",
+      "congratulations",
       "party",
       "success",
-      "celebrate"
+      "well done"
     ],
     "text": "☆=(ゝω･)/"
   },
@@ -504,9 +760,14 @@
     "name": "Hug",
     "category": "hug",
     "tags": [
+      "care",
       "comfort",
-      "warm",
-      "hug"
+      "consolation",
+      "console",
+      "hug",
+      "support",
+      "there there",
+      "warm"
     ],
     "text": "⊂(◉‿◉)つ"
   },
@@ -515,9 +776,15 @@
     "name": "Come Here",
     "category": "hug",
     "tags": [
+      "care",
       "comfort",
-      "warm",
-      "hug"
+      "consolation",
+      "gimme",
+      "hug",
+      "support",
+      "there there",
+      "want",
+      "warm"
     ],
     "text": "ლ(・ヮ・ლ)"
   },
@@ -526,9 +793,13 @@
     "name": "Embrace",
     "category": "hug",
     "tags": [
+      "care",
       "comfort",
-      "warm",
-      "hug"
+      "consolation",
+      "hug",
+      "support",
+      "there there",
+      "warm"
     ],
     "text": "⊂(・ヮ・⊂)"
   },
@@ -537,9 +808,13 @@
     "name": "Reach Out",
     "category": "hug",
     "tags": [
+      "care",
       "comfort",
-      "warm",
-      "hug"
+      "consolation",
+      "hug",
+      "support",
+      "there there",
+      "warm"
     ],
     "text": "(っಠ‿ಠ)っ"
   },
@@ -548,9 +823,12 @@
     "name": "Bear",
     "category": "animals",
     "tags": [
-      "cute",
+      "animals",
       "creature",
-      "animals"
+      "cute",
+      "kawaii",
+      "pet",
+      "teddy"
     ],
     "text": "ʕ•ᴥ•ʔ"
   },
@@ -559,9 +837,14 @@
     "name": "Cat",
     "category": "animals",
     "tags": [
-      "cute",
+      "animals",
       "creature",
-      "animals"
+      "cute",
+      "kawaii",
+      "kitten",
+      "meow",
+      "neko",
+      "pet"
     ],
     "text": "ฅ•ω•ฅ"
   },
@@ -570,9 +853,11 @@
     "name": "Bunny",
     "category": "animals",
     "tags": [
-      "cute",
+      "animals",
       "creature",
-      "animals"
+      "cute",
+      "kawaii",
+      "pet"
     ],
     "text": "(•ㅅ•)"
   },
@@ -581,9 +866,13 @@
     "name": "Dog",
     "category": "animals",
     "tags": [
-      "cute",
+      "animals",
       "creature",
-      "animals"
+      "cute",
+      "kawaii",
+      "pet",
+      "puppy",
+      "woof"
     ],
     "text": "U・ᴥ・U"
   },
@@ -592,9 +881,11 @@
     "name": "Bear Cub",
     "category": "animals",
     "tags": [
-      "cute",
+      "animals",
       "creature",
-      "animals"
+      "cute",
+      "kawaii",
+      "pet"
     ],
     "text": "ʕ·ᴥ·ʔ"
   },
@@ -603,9 +894,11 @@
     "name": "Kitten",
     "category": "animals",
     "tags": [
-      "cute",
+      "animals",
       "creature",
-      "animals"
+      "cute",
+      "kawaii",
+      "pet"
     ],
     "text": "චᆽච"
   },
@@ -614,9 +907,11 @@
     "name": "Rabbit",
     "category": "animals",
     "tags": [
-      "cute",
+      "animals",
       "creature",
-      "animals"
+      "cute",
+      "kawaii",
+      "pet"
     ],
     "text": "(⁎˃ᆺ˂)"
   },
@@ -625,9 +920,14 @@
     "name": "Table Flip",
     "category": "table-flip",
     "tags": [
-      "rage",
+      "angry",
+      "done",
       "flip",
       "frustration",
+      "over it",
+      "quit",
+      "rage",
+      "rage quit",
       "table-flip"
     ],
     "text": "(╯°□°)╯︵ ┻━┻"
@@ -637,9 +937,12 @@
     "name": "Angry Flip",
     "category": "table-flip",
     "tags": [
-      "rage",
+      "done",
       "flip",
       "frustration",
+      "over it",
+      "quit",
+      "rage",
       "table-flip"
     ],
     "text": "(ﾉ｀□´)ﾉ⌒┻━┻"
@@ -649,9 +952,15 @@
     "name": "Put It Back",
     "category": "table-flip",
     "tags": [
-      "rage",
+      "calm",
+      "done",
+      "fix",
       "flip",
       "frustration",
+      "over it",
+      "quit",
+      "rage",
+      "restore",
       "table-flip"
     ],
     "text": "┬─┬ノ(ಠ_ಠノ)"
@@ -661,9 +970,16 @@
     "name": "Sleepy",
     "category": "sleepy",
     "tags": [
-      "tired",
+      "bored",
+      "drowsy",
+      "exhausted",
+      "goodnight",
+      "meh",
+      "nap",
       "rest",
-      "sleepy"
+      "sleepy",
+      "tired",
+      "zzz"
     ],
     "text": "(*-ω-)"
   },
@@ -672,9 +988,14 @@
     "name": "Zzz",
     "category": "sleepy",
     "tags": [
-      "tired",
+      "drowsy",
+      "exhausted",
+      "goodnight",
+      "nap",
       "rest",
-      "sleepy"
+      "sleepy",
+      "tired",
+      "zzz"
     ],
     "text": "(︶｡︶✽)"
   },
@@ -683,9 +1004,17 @@
     "name": "Drowsy",
     "category": "sleepy",
     "tags": [
-      "tired",
+      "calm",
+      "drowsy",
+      "exhausted",
+      "goodnight",
+      "nap",
+      "peaceful",
       "rest",
-      "sleepy"
+      "sleepy",
+      "tired",
+      "zen",
+      "zzz"
     ],
     "text": "(ᴗ˳ᴗ)"
   },
@@ -694,9 +1023,14 @@
     "name": "Yawn",
     "category": "sleepy",
     "tags": [
-      "tired",
+      "drowsy",
+      "exhausted",
+      "goodnight",
+      "nap",
       "rest",
-      "sleepy"
+      "sleepy",
+      "tired",
+      "zzz"
     ],
     "text": "(´～`)"
   },
@@ -706,8 +1040,13 @@
     "category": "nervous",
     "tags": [
       "anxious",
-      "worried",
-      "nervous"
+      "awkward",
+      "embarrassed",
+      "nervous",
+      "oops",
+      "shy",
+      "sorry",
+      "worried"
     ],
     "text": "(；^ω^)"
   },
@@ -717,8 +1056,13 @@
     "category": "nervous",
     "tags": [
       "anxious",
-      "worried",
-      "nervous"
+      "awkward",
+      "embarrassed",
+      "nervous",
+      "oops",
+      "shy",
+      "sorry",
+      "worried"
     ],
     "text": "(⊃д⊂)"
   },
@@ -728,8 +1072,13 @@
     "category": "nervous",
     "tags": [
       "anxious",
-      "worried",
-      "nervous"
+      "awkward",
+      "embarrassed",
+      "nervous",
+      "oops",
+      "shy",
+      "sorry",
+      "worried"
     ],
     "text": "(/ω＼)"
   },
@@ -739,8 +1088,13 @@
     "category": "nervous",
     "tags": [
       "anxious",
-      "worried",
-      "nervous"
+      "awkward",
+      "embarrassed",
+      "nervous",
+      "oops",
+      "shy",
+      "sorry",
+      "worried"
     ],
     "text": "(´；ω；`)"
   },
@@ -749,8 +1103,13 @@
     "name": "Wink",
     "category": "wink",
     "tags": [
-      "playful",
+      "cheeky",
       "flirt",
+      "flirty",
+      "hint",
+      "playful",
+      "sly",
+      "teasing",
       "wink"
     ],
     "text": "(^_-)"
@@ -760,8 +1119,12 @@
     "name": "Sly",
     "category": "wink",
     "tags": [
-      "playful",
       "flirt",
+      "flirty",
+      "hint",
+      "playful",
+      "sly",
+      "teasing",
       "wink"
     ],
     "text": "ಠ‿↼"
@@ -771,8 +1134,12 @@
     "name": "Playful",
     "category": "wink",
     "tags": [
-      "playful",
       "flirt",
+      "flirty",
+      "hint",
+      "playful",
+      "sly",
+      "teasing",
       "wink"
     ],
     "text": "(・ω<)"
@@ -782,9 +1149,14 @@
     "name": "Cast Spell",
     "category": "magic",
     "tags": [
+      "abracadabra",
+      "fairy",
+      "magic",
+      "power",
       "sparkle",
       "spell",
-      "magic"
+      "wizard",
+      "wow"
     ],
     "text": "(∩^o^)⊃━☆゜.*"
   },
@@ -793,9 +1165,15 @@
     "name": "Magic Wand",
     "category": "magic",
     "tags": [
+      "fairy",
+      "magic",
+      "power",
+      "shine",
       "sparkle",
       "spell",
-      "magic"
+      "star",
+      "wizard",
+      "wow"
     ],
     "text": "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"
   },
@@ -804,9 +1182,13 @@
     "name": "Fire",
     "category": "magic",
     "tags": [
+      "fairy",
+      "magic",
+      "power",
       "sparkle",
       "spell",
-      "magic"
+      "wizard",
+      "wow"
     ],
     "text": "(`･Д･)ノ=☆"
   },
@@ -815,9 +1197,15 @@
     "name": "Laughing",
     "category": "laughing",
     "tags": [
-      "lol",
+      "amused",
+      "comedy",
       "funny",
-      "laughing"
+      "haha",
+      "hilarious",
+      "joke",
+      "laughing",
+      "lol",
+      "rofl"
     ],
     "text": "（⌒▽⌒）"
   },
@@ -826,9 +1214,14 @@
     "name": "LOL",
     "category": "laughing",
     "tags": [
-      "lol",
+      "comedy",
       "funny",
-      "laughing"
+      "haha",
+      "hilarious",
+      "joke",
+      "laughing",
+      "lol",
+      "rofl"
     ],
     "text": "(ಡ艸ಡ)"
   },
@@ -837,9 +1230,14 @@
     "name": "Hehe",
     "category": "laughing",
     "tags": [
-      "lol",
+      "comedy",
       "funny",
-      "laughing"
+      "haha",
+      "hilarious",
+      "joke",
+      "laughing",
+      "lol",
+      "rofl"
     ],
     "text": "(＾艸＾)"
   },
@@ -848,9 +1246,16 @@
     "name": "Fight",
     "category": "determined",
     "tags": [
-      "focus",
+      "determination",
+      "determined",
       "fighting",
-      "determined"
+      "focus",
+      "go",
+      "hope",
+      "let's go",
+      "motivated",
+      "power",
+      "strong"
     ],
     "text": "(ง •̀ω•́)ง"
   },
@@ -859,9 +1264,17 @@
     "name": "Determined",
     "category": "determined",
     "tags": [
-      "focus",
+      "can do",
+      "determination",
+      "determined",
       "fighting",
-      "determined"
+      "focus",
+      "go",
+      "hope",
+      "let's go",
+      "motivated",
+      "strong",
+      "yes"
     ],
     "text": "(•̀ᴗ•́)و"
   },
@@ -870,10 +1283,163 @@
     "name": "Salute",
     "category": "determined",
     "tags": [
-      "focus",
+      "determination",
+      "determined",
       "fighting",
-      "determined"
+      "focus",
+      "go",
+      "hope",
+      "let's go",
+      "motivated",
+      "strong"
     ],
     "text": "(￣^￣)ゞ"
+  },
+  {
+    "id": "k080",
+    "name": "Eating",
+    "category": "eating",
+    "tags": [
+      "hungry",
+      "food",
+      "eat",
+      "yummy",
+      "delicious",
+      "nom"
+    ],
+    "text": "(ノ・ω・)ノ🍜"
+  },
+  {
+    "id": "k081",
+    "name": "Nom Nom",
+    "category": "eating",
+    "tags": [
+      "hungry",
+      "food",
+      "eat",
+      "snack",
+      "munch"
+    ],
+    "text": "(っ˘ڡ˘ς)"
+  },
+  {
+    "id": "k082",
+    "name": "Yummy",
+    "category": "eating",
+    "tags": [
+      "hungry",
+      "food",
+      "eat",
+      "delicious",
+      "tasty"
+    ],
+    "text": "( ˘▽˘)っ♨"
+  },
+  {
+    "id": "k083",
+    "name": "Dancing",
+    "category": "dancing",
+    "tags": [
+      "dance",
+      "music",
+      "party",
+      "groove",
+      "fun",
+      "move"
+    ],
+    "text": "♪┏(・o・)┛♪"
+  },
+  {
+    "id": "k084",
+    "name": "Disco",
+    "category": "dancing",
+    "tags": [
+      "dance",
+      "music",
+      "party",
+      "rhythm",
+      "vibe"
+    ],
+    "text": "┌(★o☆)┘"
+  },
+  {
+    "id": "k085",
+    "name": "Music",
+    "category": "dancing",
+    "tags": [
+      "music",
+      "sing",
+      "song",
+      "melody",
+      "tune",
+      "listen"
+    ],
+    "text": "♪(´ε` )"
+  },
+  {
+    "id": "k086",
+    "name": "Hopeful",
+    "category": "hopeful",
+    "tags": [
+      "hope",
+      "wish",
+      "pray",
+      "please",
+      "dream",
+      "optimistic"
+    ],
+    "text": "(☆▽☆)"
+  },
+  {
+    "id": "k087",
+    "name": "Wishing",
+    "category": "hopeful",
+    "tags": [
+      "hope",
+      "wish",
+      "pray",
+      "fingers crossed",
+      "luck"
+    ],
+    "text": "(人´∀`)"
+  },
+  {
+    "id": "k088",
+    "name": "Praying",
+    "category": "hopeful",
+    "tags": [
+      "hope",
+      "pray",
+      "please",
+      "beg",
+      "wish"
+    ],
+    "text": "(>人<)"
+  },
+  {
+    "id": "k089",
+    "name": "Envious",
+    "category": "jealous",
+    "tags": [
+      "jealous",
+      "envy",
+      "want",
+      "unfair",
+      "covet"
+    ],
+    "text": "(¬‿¬ )"
+  },
+  {
+    "id": "k090",
+    "name": "Jealous Glare",
+    "category": "jealous",
+    "tags": [
+      "jealous",
+      "envy",
+      "suspicious",
+      "side eye",
+      "hmph"
+    ],
+    "text": "(눈_눈 )"
   }
 ]
