@@ -928,5 +928,575 @@
     "file": "misc/swords.txt",
     "width": 15,
     "height": 8
+  },
+  {
+    "id": "drum",
+    "name": "Drum",
+    "category": "music",
+    "tags": [
+      "drum",
+      "music",
+      "beat",
+      "percussion"
+    ],
+    "size": 16,
+    "file": "music/drum.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "headphones",
+    "name": "Headphones",
+    "category": "music",
+    "tags": [
+      "headphones",
+      "music",
+      "listen",
+      "audio"
+    ],
+    "size": 16,
+    "file": "music/headphones.txt",
+    "width": 16,
+    "height": 7
+  },
+  {
+    "id": "baby",
+    "name": "Baby",
+    "category": "people",
+    "tags": [
+      "baby",
+      "child",
+      "face",
+      "cute"
+    ],
+    "size": 16,
+    "file": "people/baby.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "person",
+    "name": "Person",
+    "category": "people",
+    "tags": [
+      "person",
+      "human",
+      "people",
+      "standing"
+    ],
+    "size": 16,
+    "file": "people/person.txt",
+    "width": 11,
+    "height": 8
+  },
+  {
+    "id": "monk",
+    "name": "Monk",
+    "category": "people",
+    "tags": [
+      "monk",
+      "hood",
+      "mysterious",
+      "cloak"
+    ],
+    "size": 16,
+    "file": "people/monk.txt",
+    "width": 14,
+    "height": 8
+  },
+  {
+    "id": "anvil",
+    "name": "Anvil",
+    "category": "tools",
+    "tags": [
+      "anvil",
+      "forge",
+      "craft",
+      "metal"
+    ],
+    "size": 16,
+    "file": "tools/anvil.txt",
+    "width": 15,
+    "height": 7
+  },
+  {
+    "id": "paintbrush",
+    "name": "Paintbrush",
+    "category": "tools",
+    "tags": [
+      "paint",
+      "brush",
+      "art",
+      "creative"
+    ],
+    "size": 16,
+    "file": "tools/paintbrush.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "gear",
+    "name": "Gear",
+    "category": "tools",
+    "tags": [
+      "gear",
+      "settings",
+      "mechanical",
+      "engine"
+    ],
+    "size": 16,
+    "file": "tools/gear.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "helicopter",
+    "name": "Helicopter",
+    "category": "transport",
+    "tags": [
+      "helicopter",
+      "fly",
+      "aircraft",
+      "sky"
+    ],
+    "size": 16,
+    "file": "transport/helicopter.txt",
+    "width": 15,
+    "height": 7
+  },
+  {
+    "id": "rocket2",
+    "name": "Rocket Launch",
+    "category": "transport",
+    "tags": [
+      "rocket",
+      "launch",
+      "space",
+      "fly"
+    ],
+    "size": 16,
+    "file": "transport/rocket2.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "tennis",
+    "name": "Tennis Ball",
+    "category": "sports",
+    "tags": [
+      "tennis",
+      "ball",
+      "sport",
+      "racket"
+    ],
+    "size": 16,
+    "file": "sports/tennis.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "boxing",
+    "name": "Boxing Glove",
+    "category": "sports",
+    "tags": [
+      "boxing",
+      "glove",
+      "fight",
+      "sport"
+    ],
+    "size": 16,
+    "file": "sports/boxing.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "basketball",
+    "name": "Basketball",
+    "category": "sports",
+    "tags": [
+      "basketball",
+      "ball",
+      "sport",
+      "hoop"
+    ],
+    "size": 16,
+    "file": "sports/basketball.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "saturn",
+    "name": "Saturn",
+    "category": "space",
+    "tags": [
+      "saturn",
+      "planet",
+      "ring",
+      "space"
+    ],
+    "size": 16,
+    "file": "space/saturn.txt",
+    "width": 16,
+    "height": 7
+  },
+  {
+    "id": "star-swirl",
+    "name": "Star Swirl",
+    "category": "space",
+    "tags": [
+      "star",
+      "swirl",
+      "galaxy",
+      "space"
+    ],
+    "size": 16,
+    "file": "space/star-swirl.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "candle",
+    "name": "Candle",
+    "category": "holiday",
+    "tags": [
+      "candle",
+      "light",
+      "flame",
+      "warm"
+    ],
+    "size": 16,
+    "file": "holiday/candle.txt",
+    "width": 12,
+    "height": 8
+  },
+  {
+    "id": "butterfly",
+    "name": "Butterfly",
+    "category": "animals",
+    "tags": [
+      "butterfly",
+      "insect",
+      "wings",
+      "nature"
+    ],
+    "size": 16,
+    "file": "animals/butterfly.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "penguin",
+    "name": "Penguin",
+    "category": "animals",
+    "tags": [
+      "penguin",
+      "bird",
+      "arctic",
+      "cute"
+    ],
+    "size": 16,
+    "file": "animals/penguin.txt",
+    "width": 13,
+    "height": 8
+  },
+  {
+    "id": "snake",
+    "name": "Snake",
+    "category": "animals",
+    "tags": [
+      "snake",
+      "reptile",
+      "serpent",
+      "slither"
+    ],
+    "size": 16,
+    "file": "animals/snake.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "wolf",
+    "name": "Wolf",
+    "category": "animals",
+    "tags": [
+      "wolf",
+      "howl",
+      "predator",
+      "wild"
+    ],
+    "size": 16,
+    "file": "animals/wolf.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "octopus",
+    "name": "Octopus",
+    "category": "animals",
+    "tags": [
+      "octopus",
+      "sea",
+      "tentacle",
+      "ocean"
+    ],
+    "size": 16,
+    "file": "animals/octopus.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "bee",
+    "name": "Bee",
+    "category": "animals",
+    "tags": [
+      "bee",
+      "insect",
+      "honey",
+      "buzz"
+    ],
+    "size": 16,
+    "file": "animals/bee.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "mushroom",
+    "name": "Mushroom",
+    "category": "nature",
+    "tags": [
+      "mushroom",
+      "fungi",
+      "forest",
+      "nature"
+    ],
+    "size": 16,
+    "file": "nature/mushroom.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "oak",
+    "name": "Oak Tree",
+    "category": "nature",
+    "tags": [
+      "oak",
+      "tree",
+      "forest",
+      "wood"
+    ],
+    "size": 16,
+    "file": "nature/oak.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "rose",
+    "name": "Rose",
+    "category": "nature",
+    "tags": [
+      "rose",
+      "flower",
+      "love",
+      "garden"
+    ],
+    "size": 16,
+    "file": "nature/rose.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "cherry",
+    "name": "Cherry",
+    "category": "food",
+    "tags": [
+      "cherry",
+      "fruit",
+      "food",
+      "sweet"
+    ],
+    "size": 16,
+    "file": "food/cherry.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "pear",
+    "name": "Pear",
+    "category": "food",
+    "tags": [
+      "pear",
+      "fruit",
+      "food",
+      "healthy"
+    ],
+    "size": 16,
+    "file": "food/pear.txt",
+    "width": 13,
+    "height": 8
+  },
+  {
+    "id": "wizard",
+    "name": "Wizard",
+    "category": "fantasy",
+    "tags": [
+      "wizard",
+      "magic",
+      "staff",
+      "mage"
+    ],
+    "size": 16,
+    "file": "fantasy/wizard.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "potion",
+    "name": "Potion",
+    "category": "fantasy",
+    "tags": [
+      "potion",
+      "magic",
+      "bottle",
+      "alchemy"
+    ],
+    "size": 16,
+    "file": "fantasy/potion.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "dragon-head",
+    "name": "Dragon Head",
+    "category": "fantasy",
+    "tags": [
+      "dragon",
+      "head",
+      "fire",
+      "beast"
+    ],
+    "size": 16,
+    "file": "fantasy/dragon-head.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "fairy",
+    "name": "Fairy",
+    "category": "fantasy",
+    "tags": [
+      "fairy",
+      "magic",
+      "wings",
+      "fantasy"
+    ],
+    "size": 16,
+    "file": "fantasy/fairy.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "scroll",
+    "name": "Scroll",
+    "category": "fantasy",
+    "tags": [
+      "scroll",
+      "paper",
+      "ancient",
+      "quest"
+    ],
+    "size": 16,
+    "file": "fantasy/scroll.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "crystal",
+    "name": "Crystal Ball",
+    "category": "fantasy",
+    "tags": [
+      "crystal",
+      "ball",
+      "fortune",
+      "magic"
+    ],
+    "size": 16,
+    "file": "fantasy/crystal.txt",
+    "width": 14,
+    "height": 8
+  },
+  {
+    "id": "cauldron",
+    "name": "Cauldron",
+    "category": "fantasy",
+    "tags": [
+      "cauldron",
+      "brew",
+      "witch",
+      "potion"
+    ],
+    "size": 16,
+    "file": "fantasy/cauldron.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "lock",
+    "name": "Lock",
+    "category": "misc",
+    "tags": [
+      "lock",
+      "padlock",
+      "security",
+      "closed"
+    ],
+    "size": 16,
+    "file": "misc/lock.txt",
+    "width": 14,
+    "height": 8
+  },
+  {
+    "id": "magnify",
+    "name": "Magnifying Glass",
+    "category": "misc",
+    "tags": [
+      "search",
+      "magnify",
+      "glass",
+      "find"
+    ],
+    "size": 16,
+    "file": "misc/magnify.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "compass",
+    "name": "Compass",
+    "category": "misc",
+    "tags": [
+      "compass",
+      "direction",
+      "navigation",
+      "north"
+    ],
+    "size": 16,
+    "file": "misc/compass.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "hourglass",
+    "name": "Hourglass",
+    "category": "misc",
+    "tags": [
+      "hourglass",
+      "time",
+      "sand",
+      "wait"
+    ],
+    "size": 16,
+    "file": "misc/hourglass.txt",
+    "width": 14,
+    "height": 8
   }
 ]
