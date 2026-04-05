@@ -1441,5 +1441,135 @@
       "hmph"
     ],
     "text": "(눈_눈 )"
+  },
+  {
+    "id": "k091",
+    "name": "Cool",
+    "category": "cool",
+    "tags": [
+      "cool",
+      "sunglasses",
+      "chill",
+      "confident",
+      "smooth"
+    ],
+    "text": "(⌐■_■)"
+  },
+  {
+    "id": "k092",
+    "name": "Deal With It",
+    "category": "cool",
+    "tags": [
+      "cool",
+      "deal",
+      "sunglasses",
+      "boss",
+      "swagger"
+    ],
+    "text": "( •_•)>⌐■-■"
+  },
+  {
+    "id": "k093",
+    "name": "Flex",
+    "category": "cool",
+    "tags": [
+      "cool",
+      "strong",
+      "flex",
+      "muscle",
+      "power"
+    ],
+    "text": "ᕦ(ò_óˇ)ᕤ"
+  },
+  {
+    "id": "k094",
+    "name": "Bow",
+    "category": "apologize",
+    "tags": [
+      "sorry",
+      "apologize",
+      "bow",
+      "humble",
+      "forgive"
+    ],
+    "text": "m(_ _)m"
+  },
+  {
+    "id": "k095",
+    "name": "Deep Bow",
+    "category": "apologize",
+    "tags": [
+      "sorry",
+      "apologize",
+      "bow",
+      "please",
+      "beg"
+    ],
+    "text": "orz"
+  },
+  {
+    "id": "k096",
+    "name": "Chin Rest",
+    "category": "thinking",
+    "tags": [
+      "think",
+      "ponder",
+      "hmm",
+      "wonder",
+      "consider"
+    ],
+    "text": "(⊙_☉)"
+  },
+  {
+    "id": "k097",
+    "name": "Contemplating",
+    "category": "thinking",
+    "tags": [
+      "think",
+      "consider",
+      "reflect",
+      "deep",
+      "mind"
+    ],
+    "text": "(ー_ー)!!"
+  },
+  {
+    "id": "k098",
+    "name": "Running",
+    "category": "action",
+    "tags": [
+      "run",
+      "hurry",
+      "fast",
+      "rush",
+      "go"
+    ],
+    "text": "ε=ε=ε=┌(;*´Д`)ﾉ"
+  },
+  {
+    "id": "k099",
+    "name": "Spinning",
+    "category": "action",
+    "tags": [
+      "spin",
+      "dizzy",
+      "turn",
+      "whirl",
+      "rotate"
+    ],
+    "text": "((((;゜Д゜)))"
+  },
+  {
+    "id": "k100",
+    "name": "Stretching",
+    "category": "action",
+    "tags": [
+      "stretch",
+      "relax",
+      "yawn",
+      "morning",
+      "wake"
+    ],
+    "text": "\\(˘▽˘)/"
   }
 ]

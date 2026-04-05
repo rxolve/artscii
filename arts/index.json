@@ -1498,5 +1498,80 @@
     "file": "misc/hourglass.txt",
     "width": 14,
     "height": 8
+  },
+  {
+    "id": "anchor",
+    "name": "Anchor",
+    "category": "transport",
+    "tags": [
+      "anchor",
+      "ship",
+      "sea",
+      "dock"
+    ],
+    "size": 16,
+    "file": "transport/anchor.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "lantern",
+    "name": "Lantern",
+    "category": "misc",
+    "tags": [
+      "lantern",
+      "light",
+      "flame",
+      "night"
+    ],
+    "size": 16,
+    "file": "misc/lantern.txt",
+    "width": 13,
+    "height": 8
+  },
+  {
+    "id": "quill",
+    "name": "Quill",
+    "category": "tools",
+    "tags": [
+      "quill",
+      "pen",
+      "ink",
+      "write"
+    ],
+    "size": 16,
+    "file": "tools/quill.txt",
+    "width": 15,
+    "height": 8
+  },
+  {
+    "id": "castle",
+    "name": "Castle",
+    "category": "fantasy",
+    "tags": [
+      "castle",
+      "fortress",
+      "medieval",
+      "tower"
+    ],
+    "size": 16,
+    "file": "fantasy/castle.txt",
+    "width": 16,
+    "height": 8
+  },
+  {
+    "id": "binoculars",
+    "name": "Binoculars",
+    "category": "tools",
+    "tags": [
+      "binoculars",
+      "look",
+      "observe",
+      "spy"
+    ],
+    "size": 16,
+    "file": "tools/binoculars.txt",
+    "width": 16,
+    "height": 7
   }
 ]
