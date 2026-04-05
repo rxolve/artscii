@@ -55,13 +55,22 @@ bot.reply(`Deploy complete! ${first.text}`); // Deploy complete! (ﾉ◕ヮ◕)�
 
 ## Install
 
-```bash
-# MCP server (Claude Desktop, Cursor, etc.)
-npx -y artscii
-
-# REST API server
-npx artscii          # or: npm i artscii && npm start
+**Claude Desktop** — add to `claude_desktop_config.json`:
+```json
+{ "mcpServers": { "artscii": { "command": "npx", "args": ["-y", "artscii"] } } }
 ```
+
+**Cursor** — add to `.cursor/mcp.json`:
+```json
+{ "mcpServers": { "artscii": { "command": "npx", "args": ["-y", "artscii"] } } }
+```
+
+**VS Code** — search `@mcp artscii` in Extensions panel, or add to `settings.json`:
+```json
+{ "mcp": { "servers": { "artscii": { "command": "npx", "args": ["-y", "artscii"] } } } }
+```
+
+**REST API** — `npx artscii` starts the server on `:3001`
 
 ## MCP Tools
 
