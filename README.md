@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/artscii)](https://www.npmjs.com/package/artscii)
 
 ASCII art & kaomoji for AI agents, CLI tools, and chatbots.
-58 built-in arts + 90 kaomoji, searchable via MCP or REST API.
+101 built-in arts + 100 kaomoji, searchable via MCP or REST API.
 
 ```
      .::-::.         .:-::.        --- apple (16w) ---
