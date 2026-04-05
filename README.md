@@ -55,6 +55,11 @@ bot.reply(`Deploy complete! ${first.text}`); // Deploy complete! (ﾉ◕ヮ◕)�
 
 ## Install
 
+**Claude Code** — one command:
+```bash
+claude mcp add artscii -- npx -y artscii
+```
+
 **Claude Desktop** — add to `claude_desktop_config.json`:
 ```json
 { "mcpServers": { "artscii": { "command": "npx", "args": ["-y", "artscii"] } } }
