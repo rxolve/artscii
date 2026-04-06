@@ -89,7 +89,7 @@ claude mcp add artscii -- npx -y artscii
 | `categories` | — | List categories |
 | `submit` | `name`, `category`, `tags`, `size?`, `art` | Submit new art |
 | `convert` | `url?`, `base64?`, `size?`, ... | Convert image to ASCII |
-| `diagram` | `type`, `nodes?`, `title?`, `lines?`, `root?`, `headers?`, `rows?`, `style?` | Generate ASCII diagrams |
+| `diagram` | `type`, `nodes?`, `title?`, `lines?`, `root?`, `headers?`, `rows?`, `style?`, `actors?`, `messages?`, `events?`, `items?`, `maxWidth?` | Generate ASCII diagrams |
 | `delete` | `id` | Delete user-submitted art |
 
 ## REST API
@@ -140,7 +140,7 @@ curl -X POST http://localhost:3001/convert \
 
 ### Diagrams
 
-Generate ASCII diagrams — flowcharts, boxes, trees, and tables.
+Generate ASCII diagrams — flowcharts, boxes, trees, tables, sequence diagrams, timelines, and bar charts.
 
 ```bash
 # Flowchart
@@ -162,6 +162,21 @@ curl -X POST http://localhost:3001/diagram \
 curl -X POST http://localhost:3001/diagram \
   -H 'Content-Type: application/json' \
   -d '{"type":"box","title":"Status","lines":["All systems go","Uptime: 99.9%"],"style":"rounded"}'
+
+# Sequence diagram
+curl -X POST http://localhost:3001/diagram \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"sequence","actors":["Client","Server","DB"],"messages":[{"from":"Client","to":"Server","label":"GET"},{"from":"Server","to":"DB","label":"query"},{"from":"DB","to":"Server","label":"rows"},{"from":"Server","to":"Client","label":"200"}]}'
+
+# Timeline
+curl -X POST http://localhost:3001/diagram \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"timeline","events":[{"label":"Q1","description":"Planning"},{"label":"Q2","description":"Development"},{"label":"Q3","description":"Launch"}]}'
+
+# Bar chart
+curl -X POST http://localhost:3001/diagram \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"bar","items":[{"label":"JS","value":95},{"label":"Python","value":80},{"label":"Rust","value":45}]}'
 ```
 
 **Diagram types:**
@@ -172,6 +187,9 @@ curl -X POST http://localhost:3001/diagram \
 | `box` | `title`, `lines` | Title + separator + body |
 | `tree` | `root` (`{label, children?}`) | `├──` `└──` hierarchy |
 | `table` | `headers`, `rows` | Column-aligned grid |
+| `sequence` | `actors`, `messages` | Actor lifelines with arrows |
+| `timeline` | `events` | Vertical `●` `│` event list |
+| `bar` | `items`, `maxWidth?` | Horizontal `█` bar chart |
 
 **Box styles:** `unicode` (default `┌─┐`), `rounded` (`╭─╮`), `ascii` (`+-+`)
 

@@ -10,7 +10,7 @@ import { resolveImageInput } from './resolve.js';
 import { convertImage } from './converter.js';
 import { renderBanner, BANNER_FONTS } from './banner.js';
 import { renderDiagram, listDiagramTypes, type TreeNode } from './diagram.js';
-import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH } from './constants.js';
+import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH } from './constants.js';
 import type { ArtSize } from './types.js';
 
 const server = new McpServer({
@@ -248,9 +248,9 @@ function validateTreeDepth(node: TreeNode, depth: number): boolean {
 
 server.tool(
   'diagram',
-  'Generate ASCII diagrams: flowcharts, boxes, trees, and tables. Use style to change border characters.',
+  'Generate ASCII diagrams: flowcharts, boxes, trees, tables, sequence diagrams, timelines, and bar charts.',
   {
-    type: z.enum(['flowchart', 'box', 'tree', 'table']).describe('Diagram type'),
+    type: z.enum(['flowchart', 'box', 'tree', 'table', 'sequence', 'timeline', 'bar']).describe('Diagram type'),
     nodes: z.array(z.string()).max(MAX_DIAGRAM_NODES).optional().describe('Flowchart: list of step labels'),
     title: z.string().optional().describe('Box: title text'),
     lines: z.array(z.string()).optional().describe('Box: body lines'),
@@ -258,8 +258,13 @@ server.tool(
     headers: z.array(z.string()).optional().describe('Table: column headers'),
     rows: z.array(z.array(z.string())).max(MAX_DIAGRAM_ROWS).optional().describe('Table: data rows'),
     style: z.enum(['unicode', 'rounded', 'ascii']).default('unicode').describe('Border style: unicode (default), rounded, or ascii'),
+    actors: z.array(z.string()).max(MAX_SEQUENCE_ACTORS).optional().describe('Sequence: list of actor names'),
+    messages: z.array(z.object({ from: z.string(), to: z.string(), label: z.string() })).max(MAX_SEQUENCE_MESSAGES).optional().describe('Sequence: messages between actors'),
+    events: z.array(z.object({ label: z.string(), description: z.string() })).max(MAX_TIMELINE_EVENTS).optional().describe('Timeline: list of events with label and description'),
+    items: z.array(z.object({ label: z.string(), value: z.number() })).max(MAX_BAR_ITEMS).optional().describe('Bar: list of items with label and numeric value'),
+    maxWidth: z.number().min(1).max(MAX_BAR_WIDTH).optional().describe('Bar: maximum bar width in characters (default 20)'),
   },
-  async ({ type, nodes, title, lines, root, headers, rows, style }) => {
+  async ({ type, nodes, title, lines, root, headers, rows, style, actors, messages, events, items, maxWidth }) => {
     try {
       let input;
       switch (type) {
@@ -289,6 +294,35 @@ server.tool(
             return { content: [{ type: 'text', text: 'Error: "headers" is required for table' }], isError: true };
           }
           input = { type: 'table' as const, headers, rows: rows ?? [], style };
+          break;
+        case 'sequence':
+          if (!actors || actors.length === 0) {
+            return { content: [{ type: 'text', text: 'Error: "actors" is required for sequence' }], isError: true };
+          }
+          if (!messages || messages.length === 0) {
+            return { content: [{ type: 'text', text: 'Error: "messages" is required for sequence' }], isError: true };
+          }
+          for (const msg of messages) {
+            if (!actors.includes(msg.from)) {
+              return { content: [{ type: 'text', text: `Error: actor "${msg.from}" not in actors list` }], isError: true };
+            }
+            if (!actors.includes(msg.to)) {
+              return { content: [{ type: 'text', text: `Error: actor "${msg.to}" not in actors list` }], isError: true };
+            }
+          }
+          input = { type: 'sequence' as const, actors, messages };
+          break;
+        case 'timeline':
+          if (!events || events.length === 0) {
+            return { content: [{ type: 'text', text: 'Error: "events" is required for timeline' }], isError: true };
+          }
+          input = { type: 'timeline' as const, events };
+          break;
+        case 'bar':
+          if (!items || items.length === 0) {
+            return { content: [{ type: 'text', text: 'Error: "items" is required for bar' }], isError: true };
+          }
+          input = { type: 'bar' as const, items, maxWidth };
           break;
       }
       const diagram = renderDiagram(input);

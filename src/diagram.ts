@@ -5,11 +5,20 @@ export interface TreeNode {
   children?: TreeNode[];
 }
 
+export interface SequenceMessage {
+  from: string;
+  to: string;
+  label: string;
+}
+
 export type DiagramInput =
   | { type: 'flowchart'; nodes: string[]; style?: BoxStyle }
   | { type: 'box'; title: string; lines: string[]; style?: BoxStyle }
   | { type: 'tree'; root: TreeNode }
-  | { type: 'table'; headers: string[]; rows: string[][]; style?: BoxStyle };
+  | { type: 'table'; headers: string[]; rows: string[][]; style?: BoxStyle }
+  | { type: 'sequence'; actors: string[]; messages: SequenceMessage[] }
+  | { type: 'timeline'; events: { label: string; description: string }[] }
+  | { type: 'bar'; items: { label: string; value: number }[]; maxWidth?: number };
 
 interface BoxChars {
   tl: string; t: string; tr: string;
@@ -135,6 +144,115 @@ export function renderTable(headers: string[], rows: string[][], style: BoxStyle
   return out.join('\n');
 }
 
+export function renderSequence(actors: string[], messages: SequenceMessage[]): string {
+  if (actors.length === 0) return '';
+  const colSpacing = 15;
+  const colPositions: Record<string, number> = {};
+  let pos = 0;
+  for (const actor of actors) {
+    colPositions[actor] = pos;
+    pos += Math.max(actor.length, colSpacing);
+  }
+  const totalWidth = pos;
+
+  function makeLifeline(highlightCols?: Set<number>): string {
+    const chars = Array(totalWidth).fill(' ');
+    for (const actor of actors) {
+      const col = colPositions[actor] + Math.floor(actor.length / 2);
+      if (col < totalWidth) chars[col] = '│';
+    }
+    return chars.join('').replace(/\s+$/, '');
+  }
+
+  const out: string[] = [];
+
+  // Header line
+  let header = '';
+  for (const actor of actors) {
+    const p = colPositions[actor];
+    while (header.length < p) header += ' ';
+    header += actor;
+  }
+  out.push(header);
+
+  // Initial lifelines
+  out.push(makeLifeline());
+
+  for (const msg of messages) {
+    const fromCol = colPositions[msg.from] + Math.floor(msg.from.length / 2);
+    const toCol = colPositions[msg.to] + Math.floor(msg.to.length / 2);
+    const leftCol = Math.min(fromCol, toCol);
+    const rightCol = Math.max(fromCol, toCol);
+    const goingRight = toCol > fromCol;
+
+    // Arrow line
+    const chars = Array(totalWidth).fill(' ');
+    // Draw lifelines for actors not involved in this arrow span
+    for (const actor of actors) {
+      const c = colPositions[actor] + Math.floor(actor.length / 2);
+      if (c < leftCol || c > rightCol) {
+        if (c < totalWidth) chars[c] = '│';
+      }
+    }
+
+    // Draw arrow
+    if (fromCol === toCol) {
+      // Self-message
+      chars[fromCol] = '│';
+    } else {
+      chars[fromCol] = goingRight ? '│' : '◀';
+      chars[toCol] = goingRight ? '▶' : '│';
+      for (let i = leftCol + 1; i < rightCol; i++) {
+        chars[i] = '─';
+      }
+    }
+
+    // Place label above the arrow
+    const labelLine = Array(totalWidth).fill(' ');
+    for (const actor of actors) {
+      const c = colPositions[actor] + Math.floor(actor.length / 2);
+      if (c < totalWidth) labelLine[c] = '│';
+    }
+    const labelPos = leftCol + Math.floor((rightCol - leftCol - msg.label.length) / 2);
+    const lp = Math.max(leftCol + 1, labelPos);
+    for (let i = 0; i < msg.label.length && lp + i < totalWidth; i++) {
+      labelLine[lp + i] = msg.label[i];
+    }
+    out.push(labelLine.join('').replace(/\s+$/, ''));
+    out.push(chars.join('').replace(/\s+$/, ''));
+  }
+
+  // Final lifelines
+  out.push(makeLifeline());
+
+  return out.join('\n');
+}
+
+export function renderTimeline(events: { label: string; description: string }[]): string {
+  if (events.length === 0) return '';
+  const out: string[] = [];
+  for (let i = 0; i < events.length; i++) {
+    out.push(`● ${events[i].label}  ${events[i].description}`);
+    if (i < events.length - 1) {
+      out.push('│');
+    }
+  }
+  return out.join('\n');
+}
+
+export function renderBar(items: { label: string; value: number }[], maxWidth: number = 20): string {
+  if (items.length === 0) return '';
+  const maxLabel = Math.max(...items.map((it) => it.label.length));
+  const maxValue = Math.max(...items.map((it) => it.value), 1);
+  const out: string[] = [];
+  for (const item of items) {
+    const barLen = Math.round((item.value / maxValue) * maxWidth);
+    const bar = '█'.repeat(barLen);
+    out.push(`${padRight(item.label, maxLabel)}  ${bar} ${item.value}`);
+  }
+  return out.join('\n');
+}
+
 export function renderDiagram(input: DiagramInput): string {
   switch (input.type) {
     case 'flowchart':
@@ -145,6 +263,12 @@ export function renderDiagram(input: DiagramInput): string {
       return renderTree(input.root);
     case 'table':
       return renderTable(input.headers, input.rows, input.style);
+    case 'sequence':
+      return renderSequence(input.actors, input.messages);
+    case 'timeline':
+      return renderTimeline(input.events);
+    case 'bar':
+      return renderBar(input.items, input.maxWidth);
   }
 }
 
@@ -154,5 +278,8 @@ export function listDiagramTypes() {
     { type: 'box', description: 'Single box with title and body lines', params: ['title', 'lines', 'style?'] },
     { type: 'tree', description: 'Hierarchical tree structure', params: ['root'] },
     { type: 'table', description: 'Text table with headers and rows', params: ['headers', 'rows', 'style?'] },
+    { type: 'sequence', description: 'Sequence diagram showing actor message flow', params: ['actors', 'messages'] },
+    { type: 'timeline', description: 'Vertical timeline of events', params: ['events'] },
+    { type: 'bar', description: 'Horizontal bar chart', params: ['items', 'maxWidth?'] },
   ];
 }

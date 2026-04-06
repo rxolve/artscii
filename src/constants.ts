@@ -24,3 +24,9 @@ export const MAX_DIAGRAM_NODES = 20;
 export const MAX_DIAGRAM_ROWS = 50;
 export const MAX_TREE_DEPTH = 10;
 export const MAX_CELL_LENGTH = 50;
+
+export const MAX_SEQUENCE_ACTORS = 10;
+export const MAX_SEQUENCE_MESSAGES = 30;
+export const MAX_TIMELINE_EVENTS = 30;
+export const MAX_BAR_ITEMS = 20;
+export const MAX_BAR_WIDTH = 40;

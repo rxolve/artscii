@@ -5,7 +5,7 @@ import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
 import { loadIndex, search, getById, getByCategory, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
 import { loadKaomoji, searchKaomoji, getKaomojiByCategory, getRandomKaomoji, listKaomojiCategories, listAllKaomoji, toKaomojiResult } from './kaomoji.js';
-import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONVERT_RATE_LIMIT_PER_MIN, RATE_LIMIT_PER_MIN, SIZE_LIMITS, DEFAULT_SIZE, DIAGRAM_RATE_LIMIT_PER_MIN, MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_CELL_LENGTH } from './constants.js';
+import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONVERT_RATE_LIMIT_PER_MIN, RATE_LIMIT_PER_MIN, SIZE_LIMITS, DEFAULT_SIZE, DIAGRAM_RATE_LIMIT_PER_MIN, MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_CELL_LENGTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH } from './constants.js';
 import { resolveImageInput, ConvertInputError } from './resolve.js';
 import { convertImage } from './converter.js';
 import { createRateLimiter } from './rate-limit.js';
@@ -43,7 +43,7 @@ app.get('/', (c) =>
       kaomojiRandom: 'GET /kaomoji/random',
       kaomojiCategories: 'GET /kaomoji/categories',
       kaomojiCategory: 'GET /kaomoji/categories/:name',
-      diagram: 'POST /diagram { type, nodes?, title?, lines?, root?, headers?, rows?, style? }',
+      diagram: 'POST /diagram { type, nodes?, title?, lines?, root?, headers?, rows?, style?, actors?, messages?, events?, items?, maxWidth? }',
       diagramTypes: 'GET /diagram/types',
     },
   })
@@ -313,8 +313,8 @@ app.post('/diagram', async (c) => {
   if (!body) return c.json({ error: 'Invalid JSON body' }, 400);
 
   const { type, style } = body;
-  if (!type || !['flowchart', 'box', 'tree', 'table'].includes(type)) {
-    return c.json({ error: '"type" must be one of: flowchart, box, tree, table' }, 400);
+  if (!type || !['flowchart', 'box', 'tree', 'table', 'sequence', 'timeline', 'bar'].includes(type)) {
+    return c.json({ error: '"type" must be one of: flowchart, box, tree, table, sequence, timeline, bar' }, 400);
   }
   if (style !== undefined && !VALID_BOX_STYLES.includes(style)) {
     return c.json({ error: `"style" must be one of: ${VALID_BOX_STYLES.join(', ')}` }, 400);
@@ -339,8 +339,7 @@ app.post('/diagram', async (c) => {
     const treeErr = validateTreeDepth(root, 1);
     if (treeErr) return c.json({ error: treeErr }, 400);
     input = { type: 'tree', root: root as TreeNode };
-  } else {
-    // table
+  } else if (type === 'table') {
     const { headers, rows } = body;
     if (!Array.isArray(headers) || headers.length === 0) return c.json({ error: '"headers" must be a non-empty array of strings' }, 400);
     if (headers.some((h: unknown) => typeof h !== 'string')) return c.json({ error: 'Each header must be a string' }, 400);
@@ -350,6 +349,47 @@ app.post('/diagram', async (c) => {
       return c.json({ error: 'Each row must be an array of strings' }, 400);
     }
     input = { type: 'table', headers, rows, style };
+  } else if (type === 'sequence') {
+    const { actors, messages } = body;
+    if (!Array.isArray(actors) || actors.length === 0) return c.json({ error: '"actors" must be a non-empty array of strings' }, 400);
+    if (actors.length > MAX_SEQUENCE_ACTORS) return c.json({ error: `"actors" exceeds maximum of ${MAX_SEQUENCE_ACTORS}` }, 400);
+    if (actors.some((a: unknown) => typeof a !== 'string')) return c.json({ error: 'Each actor must be a string' }, 400);
+    if (!Array.isArray(messages) || messages.length === 0) return c.json({ error: '"messages" must be a non-empty array' }, 400);
+    if (messages.length > MAX_SEQUENCE_MESSAGES) return c.json({ error: `"messages" exceeds maximum of ${MAX_SEQUENCE_MESSAGES}` }, 400);
+    for (const msg of messages) {
+      if (!msg || typeof msg !== 'object') return c.json({ error: 'Each message must be an object with from, to, label' }, 400);
+      if (typeof msg.from !== 'string' || typeof msg.to !== 'string' || typeof msg.label !== 'string') {
+        return c.json({ error: 'Each message must have string "from", "to", and "label"' }, 400);
+      }
+      if (!actors.includes(msg.from)) return c.json({ error: `Message "from" actor "${msg.from}" not found in actors list` }, 400);
+      if (!actors.includes(msg.to)) return c.json({ error: `Message "to" actor "${msg.to}" not found in actors list` }, 400);
+    }
+    input = { type: 'sequence', actors, messages };
+  } else if (type === 'timeline') {
+    const { events } = body;
+    if (!Array.isArray(events) || events.length === 0) return c.json({ error: '"events" must be a non-empty array' }, 400);
+    if (events.length > MAX_TIMELINE_EVENTS) return c.json({ error: `"events" exceeds maximum of ${MAX_TIMELINE_EVENTS}` }, 400);
+    for (const evt of events) {
+      if (!evt || typeof evt !== 'object') return c.json({ error: 'Each event must be an object with label and description' }, 400);
+      if (typeof evt.label !== 'string' || typeof evt.description !== 'string') {
+        return c.json({ error: 'Each event must have string "label" and "description"' }, 400);
+      }
+    }
+    input = { type: 'timeline', events };
+  } else {
+    // bar
+    const { items, maxWidth } = body;
+    if (!Array.isArray(items) || items.length === 0) return c.json({ error: '"items" must be a non-empty array' }, 400);
+    if (items.length > MAX_BAR_ITEMS) return c.json({ error: `"items" exceeds maximum of ${MAX_BAR_ITEMS}` }, 400);
+    for (const item of items) {
+      if (!item || typeof item !== 'object') return c.json({ error: 'Each item must be an object with label and value' }, 400);
+      if (typeof item.label !== 'string') return c.json({ error: 'Each item must have a string "label"' }, 400);
+      if (typeof item.value !== 'number' || item.value < 0) return c.json({ error: 'Each item must have a non-negative number "value"' }, 400);
+    }
+    if (maxWidth !== undefined && (typeof maxWidth !== 'number' || maxWidth < 1 || maxWidth > MAX_BAR_WIDTH)) {
+      return c.json({ error: `"maxWidth" must be a number between 1 and ${MAX_BAR_WIDTH}` }, 400);
+    }
+    input = { type: 'bar', items, maxWidth };
   }
 
   const diagram = renderDiagram(input);
