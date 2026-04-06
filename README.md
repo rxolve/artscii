@@ -2,8 +2,8 @@
 
 [![npm](https://img.shields.io/npm/v/artscii)](https://www.npmjs.com/package/artscii)
 
-ASCII art & kaomoji for AI agents, CLI tools, and chatbots.
-101 built-in arts + 100 kaomoji, searchable via MCP or REST API.
+ASCII art, kaomoji & diagrams for AI agents, CLI tools, and chatbots.
+101 built-in arts + 100 kaomoji + diagram generation, searchable via MCP or REST API.
 
 ```
      .::-::.         .:-::.        --- apple (16w) ---
@@ -89,6 +89,7 @@ claude mcp add artscii -- npx -y artscii
 | `categories` | — | List categories |
 | `submit` | `name`, `category`, `tags`, `size?`, `art` | Submit new art |
 | `convert` | `url?`, `base64?`, `size?`, ... | Convert image to ASCII |
+| `diagram` | `type`, `nodes?`, `title?`, `lines?`, `root?`, `headers?`, `rows?`, `style?` | Generate ASCII diagrams |
 | `delete` | `id` | Delete user-submitted art |
 
 ## REST API
@@ -109,6 +110,8 @@ claude mcp add artscii -- npx -y artscii
 | `GET /kaomoji/random` | Random kaomoji |
 | `GET /kaomoji/categories` | Kaomoji categories |
 | `GET /kaomoji/categories/:name` | Kaomoji by category |
+| `POST /diagram` | Generate ASCII diagram |
+| `GET /diagram/types` | List diagram types |
 
 ### Submit Art
 
@@ -134,6 +137,55 @@ curl -X POST http://localhost:3001/convert \
 | `contrast` | boolean | true | Auto-contrast |
 | `gamma` | number | 1.0 | Gamma correction |
 | `save` | object | — | `{ name, category, tags }` to persist |
+
+### Diagrams
+
+Generate ASCII diagrams — flowcharts, boxes, trees, and tables.
+
+```bash
+# Flowchart
+curl -X POST http://localhost:3001/diagram \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"flowchart","nodes":["Start","Process","End"]}'
+
+# Table
+curl -X POST http://localhost:3001/diagram \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"table","headers":["Name","Score"],"rows":[["A","95"],["B","87"]]}'
+
+# Tree
+curl -X POST http://localhost:3001/diagram \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"tree","root":{"label":"src","children":[{"label":"index.ts"},{"label":"diagram.ts"}]}}'
+
+# Box
+curl -X POST http://localhost:3001/diagram \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"box","title":"Status","lines":["All systems go","Uptime: 99.9%"],"style":"rounded"}'
+```
+
+**Diagram types:**
+
+| Type | Required fields | Output |
+|---|---|---|
+| `flowchart` | `nodes` | Vertical flow with `│` `▼` connectors |
+| `box` | `title`, `lines` | Title + separator + body |
+| `tree` | `root` (`{label, children?}`) | `├──` `└──` hierarchy |
+| `table` | `headers`, `rows` | Column-aligned grid |
+
+**Box styles:** `unicode` (default `┌─┐`), `rounded` (`╭─╮`), `ascii` (`+-+`)
+
+```
+┌─────────┐    ╭──────────╮    ┌──────┬───────┐    src
+│  Start  │    │  Status  │    │ Name │ Score │    ├── index.ts
+└────┬────┘    ├──────────┤    ├──────┼───────┤    └── diagram.ts
+     │         │ Line 1   │    │ A    │ 95    │
+     ▼         │ Line 2   │    │ B    │ 87    │
+┌─────────┐    ╰──────────╯    └──────┴───────┘
+│   End   │
+└─────────┘
+ flowchart       box              table              tree
+```
 
 ## Size Tiers
 
