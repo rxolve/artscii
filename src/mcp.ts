@@ -9,6 +9,8 @@ import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, SIZE
 import { resolveImageInput } from './resolve.js';
 import { convertImage } from './converter.js';
 import { renderBanner, BANNER_FONTS } from './banner.js';
+import { renderDiagram, listDiagramTypes, type TreeNode } from './diagram.js';
+import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH } from './constants.js';
 import type { ArtSize } from './types.js';
 
 const server = new McpServer({
@@ -227,6 +229,73 @@ server.tool(
     } catch (err: unknown) {
       const e = err as { message?: string };
       return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Conversion failed'}` }], isError: true };
+    }
+  }
+);
+
+const treeNodeSchema: z.ZodType<TreeNode> = z.object({
+  label: z.string(),
+  children: z.lazy(() => treeNodeSchema.array()).optional(),
+});
+
+function validateTreeDepth(node: TreeNode, depth: number): boolean {
+  if (depth > MAX_TREE_DEPTH) return false;
+  for (const child of node.children ?? []) {
+    if (!validateTreeDepth(child, depth + 1)) return false;
+  }
+  return true;
+}
+
+server.tool(
+  'diagram',
+  'Generate ASCII diagrams: flowcharts, boxes, trees, and tables. Use style to change border characters.',
+  {
+    type: z.enum(['flowchart', 'box', 'tree', 'table']).describe('Diagram type'),
+    nodes: z.array(z.string()).max(MAX_DIAGRAM_NODES).optional().describe('Flowchart: list of step labels'),
+    title: z.string().optional().describe('Box: title text'),
+    lines: z.array(z.string()).optional().describe('Box: body lines'),
+    root: z.lazy(() => treeNodeSchema).optional().describe('Tree: root node with label and optional children'),
+    headers: z.array(z.string()).optional().describe('Table: column headers'),
+    rows: z.array(z.array(z.string())).max(MAX_DIAGRAM_ROWS).optional().describe('Table: data rows'),
+    style: z.enum(['unicode', 'rounded', 'ascii']).default('unicode').describe('Border style: unicode (default), rounded, or ascii'),
+  },
+  async ({ type, nodes, title, lines, root, headers, rows, style }) => {
+    try {
+      let input;
+      switch (type) {
+        case 'flowchart':
+          if (!nodes || nodes.length === 0) {
+            return { content: [{ type: 'text', text: 'Error: "nodes" is required for flowchart' }], isError: true };
+          }
+          input = { type: 'flowchart' as const, nodes, style };
+          break;
+        case 'box':
+          if (!title) {
+            return { content: [{ type: 'text', text: 'Error: "title" is required for box' }], isError: true };
+          }
+          input = { type: 'box' as const, title, lines: lines ?? [], style };
+          break;
+        case 'tree':
+          if (!root) {
+            return { content: [{ type: 'text', text: 'Error: "root" is required for tree' }], isError: true };
+          }
+          if (!validateTreeDepth(root, 1)) {
+            return { content: [{ type: 'text', text: `Error: tree depth exceeds maximum of ${MAX_TREE_DEPTH}` }], isError: true };
+          }
+          input = { type: 'tree' as const, root };
+          break;
+        case 'table':
+          if (!headers || headers.length === 0) {
+            return { content: [{ type: 'text', text: 'Error: "headers" is required for table' }], isError: true };
+          }
+          input = { type: 'table' as const, headers, rows: rows ?? [], style };
+          break;
+      }
+      const diagram = renderDiagram(input);
+      return { content: [{ type: 'text', text: diagram }] };
+    } catch (err: unknown) {
+      const e = err as { message?: string };
+      return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Diagram generation failed'}` }], isError: true };
     }
   }
 );

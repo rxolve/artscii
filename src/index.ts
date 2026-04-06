@@ -5,11 +5,12 @@ import type { ContentfulStatusCode } from 'hono/utils/http-status';
 
 import { loadIndex, search, getById, getByCategory, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
 import { loadKaomoji, searchKaomoji, getKaomojiByCategory, getRandomKaomoji, listKaomojiCategories, listAllKaomoji, toKaomojiResult } from './kaomoji.js';
-import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONVERT_RATE_LIMIT_PER_MIN, RATE_LIMIT_PER_MIN, SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
+import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, CONVERT_RATE_LIMIT_PER_MIN, RATE_LIMIT_PER_MIN, SIZE_LIMITS, DEFAULT_SIZE, DIAGRAM_RATE_LIMIT_PER_MIN, MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_CELL_LENGTH } from './constants.js';
 import { resolveImageInput, ConvertInputError } from './resolve.js';
 import { convertImage } from './converter.js';
 import { createRateLimiter } from './rate-limit.js';
 import { renderBanner, listBannerFonts, BANNER_FONTS, type BannerFont } from './banner.js';
+import { renderDiagram, listDiagramTypes, type DiagramInput, type BoxStyle, type TreeNode } from './diagram.js';
 import type { ArtSize } from './types.js';
 
 const app = new Hono();
@@ -42,6 +43,8 @@ app.get('/', (c) =>
       kaomojiRandom: 'GET /kaomoji/random',
       kaomojiCategories: 'GET /kaomoji/categories',
       kaomojiCategory: 'GET /kaomoji/categories/:name',
+      diagram: 'POST /diagram { type, nodes?, title?, lines?, root?, headers?, rows?, style? }',
+      diagramTypes: 'GET /diagram/types',
     },
   })
 );
@@ -275,6 +278,86 @@ app.post('/convert', async (c) => {
     const e = err as { status?: number; message?: string };
     return c.json({ error: e.message ?? 'Conversion failed' }, (e.status ?? 500) as ContentfulStatusCode);
   }
+});
+
+// --- Diagram endpoints ---
+
+const checkDiagramRateLimit = createRateLimiter(DIAGRAM_RATE_LIMIT_PER_MIN);
+
+const VALID_BOX_STYLES = ['unicode', 'rounded', 'ascii'];
+
+function validateTreeDepth(node: unknown, depth: number): string | null {
+  if (depth > MAX_TREE_DEPTH) return `Tree depth exceeds maximum of ${MAX_TREE_DEPTH}`;
+  if (!node || typeof node !== 'object') return '"root" must be an object';
+  const n = node as Record<string, unknown>;
+  if (typeof n.label !== 'string' || !n.label) return 'Each tree node must have a "label" string';
+  if (n.children !== undefined) {
+    if (!Array.isArray(n.children)) return '"children" must be an array';
+    for (const child of n.children) {
+      const err = validateTreeDepth(child, depth + 1);
+      if (err) return err;
+    }
+  }
+  return null;
+}
+
+app.get('/diagram/types', (c) => {
+  return c.json(listDiagramTypes());
+});
+
+app.post('/diagram', async (c) => {
+  const ip = getClientIp(c);
+  if (!checkDiagramRateLimit(ip)) return c.json({ error: `Rate limit exceeded (${DIAGRAM_RATE_LIMIT_PER_MIN}/min)` }, 429);
+
+  const body = await c.req.json().catch(() => null);
+  if (!body) return c.json({ error: 'Invalid JSON body' }, 400);
+
+  const { type, style } = body;
+  if (!type || !['flowchart', 'box', 'tree', 'table'].includes(type)) {
+    return c.json({ error: '"type" must be one of: flowchart, box, tree, table' }, 400);
+  }
+  if (style !== undefined && !VALID_BOX_STYLES.includes(style)) {
+    return c.json({ error: `"style" must be one of: ${VALID_BOX_STYLES.join(', ')}` }, 400);
+  }
+
+  let input: DiagramInput;
+
+  if (type === 'flowchart') {
+    const { nodes } = body;
+    if (!Array.isArray(nodes) || nodes.length === 0) return c.json({ error: '"nodes" must be a non-empty array of strings' }, 400);
+    if (nodes.length > MAX_DIAGRAM_NODES) return c.json({ error: `"nodes" exceeds maximum of ${MAX_DIAGRAM_NODES}` }, 400);
+    if (nodes.some((n: unknown) => typeof n !== 'string')) return c.json({ error: 'Each node must be a string' }, 400);
+    input = { type: 'flowchart', nodes, style };
+  } else if (type === 'box') {
+    const { title, lines } = body;
+    if (typeof title !== 'string' || !title) return c.json({ error: '"title" is required' }, 400);
+    if (!Array.isArray(lines)) return c.json({ error: '"lines" must be an array of strings' }, 400);
+    if (lines.some((l: unknown) => typeof l !== 'string')) return c.json({ error: 'Each line must be a string' }, 400);
+    input = { type: 'box', title, lines, style };
+  } else if (type === 'tree') {
+    const { root } = body;
+    const treeErr = validateTreeDepth(root, 1);
+    if (treeErr) return c.json({ error: treeErr }, 400);
+    input = { type: 'tree', root: root as TreeNode };
+  } else {
+    // table
+    const { headers, rows } = body;
+    if (!Array.isArray(headers) || headers.length === 0) return c.json({ error: '"headers" must be a non-empty array of strings' }, 400);
+    if (headers.some((h: unknown) => typeof h !== 'string')) return c.json({ error: 'Each header must be a string' }, 400);
+    if (!Array.isArray(rows)) return c.json({ error: '"rows" must be an array' }, 400);
+    if (rows.length > MAX_DIAGRAM_ROWS) return c.json({ error: `"rows" exceeds maximum of ${MAX_DIAGRAM_ROWS}` }, 400);
+    if (rows.some((r: unknown) => !Array.isArray(r) || (r as unknown[]).some((c) => typeof c !== 'string'))) {
+      return c.json({ error: 'Each row must be an array of strings' }, 400);
+    }
+    input = { type: 'table', headers, rows, style };
+  }
+
+  const diagram = renderDiagram(input);
+  const diagramLines = diagram.split('\n');
+  const width = Math.max(...diagramLines.map((l) => l.length), 0);
+  const height = diagramLines.length;
+
+  return c.json({ diagram, type, width, height });
 });
 
 async function main() {
