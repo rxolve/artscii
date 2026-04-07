@@ -11,6 +11,29 @@ export interface SequenceMessage {
   label: string;
 }
 
+export interface ClassDef {
+  name: string;
+  properties?: string[];
+  methods?: string[];
+}
+
+export interface Relationship {
+  from: string;
+  to: string;
+  label: string;
+}
+
+export interface Entity {
+  name: string;
+  attributes?: string[];
+}
+
+export interface GanttTask {
+  label: string;
+  start: number;
+  duration: number;
+}
+
 export type DiagramInput =
   | { type: 'flowchart'; nodes: string[]; style?: BoxStyle }
   | { type: 'box'; title: string; lines: string[]; style?: BoxStyle }
@@ -18,7 +41,11 @@ export type DiagramInput =
   | { type: 'table'; headers: string[]; rows: string[][]; style?: BoxStyle }
   | { type: 'sequence'; actors: string[]; messages: SequenceMessage[] }
   | { type: 'timeline'; events: { label: string; description: string }[] }
-  | { type: 'bar'; items: { label: string; value: number }[]; maxWidth?: number };
+  | { type: 'bar'; items: { label: string; value: number }[]; maxWidth?: number }
+  | { type: 'class'; classes: ClassDef[]; style?: BoxStyle }
+  | { type: 'er'; entities: Entity[]; relationships: Relationship[] }
+  | { type: 'mindmap'; root: TreeNode }
+  | { type: 'gantt'; tasks: GanttTask[]; unitLabel?: string };
 
 interface BoxChars {
   tl: string; t: string; tr: string;
@@ -253,6 +280,149 @@ export function renderBar(items: { label: string; value: number }[], maxWidth: n
   return out.join('\n');
 }
 
+export function renderClass(classes: ClassDef[], style: BoxStyle = 'unicode'): string {
+  const c = BOX_CHARS[style];
+  const out: string[] = [];
+  for (let ci = 0; ci < classes.length; ci++) {
+    const cls = classes[ci];
+    const props = cls.properties ?? [];
+    const methods = cls.methods ?? [];
+    const maxLen = Math.max(
+      cls.name.length,
+      ...props.map((p) => p.length),
+      ...methods.map((m) => m.length),
+    );
+    const inner = maxLen + 2;
+
+    out.push(c.tl + c.t.repeat(inner) + c.tr);
+    out.push(c.l + ' ' + padCenter(cls.name, inner - 2) + ' ' + c.r);
+
+    if (props.length > 0 || methods.length > 0) {
+      out.push(c.ml + c.t.repeat(inner) + c.mr);
+      for (const p of props) {
+        out.push(c.l + ' ' + padRight(p, inner - 2) + ' ' + c.r);
+      }
+    }
+    if (methods.length > 0) {
+      out.push(c.ml + c.t.repeat(inner) + c.mr);
+      for (const m of methods) {
+        out.push(c.l + ' ' + padRight(m, inner - 2) + ' ' + c.r);
+      }
+    }
+    out.push(c.bl + c.b.repeat(inner) + c.br);
+
+    if (ci < classes.length - 1) {
+      const center = Math.floor((inner + 2) / 2);
+      out.push(' '.repeat(center) + '▲');
+      out.push(' '.repeat(center) + '│');
+    }
+  }
+  return out.join('\n');
+}
+
+export function renderER(entities: Entity[], relationships: Relationship[]): string {
+  const out: string[] = [];
+
+  // Render each entity as a box
+  const entityBoxes: Record<string, string[]> = {};
+  for (const ent of entities) {
+    const attrs = ent.attributes ?? [];
+    const maxLen = Math.max(ent.name.length, ...attrs.map((a) => a.length));
+    const inner = maxLen + 2;
+    const lines: string[] = [];
+    lines.push('┌' + '─'.repeat(inner) + '┐');
+    lines.push('│' + ' ' + padCenter(ent.name, inner - 2) + ' ' + '│');
+    if (attrs.length > 0) {
+      lines.push('├' + '─'.repeat(inner) + '┤');
+      for (const a of attrs) {
+        lines.push('│' + ' ' + padRight(a, inner - 2) + ' ' + '│');
+      }
+    }
+    lines.push('└' + '─'.repeat(inner) + '┘');
+    entityBoxes[ent.name] = lines;
+  }
+
+  // Render entities side by side
+  const maxHeight = Math.max(...Object.values(entityBoxes).map((b) => b.length));
+  const widths: number[] = [];
+  const orderedBoxes: string[][] = [];
+  for (const ent of entities) {
+    const box = entityBoxes[ent.name];
+    const w = box[0].length;
+    widths.push(w);
+    // Pad to max height
+    const padded = [...box];
+    while (padded.length < maxHeight) padded.push(' '.repeat(w));
+    orderedBoxes.push(padded);
+  }
+
+  const gap = '   ';
+  for (let row = 0; row < maxHeight; row++) {
+    out.push(orderedBoxes.map((b) => b[row]).join(gap));
+  }
+
+  // Render relationships below
+  if (relationships.length > 0) {
+    out.push('');
+    for (const rel of relationships) {
+      out.push(`  ${rel.from} ──${rel.label}── ${rel.to}`);
+    }
+  }
+
+  return out.join('\n');
+}
+
+export function renderMindmap(node: TreeNode, prefix: string = '', isLast: boolean = true, isRoot: boolean = true): string {
+  const lines: string[] = [];
+  if (isRoot) {
+    lines.push(node.label);
+  } else {
+    const connector = isLast ? '└── ' : '├── ';
+    lines.push(prefix + connector + node.label);
+  }
+  const children = node.children ?? [];
+  for (let i = 0; i < children.length; i++) {
+    const childIsLast = i === children.length - 1;
+    const childPrefix = isRoot ? '' : prefix + (isLast ? '    ' : '│   ');
+    lines.push(renderMindmap(children[i], childPrefix, childIsLast, false));
+  }
+  return lines.join('\n');
+}
+
+export function renderGantt(tasks: GanttTask[], unitLabel: string = ''): string {
+  if (tasks.length === 0) return '';
+  const maxLabel = Math.max(...tasks.map((t) => t.label.length));
+  const maxEnd = Math.max(...tasks.map((t) => t.start + t.duration));
+  const barWidth = Math.min(maxEnd, 40);
+  const scale = barWidth / maxEnd;
+
+  const out: string[] = [];
+
+  // Header with unit markers
+  let header = ' '.repeat(maxLabel + 2);
+  for (let i = 0; i <= maxEnd; i += Math.max(1, Math.ceil(maxEnd / 10))) {
+    const pos = Math.round(i * scale);
+    const label = String(i);
+    while (header.length < maxLabel + 2 + pos) header += ' ';
+    header += label;
+  }
+  if (unitLabel) header += ' ' + unitLabel;
+  out.push(header);
+
+  // Axis
+  out.push(' '.repeat(maxLabel + 2) + '┼' + '─'.repeat(barWidth));
+
+  for (const task of tasks) {
+    const startPos = Math.round(task.start * scale);
+    const endPos = Math.round((task.start + task.duration) * scale);
+    const barLen = Math.max(endPos - startPos, 1);
+    const line = padRight(task.label, maxLabel) + '  ' + ' '.repeat(startPos) + '█'.repeat(barLen);
+    out.push(line);
+  }
+
+  return out.join('\n');
+}
+
 export function renderDiagram(input: DiagramInput): string {
   switch (input.type) {
     case 'flowchart':
@@ -269,6 +439,14 @@ export function renderDiagram(input: DiagramInput): string {
       return renderTimeline(input.events);
     case 'bar':
       return renderBar(input.items, input.maxWidth);
+    case 'class':
+      return renderClass(input.classes, input.style);
+    case 'er':
+      return renderER(input.entities, input.relationships);
+    case 'mindmap':
+      return renderMindmap(input.root);
+    case 'gantt':
+      return renderGantt(input.tasks, input.unitLabel);
   }
 }
 
@@ -281,5 +459,9 @@ export function listDiagramTypes() {
     { type: 'sequence', description: 'Sequence diagram showing actor message flow', params: ['actors', 'messages'] },
     { type: 'timeline', description: 'Vertical timeline of events', params: ['events'] },
     { type: 'bar', description: 'Horizontal bar chart', params: ['items', 'maxWidth?'] },
+    { type: 'class', description: 'UML class diagram with properties and methods', params: ['classes', 'style?'] },
+    { type: 'er', description: 'Entity-relationship diagram', params: ['entities', 'relationships'] },
+    { type: 'mindmap', description: 'Horizontal mind map tree', params: ['root'] },
+    { type: 'gantt', description: 'Gantt chart with task timelines', params: ['tasks', 'unitLabel?'] },
   ];
 }

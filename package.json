@@ -1,10 +1,10 @@
 {
   "name": "artscii",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "ASCII art & kaomoji search MCP server for AI agents",
   "mcpName": "io.github.rxolve/artscii",
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/mcp.js",
   "bin": {
     "artscii": "dist/mcp.js"
   },
@@ -15,11 +15,8 @@
     "README.md"
   ],
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx src/mcp.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "mcp": "tsx src/mcp.ts",
-    "convert": "python3 scripts/convert_all.py",
     "test": "vitest run",
     "prepublishOnly": "npm run build"
   },
@@ -38,10 +35,8 @@
     "node": ">=18.17.0"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.12",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "figlet": "^1.11.0",
-    "hono": "^4.12.9",
     "sharp": "^0.34.5",
     "zod": "^4.3.6"
   },

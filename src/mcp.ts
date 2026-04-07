@@ -3,19 +3,22 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 
-import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult, addArt, deleteArt } from './store.js';
+import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult } from './store.js';
 import { loadKaomoji, searchKaomoji, getRandomKaomoji, listKaomojiCategories, getKaomojiByCategory, toKaomojiResult } from './kaomoji.js';
-import { MAX_NAME_LENGTH, MAX_TAG_LENGTH, MAX_TAGS, MAX_DESCRIPTION_LENGTH, SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
+import { SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
 import { resolveImageInput } from './resolve.js';
 import { convertImage } from './converter.js';
 import { renderBanner, BANNER_FONTS } from './banner.js';
 import { renderDiagram, listDiagramTypes, type TreeNode } from './diagram.js';
+import { styleText, TEXT_STYLES } from './style.js';
+import { frame, FRAME_STYLES } from './frame.js';
+import { renderProgress, renderMultiProgress, PROGRESS_STYLES } from './progress.js';
 import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH } from './constants.js';
 import type { ArtSize } from './types.js';
 
 const server = new McpServer({
   name: 'artscii',
-  version: '0.3.0',
+  version: '0.5.0',
 });
 
 const sizeSchema = z.enum(['16', '32', '64']).default(String(DEFAULT_SIZE) as '16').describe('Art size tier: "16" (simple, default), "32" (medium), "64" (detailed)');
@@ -139,64 +142,75 @@ server.tool(
 );
 
 server.tool(
-  'submit',
-  'Submit a new ASCII art. Size tiers: 16w (16x8), 32w (32x16), 64w (64x32).',
+  'style',
+  `Style text using Unicode transforms. Styles: ${TEXT_STYLES.join(', ')}.`,
   {
-    name: z.string().max(MAX_NAME_LENGTH).describe('Art name (max 30 chars)'),
-    description: z.string().max(MAX_DESCRIPTION_LENGTH).optional().describe('When to use this art'),
-    category: z.string().max(MAX_NAME_LENGTH).describe('Category (e.g. "animals", "nature")'),
-    tags: z.array(z.string().max(MAX_TAG_LENGTH)).max(MAX_TAGS).describe('Tags (max 5, each max 20 chars)'),
-    size: sizeSchema,
-    art: z.string().describe('ASCII art content'),
+    text: z.string().max(200).describe('Text to style (max 200 chars)'),
+    style: z.enum(TEXT_STYLES as [string, ...string[]]).describe('Style to apply'),
   },
-  async ({ name, description, category, tags, size, art }) => {
-    try {
-      const s = Number(size) as ArtSize;
-      const entry = await addArt({ name, description, category: category.toLowerCase(), tags, size: s, art });
-      return { content: [{ type: 'text', text: `Submitted "${entry.name}" as "${entry.id}" [${entry.size}w ${entry.width}x${entry.height}]` }] };
-    } catch (err: unknown) {
-      const e = err as { message?: string };
-      return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Unknown error'}` }], isError: true };
-    }
+  async ({ text, style }) => {
+    const styled = styleText(text, style as any);
+    return { content: [{ type: 'text', text: styled }] };
   }
 );
 
 server.tool(
-  'delete',
-  'Delete a user-submitted ASCII art by ID. Built-in arts cannot be deleted.',
-  { id: z.string().describe('Art ID to delete') },
-  async ({ id }) => {
-    try {
-      const deleted = await deleteArt(id);
-      if (!deleted) {
-        return { content: [{ type: 'text', text: `Art "${id}" not found` }], isError: true };
-      }
-      return { content: [{ type: 'text', text: `Deleted "${deleted.name}" (${id})` }] };
-    } catch (err: unknown) {
-      const e = err as { message?: string };
-      return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Unknown error'}` }], isError: true };
+  'frame',
+  `Draw a box/frame around text. Styles: ${FRAME_STYLES.join(', ')}.`,
+  {
+    text: z.string().max(2000).describe('Text to frame (supports multi-line)'),
+    style: z.enum(FRAME_STYLES as [string, ...string[]]).default('single').describe('Border style'),
+    padding: z.number().min(0).max(10).default(1).describe('Inner padding (spaces)'),
+    align: z.enum(['left', 'center', 'right']).default('left').describe('Text alignment'),
+    title: z.string().max(50).optional().describe('Optional title in the top border'),
+  },
+  async ({ text, style, padding, align, title }) => {
+    const result = frame(text, { style: style as any, padding, align: align as any, title });
+    return { content: [{ type: 'text', text: result }] };
+  }
+);
+
+server.tool(
+  'progress',
+  `Render ASCII progress bars. Styles: ${PROGRESS_STYLES.join(', ')}.`,
+  {
+    percent: z.number().min(0).max(100).optional().describe('Completion percentage (0-100). Use for single bar.'),
+    items: z.array(z.object({
+      label: z.string(),
+      percent: z.number().min(0).max(100),
+    })).max(20).optional().describe('Multiple labeled progress bars'),
+    width: z.number().min(5).max(50).default(20).describe('Bar width in characters'),
+    style: z.enum(PROGRESS_STYLES as [string, ...string[]]).default('block').describe('Visual style'),
+    label: z.string().max(30).optional().describe('Label for single bar'),
+    showPercent: z.boolean().default(true).describe('Show percentage number'),
+  },
+  async ({ percent, items, width, style, label, showPercent }) => {
+    if (items && items.length > 0) {
+      const result = renderMultiProgress(items, width, style as any);
+      return { content: [{ type: 'text', text: result }] };
     }
+    if (percent === undefined) {
+      return { content: [{ type: 'text', text: 'Error: provide "percent" or "items"' }], isError: true };
+    }
+    const result = renderProgress({ percent, width, style: style as any, showPercent, label });
+    return { content: [{ type: 'text', text: result }] };
   }
 );
 
 server.tool(
   'convert',
-  'Convert an image (URL or base64) to ASCII art at a specific size tier.',
+  'Convert an image (URL or base64) to ASCII art. Modes: "ascii" (character ramp) or "braille" (2x4 dot grid, higher fidelity).',
   {
     url: z.string().url().optional().describe('Image URL to convert'),
     base64: z.string().optional().describe('Base64-encoded image data'),
     size: sizeSchema,
+    mode: z.enum(['ascii', 'braille']).default('ascii').describe('Render mode: "ascii" (character ramp) or "braille" (Unicode dots, 8x resolution)'),
     invert: z.boolean().default(false).describe('Invert brightness'),
     contrast: z.boolean().default(true).describe('Apply auto-contrast'),
     gamma: z.number().min(0.1).max(5).default(1.0).describe('Gamma correction'),
-    save: z.object({
-      name: z.string().max(MAX_NAME_LENGTH),
-      description: z.string().max(MAX_DESCRIPTION_LENGTH).optional(),
-      category: z.string().max(MAX_NAME_LENGTH),
-      tags: z.array(z.string().max(MAX_TAG_LENGTH)).max(MAX_TAGS),
-    }).optional().describe('Save the converted art to the store'),
+    threshold: z.number().min(0).max(1).default(0.5).describe('Braille mode: brightness threshold for dot activation (0-1)'),
   },
-  async ({ url, base64, size, invert, contrast, gamma, save }) => {
+  async ({ url, base64, size, mode, invert, contrast, gamma, threshold }) => {
     if (!url && !base64) {
       return { content: [{ type: 'text', text: 'Error: provide either "url" or "base64"' }], isError: true };
     }
@@ -205,27 +219,13 @@ server.tool(
       const { width: maxW, height: maxH } = SIZE_LIMITS[s];
       const source = (url ?? base64)!;
       const buf = await resolveImageInput(source);
-      const art = await convertImage(buf, { width: maxW, height: maxH, invert, contrast, gamma });
+      const art = await convertImage(buf, { width: maxW, height: maxH, mode, invert, contrast, gamma, threshold });
 
       const lines = art.split('\n');
       const artWidth = Math.max(...lines.map((l) => l.length), 0);
       const artHeight = lines.length;
 
-      let savedMsg = '';
-      if (save) {
-        const entry = await addArt({
-          name: save.name,
-          description: save.description,
-          category: save.category.toLowerCase(),
-          tags: save.tags,
-          size: s,
-          art,
-        });
-        savedMsg = `\n\nSaved as "${entry.id}" [${entry.size}w ${entry.width}x${entry.height}]`;
-      }
-
-      const text = `--- ${s}w [${artWidth}x${artHeight}] ---\n${art}${savedMsg}`;
-      return { content: [{ type: 'text', text }] };
+      return { content: [{ type: 'text', text: `--- ${s}w [${artWidth}x${artHeight}] ---\n${art}` }] };
     } catch (err: unknown) {
       const e = err as { message?: string };
       return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Conversion failed'}` }], isError: true };
@@ -246,15 +246,38 @@ function validateTreeDepth(node: TreeNode, depth: number): boolean {
   return true;
 }
 
+const classDefSchema = z.object({
+  name: z.string(),
+  properties: z.array(z.string()).optional(),
+  methods: z.array(z.string()).optional(),
+});
+
+const entitySchema = z.object({
+  name: z.string(),
+  attributes: z.array(z.string()).optional(),
+});
+
+const relationshipSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  label: z.string(),
+});
+
+const ganttTaskSchema = z.object({
+  label: z.string(),
+  start: z.number().min(0),
+  duration: z.number().min(1),
+});
+
 server.tool(
   'diagram',
-  'Generate ASCII diagrams: flowcharts, boxes, trees, tables, sequence diagrams, timelines, and bar charts.',
+  'Generate ASCII diagrams: flowcharts, boxes, trees, tables, sequence, timeline, bar, class, ER, mindmap, and gantt.',
   {
-    type: z.enum(['flowchart', 'box', 'tree', 'table', 'sequence', 'timeline', 'bar']).describe('Diagram type'),
+    type: z.enum(['flowchart', 'box', 'tree', 'table', 'sequence', 'timeline', 'bar', 'class', 'er', 'mindmap', 'gantt']).describe('Diagram type'),
     nodes: z.array(z.string()).max(MAX_DIAGRAM_NODES).optional().describe('Flowchart: list of step labels'),
     title: z.string().optional().describe('Box: title text'),
     lines: z.array(z.string()).optional().describe('Box: body lines'),
-    root: z.lazy(() => treeNodeSchema).optional().describe('Tree: root node with label and optional children'),
+    root: z.lazy(() => treeNodeSchema).optional().describe('Tree/Mindmap: root node with label and optional children'),
     headers: z.array(z.string()).optional().describe('Table: column headers'),
     rows: z.array(z.array(z.string())).max(MAX_DIAGRAM_ROWS).optional().describe('Table: data rows'),
     style: z.enum(['unicode', 'rounded', 'ascii']).default('unicode').describe('Border style: unicode (default), rounded, or ascii'),
@@ -263,8 +286,13 @@ server.tool(
     events: z.array(z.object({ label: z.string(), description: z.string() })).max(MAX_TIMELINE_EVENTS).optional().describe('Timeline: list of events with label and description'),
     items: z.array(z.object({ label: z.string(), value: z.number() })).max(MAX_BAR_ITEMS).optional().describe('Bar: list of items with label and numeric value'),
     maxWidth: z.number().min(1).max(MAX_BAR_WIDTH).optional().describe('Bar: maximum bar width in characters (default 20)'),
+    classes: z.array(classDefSchema).max(MAX_DIAGRAM_NODES).optional().describe('Class: list of classes with name, properties, methods'),
+    entities: z.array(entitySchema).max(MAX_DIAGRAM_NODES).optional().describe('ER: list of entities with name and attributes'),
+    relationships: z.array(relationshipSchema).max(MAX_SEQUENCE_MESSAGES).optional().describe('ER: relationships between entities (from, to, label like "1:N")'),
+    tasks: z.array(ganttTaskSchema).max(MAX_DIAGRAM_ROWS).optional().describe('Gantt: tasks with label, start position, and duration'),
+    unitLabel: z.string().optional().describe('Gantt: label for time units (e.g. "weeks", "sprints")'),
   },
-  async ({ type, nodes, title, lines, root, headers, rows, style, actors, messages, events, items, maxWidth }) => {
+  async ({ type, nodes, title, lines, root, headers, rows, style, actors, messages, events, items, maxWidth, classes, entities, relationships, tasks, unitLabel }) => {
     try {
       let input;
       switch (type) {
@@ -323,6 +351,33 @@ server.tool(
             return { content: [{ type: 'text', text: 'Error: "items" is required for bar' }], isError: true };
           }
           input = { type: 'bar' as const, items, maxWidth };
+          break;
+        case 'class':
+          if (!classes || classes.length === 0) {
+            return { content: [{ type: 'text', text: 'Error: "classes" is required for class diagram' }], isError: true };
+          }
+          input = { type: 'class' as const, classes, style };
+          break;
+        case 'er':
+          if (!entities || entities.length === 0) {
+            return { content: [{ type: 'text', text: 'Error: "entities" is required for ER diagram' }], isError: true };
+          }
+          input = { type: 'er' as const, entities, relationships: relationships ?? [] };
+          break;
+        case 'mindmap':
+          if (!root) {
+            return { content: [{ type: 'text', text: 'Error: "root" is required for mindmap' }], isError: true };
+          }
+          if (!validateTreeDepth(root, 1)) {
+            return { content: [{ type: 'text', text: `Error: tree depth exceeds maximum of ${MAX_TREE_DEPTH}` }], isError: true };
+          }
+          input = { type: 'mindmap' as const, root };
+          break;
+        case 'gantt':
+          if (!tasks || tasks.length === 0) {
+            return { content: [{ type: 'text', text: 'Error: "tasks" is required for gantt chart' }], isError: true };
+          }
+          input = { type: 'gantt' as const, tasks, unitLabel };
           break;
       }
       const diagram = renderDiagram(input);

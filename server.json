@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.rxolve/artscii",
-  "description": "ASCII art & kaomoji search for AI agents. 58 arts + 90 kaomoji via MCP.",
+  "description": "ASCII art, kaomoji, diagrams, text styling & image conversion for AI agents. 101 arts + 100 kaomoji + 11 diagram types via MCP.",
   "repository": {
     "url": "https://github.com/rxolve/artscii",
     "source": "github"
   },
-  "version": "0.4.0",
+  "version": "0.5.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "artscii",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "transport": {
         "type": "stdio"
       }

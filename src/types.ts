@@ -12,7 +12,6 @@ export interface ArtEntry {
   file: string;
   width: number;
   height: number;
-  userSubmitted?: boolean;
 }
 
 export interface KaomojiEntry {

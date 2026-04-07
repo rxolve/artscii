@@ -8,18 +8,12 @@ importers:
 
   .:
     dependencies:
-      '@hono/node-server':
-        specifier: ^1.19.12
-        version: 1.19.12(hono@4.12.9)
       '@modelcontextprotocol/sdk':
         specifier: ^1.29.0
         version: 1.29.0(zod@4.3.6)
       figlet:
         specifier: ^1.11.0
         version: 1.11.0
-      hono:
-        specifier: ^4.12.9
-        version: 4.12.9
       sharp:
         specifier: ^0.34.5
         version: 0.34.5

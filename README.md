@@ -2,8 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/artscii)](https://www.npmjs.com/package/artscii)
 
-ASCII art, kaomoji & diagrams for AI agents, CLI tools, and chatbots.
-101 built-in arts + 100 kaomoji + diagram generation, searchable via MCP or REST API.
+ASCII art, kaomoji, diagrams, text styling & image conversion — all in one MCP server for AI agents.
+
+101 built-in arts + 100 kaomoji + 11 diagram types + Unicode text styles + progress bars + box frames + image-to-ASCII (with braille mode).
 
 ```
      .::-::.         .:-::.        --- apple (16w) ---
@@ -21,37 +22,6 @@ ASCII art, kaomoji & diagrams for AI agents, CLI tools, and chatbots.
             -#@@@@%=.
               -*#=
 ```
-
-## Use Cases
-
-**Give your CLI personality.** Replace boring spinners with ASCII art loading screens, success badges, or error illustrations.
-
-```javascript
-import { execSync } from 'child_process';
-// npx artscii runs the MCP server — or just fetch from the REST API:
-const art = await fetch('http://localhost:3001/art/trophy/raw').then(r => r.text());
-console.log(art); // 16w trophy on build success
-```
-
-**Make chatbots expressive.** Discord/Slack bots can react with kaomoji that match the mood — no custom emoji uploads needed.
-
-```javascript
-const res = await fetch('http://localhost:3001/kaomoji?q=celebrate');
-const [first] = await res.json();
-bot.reply(`Deploy complete! ${first.text}`); // Deploy complete! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
-```
-
-**Add visuals to AI agents without wasting tokens.** A 16w art is only 8 lines — far cheaper than describing an image in natural language.
-
-```json
-{
-  "mcpServers": {
-    "artscii": { "command": "npx", "args": ["-y", "artscii"] }
-  }
-}
-```
-
-> "Show me a cat" → MCP `search("cat")` → returns 32w cat silhouette + `ฅ•ω•ฅ` kaomoji
 
 ## Install
 
@@ -75,8 +45,6 @@ claude mcp add artscii -- npx -y artscii
 { "mcp": { "servers": { "artscii": { "command": "npx", "args": ["-y", "artscii"] } } } }
 ```
 
-**REST API** — `npx artscii` starts the server on `:3001`
-
 ## MCP Tools
 
 | Tool | Parameters | Description |
@@ -85,101 +53,75 @@ claude mcp add artscii -- npx -y artscii
 | `kaomoji` | `query?`, `category?` | Get kaomoji by emotion. Omit for random |
 | `get` | `id` | Get art by ID |
 | `random` | — | Random art |
-| `list` | — | List all arts |
+| `list` | — | List all arts with metadata |
 | `categories` | — | List categories |
-| `submit` | `name`, `category`, `tags`, `size?`, `art` | Submit new art |
-| `convert` | `url?`, `base64?`, `size?`, ... | Convert image to ASCII |
-| `diagram` | `type`, `nodes?`, `title?`, `lines?`, `root?`, `headers?`, `rows?`, `style?`, `actors?`, `messages?`, `events?`, `items?`, `maxWidth?` | Generate ASCII diagrams |
-| `delete` | `id` | Delete user-submitted art |
+| `banner` | `text`, `font?` | Render large ASCII text (FIGlet) |
+| `style` | `text`, `style` | Unicode text transforms (8 styles) |
+| `frame` | `text`, `style?`, `padding?`, `align?`, `title?` | Draw box/frame around text |
+| `progress` | `percent?`, `items?`, `width?`, `style?` | ASCII progress bars |
+| `convert` | `url?`, `base64?`, `mode?`, `size?`, ... | Image → ASCII (with braille mode) |
+| `diagram` | `type`, ... | Generate ASCII diagrams (11 types) |
 
-## REST API
+## Text Styling
 
-| Endpoint | Description |
+Transform text using 8 Unicode styles — no images, just characters.
+
+| Style | Example |
 |---|---|
-| `GET /search?q={query}&type=art\|kaomoji` | Unified search |
-| `GET /art/:id` | Art by ID (JSON) |
-| `GET /art/:id/raw` | Raw ASCII text |
-| `GET /random` | Random art |
-| `GET /categories` | List categories |
-| `GET /categories/:name` | Arts in category |
-| `GET /list` | All arts metadata |
-| `POST /art` | Submit art |
-| `POST /convert` | Image → ASCII |
-| `DELETE /art/:id` | Delete user art |
-| `GET /kaomoji?q={query}` | Search kaomoji |
-| `GET /kaomoji/random` | Random kaomoji |
-| `GET /kaomoji/categories` | Kaomoji categories |
-| `GET /kaomoji/categories/:name` | Kaomoji by category |
-| `POST /diagram` | Generate ASCII diagram |
-| `GET /diagram/types` | List diagram types |
+| `bubble` | `ⓗⓔⓛⓛⓞ` |
+| `fullwidth` | `ｈｅｌｌｏ` |
+| `bold` | `𝐡𝐞𝐥𝐥𝐨` |
+| `italic` | `𝘩𝘦𝘭𝘭𝘰` |
+| `monospace` | `𝚑𝚎𝚕𝚕𝚘` |
+| `smallcaps` | `ʜᴇʟʟᴏ` |
+| `upsidedown` | `oʃʃǝɥ` |
+| `strikethrough` | `h̶e̶l̶l̶o̶` |
 
-### Submit Art
+## Box Frames
 
-```bash
-curl -X POST http://localhost:3001/art \
-  -H 'Content-Type: application/json' \
-  -d '{"name":"Robot","category":"objects","tags":["robot","tech"],"size":16,"art":" [o_o]\n /| |\\\n  d b"}'
+Draw borders around any text with 5 styles:
+
+```
+┌───────┐   ╔═══════╗   ╭───────╮   ┏━━━━━━━┓   +-------+
+│ hello │   ║ hello ║   │ hello │   ┃ hello ┃   | hello |
+└───────┘   ╚═══════╝   ╰───────╯   ┗━━━━━━━┛   +-------+
+ single      double      rounded       bold        ascii
 ```
 
-### Convert Image
+Options: `padding`, `align` (left/center/right), `title` in top border.
 
-```bash
-curl -X POST http://localhost:3001/convert \
-  -H 'Content-Type: application/json' \
-  -d '{"url":"https://example.com/icon.png","size":16}'
+## Progress Bars
+
+Single or multiple bars with 5 visual styles:
+
+```
+████████████░░░░░░░░ 60%           block (default)
+▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░ 60%         shade
+[============        ] 60%         arrow
+●●●●●●●●●●●●○○○○○○○○ 60%         dot
+[############--------] 60%         ascii
 ```
 
-| Field | Type | Default | Description |
-|---|---|---|---|
-| `url` / `base64` | string | — | Image source (one required) |
-| `size` | 16 / 32 / 64 | 16 | Size tier |
-| `invert` | boolean | false | Invert brightness |
-| `contrast` | boolean | true | Auto-contrast |
-| `gamma` | number | 1.0 | Gamma correction |
-| `save` | object | — | `{ name, category, tags }` to persist |
+Multi-bar mode with labels:
 
-### Diagrams
-
-Generate ASCII diagrams — flowcharts, boxes, trees, tables, sequence diagrams, timelines, and bar charts.
-
-```bash
-# Flowchart
-curl -X POST http://localhost:3001/diagram \
-  -H 'Content-Type: application/json' \
-  -d '{"type":"flowchart","nodes":["Start","Process","End"]}'
-
-# Table
-curl -X POST http://localhost:3001/diagram \
-  -H 'Content-Type: application/json' \
-  -d '{"type":"table","headers":["Name","Score"],"rows":[["A","95"],["B","87"]]}'
-
-# Tree
-curl -X POST http://localhost:3001/diagram \
-  -H 'Content-Type: application/json' \
-  -d '{"type":"tree","root":{"label":"src","children":[{"label":"index.ts"},{"label":"diagram.ts"}]}}'
-
-# Box
-curl -X POST http://localhost:3001/diagram \
-  -H 'Content-Type: application/json' \
-  -d '{"type":"box","title":"Status","lines":["All systems go","Uptime: 99.9%"],"style":"rounded"}'
-
-# Sequence diagram
-curl -X POST http://localhost:3001/diagram \
-  -H 'Content-Type: application/json' \
-  -d '{"type":"sequence","actors":["Client","Server","DB"],"messages":[{"from":"Client","to":"Server","label":"GET"},{"from":"Server","to":"DB","label":"query"},{"from":"DB","to":"Server","label":"rows"},{"from":"Server","to":"Client","label":"200"}]}'
-
-# Timeline
-curl -X POST http://localhost:3001/diagram \
-  -H 'Content-Type: application/json' \
-  -d '{"type":"timeline","events":[{"label":"Q1","description":"Planning"},{"label":"Q2","description":"Development"},{"label":"Q3","description":"Launch"}]}'
-
-# Bar chart
-curl -X POST http://localhost:3001/diagram \
-  -H 'Content-Type: application/json' \
-  -d '{"type":"bar","items":[{"label":"JS","value":95},{"label":"Python","value":80},{"label":"Rust","value":45}]}'
+```
+CPU    ████████████████░░░░ 80%
+Memory █████████░░░░░░░░░░░ 45%
+Disk   ██████████████░░░░░░ 70%
 ```
 
-**Diagram types:**
+## Image Conversion
+
+Convert images (URL or base64) to ASCII art. Two render modes:
+
+- **`ascii`** — character ramp (` .:-=+*#%@`), classic look
+- **`braille`** — Unicode braille dots (⠿), 8x resolution per character
+
+Options: `size` (16/32/64), `invert`, `contrast`, `gamma`, `threshold` (braille).
+
+## Diagrams
+
+11 diagram types with `unicode`, `rounded`, and `ascii` border styles.
 
 | Type | Required fields | Output |
 |---|---|---|
@@ -190,8 +132,10 @@ curl -X POST http://localhost:3001/diagram \
 | `sequence` | `actors`, `messages` | Actor lifelines with arrows |
 | `timeline` | `events` | Vertical `●` `│` event list |
 | `bar` | `items`, `maxWidth?` | Horizontal `█` bar chart |
-
-**Box styles:** `unicode` (default `┌─┐`), `rounded` (`╭─╮`), `ascii` (`+-+`)
+| `class` | `classes` | UML class with properties/methods |
+| `er` | `entities`, `relationships` | Entity-relationship diagram |
+| `mindmap` | `root` | Horizontal mind map tree |
+| `gantt` | `tasks`, `unitLabel?` | Gantt chart with timelines |
 
 ```
 ┌─────────┐    ╭──────────╮    ┌──────┬───────┐    src
@@ -205,6 +149,56 @@ curl -X POST http://localhost:3001/diagram \
  flowchart       box              table              tree
 ```
 
+### Class Diagram
+
+```json
+{ "type": "class", "classes": [
+  { "name": "Animal", "properties": ["+ name: string"], "methods": ["+ speak(): void"] },
+  { "name": "Dog", "properties": ["+ breed: string"], "methods": ["+ bark(): void"] }
+]}
+```
+
+```
+┌──────────────────┐
+│      Animal       │
+├──────────────────┤
+│ + name: string   │
+├──────────────────┤
+│ + speak(): void  │
+└──────────────────┘
+         ▲
+         │
+┌──────────────────┐
+│       Dog         │
+├──────────────────┤
+│ + breed: string  │
+├──────────────────┤
+│ + bark(): void   │
+└──────────────────┘
+```
+
+### Gantt Chart
+
+```json
+{ "type": "gantt", "tasks": [
+  { "label": "Design", "start": 0, "duration": 3 },
+  { "label": "Develop", "start": 2, "duration": 5 },
+  { "label": "Test", "start": 5, "duration": 3 }
+], "unitLabel": "weeks" }
+```
+
+```
+            0   2   4   6   8 weeks
+            ┼────────────────────
+Design      ████████
+Develop         █████████████████
+Test                 ████████████
+```
+
+## Banner
+
+Render text as large ASCII art using FIGlet fonts: `Standard`, `Small`, `Slant`, `Big`, `Mini`.
+
 ## Size Tiers
 
 Each art is stored at its minimum identifiable size.
@@ -217,7 +211,7 @@ Each art is stored at its minimum identifiable size.
 
 ## Kaomoji
 
-90 curated entries across 22 categories. Source: [kao.moji](https://github.com/bnookala/kao.moji) (MIT).
+100 curated entries across 26 categories. Source: [kao.moji](https://github.com/bnookala/kao.moji) (MIT).
 
 | Category | Examples |
 |---|---|
@@ -228,7 +222,7 @@ Each art is stored at its minimum identifiable size.
 | confused | `¯\_(ツ)_/¯` `◔_◔` `(・・?)` |
 | animals | `ʕ•ᴥ•ʔ` `ฅ•ω•ฅ` `(•ㅅ•)` |
 | table-flip | `(╯°□°)╯︵ ┻━┻` `┬─┬ノ(ಠ_ಠノ)` |
-| + 15 more | excited, greeting, celebrate, hug, surprised, sleepy, nervous, wink, magic, laughing, determined, eating, dancing, hopeful, jealous |
+| + 19 more | excited, greeting, celebrate, hug, surprised, sleepy, nervous, wink, magic, laughing, determined, eating, dancing, hopeful, jealous, ... |
 
 ## License
 

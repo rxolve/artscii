@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { SIZE_LIMITS, DEFAULT_SIZE, MAX_USER_ARTS } from './constants.js';
+import { SIZE_LIMITS } from './constants.js';
 import { matchQuery, findById, filterByCategory, pickRandom, uniqueCategories } from './searchable.js';
 import type { ArtEntry, ArtResult, ArtSize } from './types.js';
 
@@ -57,85 +57,6 @@ export function listCategories(): string[] {
 
 export function listAll(): ArtEntry[] {
   return entries;
-}
-
-function toSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
-}
-
-function measureArt(content: string): { width: number; height: number } {
-  const lines = content.replace(/\n$/, '').split('\n');
-  const height = lines.length;
-  const width = Math.max(...lines.map((l) => l.length));
-  return { width, height };
-}
-
-export async function saveIndex(): Promise<void> {
-  await fs.writeFile(path.join(ARTS_DIR, 'index.json'), JSON.stringify(entries, null, 2) + '\n', 'utf-8');
-}
-
-export async function addArt(input: {
-  name: string;
-  description?: string;
-  category: string;
-  tags: string[];
-  size?: ArtSize;
-  art: string;
-}): Promise<ArtEntry> {
-  const id = toSlug(input.name);
-  if (!id) throw { status: 400, message: 'Invalid name: produces empty slug' };
-  if (getById(id)) throw { status: 409, message: `Art "${id}" already exists` };
-
-  const userCount = entries.filter((e) => e.userSubmitted).length;
-  if (userCount >= MAX_USER_ARTS) throw { status: 507, message: `User art limit reached (${MAX_USER_ARTS})` };
-
-  const size = input.size ?? DEFAULT_SIZE;
-  if (!validateArt(input.art, size)) {
-    const { width: maxW, height: maxH } = SIZE_LIMITS[size];
-    throw { status: 400, message: `Art exceeds ${size}w spec (max ${maxW}x${maxH})` };
-  }
-
-  const { width, height } = measureArt(input.art);
-
-  const dir = path.join(ARTS_DIR, input.category);
-  await fs.mkdir(dir, { recursive: true });
-
-  const file = `${input.category}/${id}.txt`;
-  await fs.writeFile(path.join(ARTS_DIR, file), input.art, 'utf-8');
-
-  const entry: ArtEntry = {
-    id,
-    name: input.name,
-    ...(input.description && { description: input.description }),
-    category: input.category,
-    tags: input.tags,
-    size,
-    file,
-    width,
-    height,
-    userSubmitted: true,
-  };
-
-  entries.push(entry);
-  await saveIndex();
-  return entry;
-}
-
-export async function deleteArt(id: string): Promise<ArtEntry | null> {
-  const entry = getById(id);
-  if (!entry) return null;
-  if (!entry.userSubmitted) throw { status: 403, message: 'Cannot delete built-in art' };
-
-  try { await fs.unlink(path.join(ARTS_DIR, entry.file)); } catch {}
-
-  entries = entries.filter((e) => e.id !== id);
-  await saveIndex();
-  return entry;
 }
 
 export async function toResult(entry: ArtEntry): Promise<ArtResult> {

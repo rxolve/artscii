@@ -317,12 +317,121 @@ describe('renderDiagram', () => {
 
 // --- listDiagramTypes ---
 
+describe('renderClass', () => {
+  it('renders a single class', () => {
+    const result = renderDiagram({
+      type: 'class',
+      classes: [{ name: 'User', properties: ['+ name: string', '- age: number'], methods: ['+ greet(): void'] }],
+    });
+    expect(result).toContain('User');
+    expect(result).toContain('+ name: string');
+    expect(result).toContain('+ greet(): void');
+    expect(result).toContain('┌');
+    expect(result).toContain('├');
+  });
+
+  it('renders multiple classes with connector', () => {
+    const result = renderDiagram({
+      type: 'class',
+      classes: [
+        { name: 'Animal', methods: ['+ speak()'] },
+        { name: 'Dog', methods: ['+ bark()'] },
+      ],
+    });
+    expect(result).toContain('▲');
+    expect(result).toContain('Animal');
+    expect(result).toContain('Dog');
+  });
+
+  it('renders class with no properties or methods', () => {
+    const result = renderDiagram({ type: 'class', classes: [{ name: 'Empty' }] });
+    expect(result).toContain('Empty');
+    expect(result).toContain('┌');
+    expect(result).toContain('└');
+  });
+});
+
+describe('renderER', () => {
+  it('renders entities side by side', () => {
+    const result = renderDiagram({
+      type: 'er',
+      entities: [
+        { name: 'User', attributes: ['id', 'name'] },
+        { name: 'Post', attributes: ['id', 'title'] },
+      ],
+      relationships: [{ from: 'User', to: 'Post', label: '1:N' }],
+    });
+    expect(result).toContain('User');
+    expect(result).toContain('Post');
+    expect(result).toContain('1:N');
+  });
+
+  it('renders entities without relationships', () => {
+    const result = renderDiagram({
+      type: 'er',
+      entities: [{ name: 'Table' }],
+      relationships: [],
+    });
+    expect(result).toContain('Table');
+  });
+});
+
+describe('renderMindmap', () => {
+  it('renders a mindmap tree', () => {
+    const result = renderDiagram({
+      type: 'mindmap',
+      root: {
+        label: 'Project',
+        children: [
+          { label: 'Frontend', children: [{ label: 'React' }, { label: 'CSS' }] },
+          { label: 'Backend' },
+        ],
+      },
+    });
+    expect(result).toContain('Project');
+    expect(result).toContain('Frontend');
+    expect(result).toContain('React');
+    expect(result).toContain('Backend');
+    expect(result).toContain('├──');
+    expect(result).toContain('└──');
+  });
+});
+
+describe('renderGantt', () => {
+  it('renders a gantt chart', () => {
+    const result = renderDiagram({
+      type: 'gantt',
+      tasks: [
+        { label: 'Design', start: 0, duration: 3 },
+        { label: 'Develop', start: 2, duration: 5 },
+        { label: 'Test', start: 5, duration: 3 },
+      ],
+    });
+    expect(result).toContain('Design');
+    expect(result).toContain('Develop');
+    expect(result).toContain('Test');
+    expect(result).toContain('█');
+  });
+
+  it('supports unit label', () => {
+    const result = renderDiagram({
+      type: 'gantt',
+      tasks: [{ label: 'Sprint 1', start: 0, duration: 2 }],
+      unitLabel: 'weeks',
+    });
+    expect(result).toContain('weeks');
+  });
+});
+
 describe('listDiagramTypes', () => {
-  it('returns all 7 types', () => {
+  it('returns all 11 types', () => {
     const types = listDiagramTypes();
-    expect(types).toHaveLength(7);
+    expect(types).toHaveLength(11);
     const names = types.map((t) => t.type);
-    expect(names).toEqual(['flowchart', 'box', 'tree', 'table', 'sequence', 'timeline', 'bar']);
+    expect(names).toContain('class');
+    expect(names).toContain('er');
+    expect(names).toContain('mindmap');
+    expect(names).toContain('gantt');
   });
 
   it('each type has description and params', () => {
