@@ -4,7 +4,7 @@
 
 ASCII art, kaomoji, diagrams, text styling & image conversion — all in one MCP server for AI agents.
 
-101 built-in arts + 100 kaomoji + 11 diagram types + Unicode text styles + progress bars + box frames + image-to-ASCII (with braille mode).
+101 built-in arts + 100 kaomoji + 11 diagram types + sparklines + heatmaps + calendars + text composition + Unicode text styles + progress bars + box frames + image-to-ASCII (with braille mode).
 
 ```
      .::-::.         .:-::.        --- apple (16w) ---
@@ -49,16 +49,17 @@ claude mcp add artscii -- npx -y artscii
 
 | Tool | Parameters | Description |
 |---|---|---|
-| `search` | `query`, `type?` | Search art + kaomoji. `type`: `"art"`, `"kaomoji"`, or `"all"` |
+| `search` | `query?`, `type?`, `random?`, `mode?` | Search art + kaomoji. Omit query to list all. `random: true` for random entry. `mode: "categories"` to list categories |
 | `kaomoji` | `query?`, `category?` | Get kaomoji by emotion. Omit for random |
 | `get` | `id` | Get art by ID |
-| `random` | — | Random art |
-| `list` | — | List all arts with metadata |
-| `categories` | — | List categories |
 | `banner` | `text`, `font?` | Render large ASCII text (FIGlet) |
 | `style` | `text`, `style` | Unicode text transforms (8 styles) |
 | `frame` | `text`, `style?`, `padding?`, `align?`, `title?` | Draw box/frame around text |
 | `progress` | `percent?`, `items?`, `width?`, `style?` | ASCII progress bars |
+| `sparkline` | `values`, `width?`, `labels?`, `style?` | Inline sparkline chart (3 styles) |
+| `heatmap` | `data`, `rowLabels?`, `colLabels?`, `showValues?`, `style?` | 2D heatmap grid (3 styles) |
+| `calendar` | `year`, `month`, `highlight?`, `firstDayOfWeek?` | ASCII monthly calendar |
+| `compose` | `blocks`, `mode?`, `gap?`, `align?`, `separator?` | Combine text blocks side-by-side or stacked |
 | `convert` | `url?`, `base64?`, `mode?`, `size?`, ... | Image → ASCII (with braille mode) |
 | `diagram` | `type`, ... | Generate ASCII diagrams (11 types) |
 
@@ -109,6 +110,64 @@ CPU    ████████████████░░░░ 80%
 Memory █████████░░░░░░░░░░░ 45%
 Disk   ██████████████░░░░░░ 70%
 ```
+
+## Sparklines
+
+Inline sparkline charts from numeric values with 3 styles:
+
+```
+▁▂▃▄▅▆▇█▇▅▃▁   default (block)
+_.-~=*#@*~-._   ascii
+⠀⡀⣀⣄⣤⣦⣶⣷⣿⣷⣶⣤⣀   dot (braille)
+```
+
+Options: `width` (auto-scale), `labels` (show min/max), `style`.
+
+## Heatmaps
+
+2D grid visualization with 5 intensity levels and 3 styles:
+
+```
+ ░▒▓█   default (blocks)
+ .oO#   ascii
+ ·•●⬤   dot
+```
+
+Options: `rowLabels`, `colLabels`, `showValues`, `style`.
+
+## Calendar
+
+ASCII monthly calendar with highlight support:
+
+```
+   January 2025
+Su Mo Tu We Th Fr Sa
+          *1  2  3  4
+ 5  6  7  8  9 10 11
+12 13 14 15 16 17 18
+19 20 21 22 23 24 25
+26 27 28 29 30 31
+* 15
+```
+
+Options: `highlight` (dates to mark), `firstDayOfWeek` (0=Sunday, 1=Monday).
+
+## Compose
+
+Combine multiple text blocks horizontally (side-by-side) or vertically (stacked):
+
+```
+┌───┐ ┌───┐         ┌───┐
+│ A │ │ B │         │ A │
+└───┘ └───┘         └───┘
+ horizontal          ---
+                    ┌───┐
+                    │ B │
+                    └───┘
+                    vertical
+```
+
+Options: `gap`, `align` (top/middle/bottom), `separator` (vertical mode).
 
 ## Image Conversion
 

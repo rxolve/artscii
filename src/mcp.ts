@@ -4,33 +4,79 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 
 import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult } from './store.js';
-import { loadKaomoji, searchKaomoji, getRandomKaomoji, listKaomojiCategories, getKaomojiByCategory, toKaomojiResult } from './kaomoji.js';
+import { loadKaomoji, searchKaomoji, getRandomKaomoji, listKaomojiCategories, getKaomojiByCategory, listAllKaomoji, toKaomojiResult } from './kaomoji.js';
 import { SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
 import { resolveImageInput } from './resolve.js';
 import { convertImage } from './converter.js';
 import { renderBanner, BANNER_FONTS } from './banner.js';
-import { renderDiagram, listDiagramTypes, type TreeNode } from './diagram.js';
+import { renderDiagram, type TreeNode } from './diagram.js';
 import { styleText, TEXT_STYLES } from './style.js';
 import { frame, FRAME_STYLES } from './frame.js';
 import { renderProgress, renderMultiProgress, PROGRESS_STYLES } from './progress.js';
-import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH } from './constants.js';
+import { renderSparkline, SPARKLINE_STYLES } from './sparkline.js';
+import { renderHeatmap, HEATMAP_STYLES } from './heatmap.js';
+import { renderCalendar } from './calendar.js';
+import { compose } from './compose.js';
+import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH, MAX_SPARKLINE_VALUES, MAX_SPARKLINE_WIDTH, MAX_HEATMAP_ROWS, MAX_HEATMAP_COLS, MAX_COMPOSE_BLOCKS, MAX_COMPOSE_GAP } from './constants.js';
 import type { ArtSize } from './types.js';
 
 const server = new McpServer({
   name: 'artscii',
-  version: '0.5.0',
+  version: '0.5.1',
 });
 
 const sizeSchema = z.enum(['16', '32', '64']).default(String(DEFAULT_SIZE) as '16').describe('Art size tier: "16" (simple, default), "32" (medium), "64" (detailed)');
 
 server.tool(
   'search',
-  'Search ASCII art and kaomoji by keyword. Use type to filter results.',
+  'Search ASCII art and kaomoji. Omit query to list all. Use random for a random entry. Use mode "categories" to list categories.',
   {
-    query: z.string().describe('Search keyword (matches id, name, category, tags)'),
+    query: z.string().optional().describe('Search keyword (matches id, name, category, tags). Omit to list all.'),
     type: z.enum(['art', 'kaomoji', 'all']).default('all').describe('Filter by type: "art", "kaomoji", or "all"'),
+    random: z.boolean().default(false).describe('Return one random entry'),
+    mode: z.enum(['search', 'categories']).default('search').describe('Mode: "search" (default) or "categories" to list categories'),
   },
-  async ({ query, type }) => {
+  async ({ query, type, random, mode }) => {
+    // Categories mode
+    if (mode === 'categories') {
+      const parts: string[] = [];
+      if (type !== 'kaomoji') {
+        parts.push('Art: ' + listCategories().join(', '));
+      }
+      if (type !== 'art') {
+        parts.push('Kaomoji: ' + listKaomojiCategories().join(', '));
+      }
+      return { content: [{ type: 'text', text: parts.join('\n') }] };
+    }
+
+    // Random mode
+    if (random) {
+      if (type !== 'kaomoji') {
+        const result = await toResult(getRandom());
+        return { content: [{ type: 'text', text: `--- ${result.name} [${result.size}w ${result.width}x${result.height}] ---\n${result.art}` }] };
+      }
+      const k = getRandomKaomoji();
+      return { content: [{ type: 'text', text: `${k.text}  — ${k.name} [${k.category}]` }] };
+    }
+
+    // List all (no query)
+    if (!query) {
+      const parts: string[] = [];
+      if (type !== 'kaomoji') {
+        const items = listAll().map((e) => {
+          const desc = e.description ? ` — ${e.description}` : '';
+          return `${e.id} — ${e.name} [${e.category}] (${e.size}w: ${e.width}x${e.height})${desc}`;
+        });
+        if (items.length > 0) parts.push(items.join('\n'));
+      }
+      if (type !== 'art') {
+        const items = listAllKaomoji().map((k) => `${k.text}  — ${k.name} [${k.category}]`);
+        if (items.length > 0) parts.push(items.join('\n'));
+      }
+      return { content: [{ type: 'text', text: parts.join('\n\n') }] };
+    }
+
+    // Search mode
     const parts: string[] = [];
 
     if (type !== 'kaomoji') {
@@ -69,34 +115,6 @@ server.tool(
     return { content: [{ type: 'text', text: result.art }] };
   }
 );
-
-server.tool(
-  'random',
-  'Get a random ASCII art.',
-  {},
-  async () => {
-    const result = await toResult(getRandom());
-    return { content: [{ type: 'text', text: `--- ${result.name} [${result.size}w ${result.width}x${result.height}] ---\n${result.art}` }] };
-  }
-);
-
-server.tool(
-  'list',
-  'List all available ASCII arts with metadata.',
-  {},
-  async () => {
-    const items = listAll().map((e) => {
-      const desc = e.description ? ` — ${e.description}` : '';
-      return `${e.id} — ${e.name} [${e.category}] (${e.size}w: ${e.width}x${e.height})${desc}`;
-    });
-    return { content: [{ type: 'text', text: items.join('\n') }] };
-  }
-);
-
-server.tool('categories', 'List all categories.', {}, async () => {
-  const cats = listCategories();
-  return { content: [{ type: 'text', text: cats.join(', ') }] };
-});
 
 server.tool(
   'banner',
@@ -193,6 +211,74 @@ server.tool(
       return { content: [{ type: 'text', text: 'Error: provide "percent" or "items"' }], isError: true };
     }
     const result = renderProgress({ percent, width, style: style as any, showPercent, label });
+    return { content: [{ type: 'text', text: result }] };
+  }
+);
+
+server.tool(
+  'sparkline',
+  `Render an inline sparkline chart from numeric values. Styles: ${SPARKLINE_STYLES.join(', ')}.`,
+  {
+    values: z.array(z.number()).max(MAX_SPARKLINE_VALUES).describe('Numeric values to chart'),
+    width: z.number().min(1).max(MAX_SPARKLINE_WIDTH).optional().describe('Output width in characters (auto-scales values)'),
+    labels: z.boolean().default(false).describe('Show min/max labels'),
+    style: z.enum(SPARKLINE_STYLES as [string, ...string[]]).default('default').describe('Visual style'),
+  },
+  async ({ values, width, labels, style }) => {
+    const result = renderSparkline(values, { width, labels, style: style as any });
+    if (!result) {
+      return { content: [{ type: 'text', text: 'Error: provide at least one value' }], isError: true };
+    }
+    return { content: [{ type: 'text', text: result }] };
+  }
+);
+
+server.tool(
+  'heatmap',
+  `Render a 2D heatmap grid from numeric data. Styles: ${HEATMAP_STYLES.join(', ')}.`,
+  {
+    data: z.array(z.array(z.number()).max(MAX_HEATMAP_COLS)).max(MAX_HEATMAP_ROWS).describe('2D array of numeric values'),
+    rowLabels: z.array(z.string()).optional().describe('Labels for each row'),
+    colLabels: z.array(z.string()).optional().describe('Labels for each column'),
+    showValues: z.boolean().default(false).describe('Show numeric values alongside intensity'),
+    style: z.enum(HEATMAP_STYLES as [string, ...string[]]).default('default').describe('Visual style'),
+  },
+  async ({ data, rowLabels, colLabels, showValues, style }) => {
+    const result = renderHeatmap(data, { rowLabels, colLabels, showValues, style: style as any });
+    if (!result) {
+      return { content: [{ type: 'text', text: 'Error: provide at least one row of data' }], isError: true };
+    }
+    return { content: [{ type: 'text', text: result }] };
+  }
+);
+
+server.tool(
+  'calendar',
+  'Render an ASCII monthly calendar.',
+  {
+    year: z.number().min(1970).max(2100).describe('Year'),
+    month: z.number().min(1).max(12).describe('Month (1-12)'),
+    highlight: z.array(z.number().min(1).max(31)).optional().describe('Dates to highlight with *'),
+    firstDayOfWeek: z.enum(['0', '1']).default('0').describe('First day of week: "0" = Sunday (default), "1" = Monday'),
+  },
+  async ({ year, month, highlight, firstDayOfWeek }) => {
+    const result = renderCalendar(year, month, { highlight, firstDayOfWeek: Number(firstDayOfWeek) as 0 | 1 });
+    return { content: [{ type: 'text', text: result }] };
+  }
+);
+
+server.tool(
+  'compose',
+  'Combine multiple text blocks side-by-side or stacked.',
+  {
+    blocks: z.array(z.string()).min(1).max(MAX_COMPOSE_BLOCKS).describe('Text blocks to combine'),
+    mode: z.enum(['horizontal', 'vertical']).default('horizontal').describe('Layout mode'),
+    gap: z.number().min(0).max(MAX_COMPOSE_GAP).default(1).describe('Gap between blocks (spaces for horizontal, blank lines for vertical)'),
+    align: z.enum(['top', 'middle', 'bottom']).default('top').describe('Vertical alignment for horizontal mode'),
+    separator: z.string().max(80).optional().describe('Separator string for vertical mode'),
+  },
+  async ({ blocks, mode, gap, align, separator }) => {
+    const result = compose(blocks, { mode: mode as any, gap, align: align as any, separator });
     return { content: [{ type: 'text', text: result }] };
   }
 );

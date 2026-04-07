@@ -20,3 +20,10 @@ export const MAX_SEQUENCE_MESSAGES = 30;
 export const MAX_TIMELINE_EVENTS = 30;
 export const MAX_BAR_ITEMS = 20;
 export const MAX_BAR_WIDTH = 40;
+
+export const MAX_SPARKLINE_VALUES = 100;
+export const MAX_SPARKLINE_WIDTH = 80;
+export const MAX_HEATMAP_ROWS = 20;
+export const MAX_HEATMAP_COLS = 20;
+export const MAX_COMPOSE_BLOCKS = 10;
+export const MAX_COMPOSE_GAP = 10;
