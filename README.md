@@ -4,7 +4,7 @@
 
 ASCII art, kaomoji, diagrams, charts & image conversion — all in one MCP server for AI agents.
 
-101 built-in arts + 100 kaomoji + 11 diagram types + charts (progress, sparkline, heatmap) + box frames + FIGlet banners + image-to-ASCII (with braille mode). 9 focused tools.
+81 curated arts + 100 kaomoji + 11 diagram types + charts + box frames + FIGlet banners + image-to-ASCII (with braille mode). 9 focused tools.
 
 ```
      .::-::.         .:-::.        --- apple (16w) ---
