@@ -3,7 +3,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 
-import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult } from './store.js';
+import { loadIndex, search, getById, getRandom, listCategories, listAll, toResult, readArt } from './store.js';
 import { loadKaomoji, searchKaomoji, getRandomKaomoji, listKaomojiCategories, getKaomojiByCategory, listAllKaomoji, toKaomojiResult } from './kaomoji.js';
 import { SIZE_LIMITS, DEFAULT_SIZE } from './constants.js';
 import { resolveImageInput } from './resolve.js';
@@ -15,7 +15,7 @@ import { renderProgress, renderMultiProgress, PROGRESS_STYLES } from './progress
 import { renderSparkline, SPARKLINE_STYLES } from './sparkline.js';
 import { renderHeatmap, HEATMAP_STYLES } from './heatmap.js';
 import { compose } from './compose.js';
-import { loadAnimations, listAnimations, getAnimation, formatForTerminal, formatFrames } from './animate.js';
+import { composeAnimation, formatScript, formatFrames, MOTIONS } from './animate.js';
 import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH, MAX_SPARKLINE_VALUES, MAX_SPARKLINE_WIDTH, MAX_HEATMAP_ROWS, MAX_HEATMAP_COLS, MAX_COMPOSE_BLOCKS, MAX_COMPOSE_GAP } from './constants.js';
 import type { ArtSize } from './types.js';
 
@@ -242,29 +242,29 @@ server.tool(
 
 server.tool(
   'animate',
-  'Play ASCII animations in the terminal. Returns animation frames or a bash script to play them. Available: bounce, pulse, spin, wave, blink, loading, firework, rain, cat-walk, typing.',
+  `Compose ASCII animations: combine any art with a motion. Motions: ${MOTIONS.join(', ')}. Returns a bash script or raw frames.`,
   {
-    id: z.string().optional().describe('Animation ID (e.g. "bounce", "cat-walk", "rain"). Omit to list all.'),
-    output: z.enum(['frames', 'script']).default('script').describe('"script" returns a bash script to play in terminal. "frames" returns raw frames.'),
+    art: z.string().describe('Art ID (e.g. "heart", "cat", "trophy") or custom ASCII text'),
+    motion: z.enum(MOTIONS as [string, ...string[]]).describe('Motion type to apply'),
+    output: z.enum(['frames', 'script']).default('script').describe('"script" = bash script for terminal. "frames" = raw frame data.'),
   },
-  async ({ id, output }) => {
-    if (!id) {
-      const list = listAnimations();
-      const text = list.map((a) => `${a.id} — ${a.name} (${a.frames} frames, ${a.delay}ms${a.loop ? ', loop' : ''})`).join('\n');
-      return { content: [{ type: 'text', text }] };
+  async ({ art: artInput, motion, output }) => {
+    // Resolve art: ID lookup or use as raw text
+    let artText: string;
+    const entry = getById(artInput);
+    if (entry) {
+      artText = await readArt(entry);
+    } else {
+      artText = artInput; // treat as raw ASCII text
     }
 
-    const anim = getAnimation(id);
-    if (!anim) {
-      const available = listAnimations().map((a) => a.id).join(', ');
-      return { content: [{ type: 'text', text: `Animation "${id}" not found. Available: ${available}` }], isError: true };
-    }
+    const anim = composeAnimation(artText, motion as any);
+    const name = `${entry?.name ?? 'Custom'} + ${motion}`;
 
     if (output === 'script') {
-      return { content: [{ type: 'text', text: formatForTerminal(anim) }] };
+      return { content: [{ type: 'text', text: formatScript(anim, name) }] };
     }
-
-    return { content: [{ type: 'text', text: formatFrames(anim) }] };
+    return { content: [{ type: 'text', text: formatFrames(anim, name) }] };
   }
 );
 
@@ -462,7 +462,6 @@ server.tool(
 
 async function main() {
   await Promise.all([loadIndex(), loadKaomoji()]);
-  loadAnimations();
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }

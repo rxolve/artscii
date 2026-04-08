@@ -1,248 +1,162 @@
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ANIM_DIR = path.join(__dirname, '..', 'arts', 'animations');
+import { readArt, getById, listAll } from './store.js';
+import type { ArtEntry } from './types.js';
 
 export interface Animation {
-  id: string;
-  name: string;
-  description: string;
-  width: number;
-  height: number;
   frames: string[];
   delay: number;
   loop: boolean;
 }
 
-let animations: Animation[] = [];
+export type MotionType = 'bounce' | 'shake' | 'blink' | 'slide' | 'reveal' | 'fade' | 'pulse' | 'rain';
 
-// --- Pre-built animation generators ---
+export const MOTIONS: MotionType[] = ['bounce', 'shake', 'blink', 'slide', 'reveal', 'fade', 'pulse', 'rain'];
 
-function generateBounce(): Animation {
-  const ball = '(●)';
-  const w = 7;
-  const positions = [4, 3, 2, 1, 0, 1, 2, 3, 4, 3, 2, 1, 0, 1, 2, 3];
-  const frames = positions.map((y) => {
-    const lines: string[] = [];
-    for (let row = 0; row < 5; row++) {
-      lines.push(row === y ? `  ${ball}` : '');
-    }
-    // Ground line
-    lines.push('───────');
-    return lines.join('\n');
-  });
-  return { id: 'bounce', name: 'Bouncing Ball', description: 'A ball bouncing up and down', width: w, height: 6, frames, delay: 120, loop: true };
+// --- Motion functions: transform art text into animation frames ---
+
+function padFrame(lines: string[], width: number, height: number): string[] {
+  const padded = lines.map((l) => l.padEnd(width));
+  while (padded.length < height) padded.push(' '.repeat(width));
+  return padded;
 }
 
-function generatePulse(): Animation {
-  const small = [
-    '  .♥.  ',
-    '  .♥.  ',
-  ];
-  const medium = [
-    '  .♥.  ',
-    ' ♥♥♥♥♥ ',
-    '  .♥.  ',
-  ];
-  const large = [
-    '   ♥   ',
-    ' ♥♥♥♥♥ ',
-    ' ♥♥♥♥♥ ',
-    '  ♥♥♥  ',
-    '   ♥   ',
-  ];
-  const frames = [
-    small.join('\n'),
-    medium.join('\n'),
-    large.join('\n'),
-    large.join('\n'),
-    medium.join('\n'),
-    small.join('\n'),
-  ];
-  return { id: 'pulse', name: 'Heart Pulse', description: 'A beating heart', width: 7, height: 5, frames, delay: 200, loop: true };
-}
-
-function generateSpin(): Animation {
-  const chars = ['|', '/', '—', '\\', '|', '/', '—', '\\'];
-  const frames = chars.map((c) => `  ${c}  `);
-  return { id: 'spin', name: 'Spinner', description: 'A rotating spinner', width: 5, height: 1, frames, delay: 100, loop: true };
-}
-
-function generateWave(): Animation {
-  const base = '~≈~≈~≈~≈~≈~≈~≈~≈';
-  const frames: string[] = [];
-  for (let i = 0; i < 8; i++) {
-    const shifted = base.slice(i) + base.slice(0, i);
-    frames.push(shifted.slice(0, 16));
+function shiftY(lines: string[], width: number, totalHeight: number, offsetY: number): string {
+  const result: string[] = [];
+  for (let y = 0; y < totalHeight; y++) {
+    const srcY = y - offsetY;
+    result.push(srcY >= 0 && srcY < lines.length ? lines[srcY].padEnd(width) : ' '.repeat(width));
   }
-  return { id: 'wave', name: 'Ocean Wave', description: 'Flowing wave pattern', width: 16, height: 1, frames, delay: 150, loop: true };
+  return result.join('\n');
 }
 
-function generateBlink(): Animation {
-  const open = [
-    ' ◉ ◉ ',
-    '  ▽  ',
-  ];
-  const half = [
-    ' ─ ─ ',
-    '  ▽  ',
-  ];
-  const closed = [
-    ' ─ ─ ',
-    '  △  ',
-  ];
-  const frames = [
-    open.join('\n'),
-    open.join('\n'),
-    open.join('\n'),
-    open.join('\n'),
-    half.join('\n'),
-    closed.join('\n'),
-    half.join('\n'),
-    open.join('\n'),
-  ];
-  return { id: 'blink', name: 'Blink', description: 'Blinking face', width: 6, height: 2, frames, delay: 150, loop: true };
+function shiftX(lines: string[], offset: number, canvasWidth: number): string {
+  return lines.map((line) => {
+    if (offset > 0) return ' '.repeat(offset) + line;
+    if (offset < 0) return line.slice(-offset).padEnd(canvasWidth);
+    return line;
+  }).join('\n');
 }
 
-function generateLoading(): Animation {
+function motionBounce(lines: string[], width: number, height: number): Animation {
+  const totalH = height + 4;
+  const positions = [2, 1, 0, 1, 2, 3, 4, 3];
+  const frames = positions.map((y) => shiftY(lines, width, totalH, y));
+  return { frames, delay: 120, loop: true };
+}
+
+function motionShake(lines: string[], width: number): Animation {
+  const offsets = [0, 1, -1, 2, -2, 1, -1, 0];
+  const canvasW = width + 4;
+  const centered = lines.map((l) => '  ' + l);
+  const frames = offsets.map((dx) => shiftX(centered, dx, canvasW));
+  return { frames, delay: 80, loop: true };
+}
+
+function motionBlink(lines: string[]): Animation {
+  const visible = lines.join('\n');
+  const blank = lines.map((l) => ' '.repeat(l.length)).join('\n');
+  const frames = [visible, visible, visible, visible, blank, blank, visible, visible];
+  return { frames, delay: 200, loop: true };
+}
+
+function motionSlide(lines: string[], width: number): Animation {
+  const canvasW = width + 20;
   const frames: string[] = [];
-  const w = 10;
-  for (let i = 0; i <= w; i++) {
-    const filled = '█'.repeat(i);
-    const empty = '░'.repeat(w - i);
-    frames.push(`[${filled}${empty}]`);
+  for (let x = -width; x <= canvasW; x += 2) {
+    frames.push(shiftX(lines, x, canvasW));
   }
-  // Reverse back
-  for (let i = w - 1; i >= 0; i--) {
-    const filled = '█'.repeat(i);
-    const empty = '░'.repeat(w - i);
-    frames.push(`[${filled}${empty}]`);
-  }
-  return { id: 'loading', name: 'Loading', description: 'Loading bar animation', width: 12, height: 1, frames, delay: 80, loop: true };
+  return { frames, delay: 60, loop: false };
 }
 
-function generateFirework(): Animation {
-  const frames = [
-    '    ·    ',
-    '    |    ',
-    '    ↑    ',
-    '    *    ',
-    '   ***   ',
-    '  * * *  ',
-    ' *  *  * ',
-    '  · · ·  ',
-    '   · ·   ',
-    '    ·    ',
-    '         ',
-  ];
-  return { id: 'firework', name: 'Firework', description: 'A firework explosion', width: 9, height: 1, frames: frames.map(f => f), delay: 150, loop: false };
-}
-
-function generateRain(): Animation {
-  const w = 16;
-  const h = 6;
-  const drops = [
-    [2,0],[7,1],[12,2],[4,3],[9,4],[14,0],[1,2],[6,4],[11,1],[3,5],[8,3],[13,5],
-  ];
+function motionReveal(lines: string[]): Animation {
   const frames: string[] = [];
+  for (let i = 1; i <= lines.length; i++) {
+    frames.push(lines.slice(0, i).join('\n'));
+  }
+  // Hold the full frame
+  frames.push(lines.join('\n'));
+  frames.push(lines.join('\n'));
+  return { frames, delay: 100, loop: false };
+}
+
+function motionFade(lines: string[]): Animation {
+  const ramp = ['@', '#', '*', '+', ':', '.', ' '];
+  const frames: string[] = [lines.join('\n')];
+
+  for (let step = 0; step < ramp.length; step++) {
+    const faded = lines.map((line) =>
+      line.split('').map((ch) => {
+        if (ch === ' ') return ' ';
+        const idx = ramp.indexOf(ch);
+        if (idx >= 0 && idx + step < ramp.length) return ramp[idx + step];
+        if (idx === -1 && step > 0) return ramp[Math.min(step, ramp.length - 1)];
+        return ch;
+      }).join('')
+    );
+    frames.push(faded.join('\n'));
+  }
+
+  return { frames, delay: 150, loop: false };
+}
+
+function motionPulse(lines: string[]): Animation {
+  const full = lines.join('\n');
+  // Create a "shrunk" version by removing outer chars
+  const shrunk = lines.map((l) => {
+    if (l.length <= 2) return ' '.repeat(l.length);
+    return ' ' + l.slice(1, -1) + ' ';
+  }).join('\n');
+  const frames = [shrunk, full, full, full, shrunk, shrunk];
+  return { frames, delay: 200, loop: true };
+}
+
+function motionRain(lines: string[], width: number, height: number): Animation {
+  const frames: string[] = [];
+  const drops = Array.from({ length: 8 }, () => [
+    Math.floor(Math.random() * width),
+    Math.floor(Math.random() * height),
+  ]);
+
   for (let frame = 0; frame < 8; frame++) {
-    const grid: string[][] = Array.from({ length: h }, () => Array(w).fill(' '));
+    const grid = lines.map((l) => l.split(''));
+    // Pad grid to full height
+    while (grid.length < height) grid.push(Array(width).fill(' '));
+
     for (const [x, startY] of drops) {
-      const y = (startY + frame) % h;
-      if (x < w && y < h) grid[y][x] = '│';
-      const y2 = (startY + frame + 3) % h;
-      if (x < w && y2 < h && grid[y2][x] === ' ') grid[y2][x] = '·';
+      const y = (startY + frame) % height;
+      if (x < width && y < grid.length) {
+        if (grid[y][x] === ' ' || grid[y][x] === undefined) {
+          grid[y][x] = '·';
+        }
+      }
     }
-    frames.push(grid.map(row => row.join('')).join('\n'));
+    frames.push(grid.map((row) => row.join('')).join('\n'));
   }
-  return { id: 'rain', name: 'Rain', description: 'Falling rain drops', width: w, height: h, frames, delay: 150, loop: true };
+  return { frames, delay: 150, loop: true };
 }
 
-function generateCatWalk(): Animation {
-  const frame1 = [
-    '  /\\_/\\  ',
-    ' ( o.o ) ',
-    '  > ^ <  ',
-    ' /|   |\\ ',
-    '(_|   |_)',
-  ];
-  const frame2 = [
-    '  /\\_/\\  ',
-    ' ( o.o ) ',
-    '  > ^ <  ',
-    '  /| |\\  ',
-    ' (_| |_) ',
-  ];
-  const frame3 = [
-    '  /\\_/\\  ',
-    ' ( o.o ) ',
-    '  > ^ <  ',
-    ' |/   \\| ',
-    ' (_) (_) ',
-  ];
-  const frame4 = [
-    '  /\\_/\\  ',
-    ' ( o.o ) ',
-    '  > ^ <  ',
-    '  /| |\\  ',
-    ' (_| |_) ',
-  ];
-  const frames = [frame1, frame2, frame3, frame4].map(f => f.join('\n'));
-  return { id: 'cat-walk', name: 'Walking Cat', description: 'A cat walking in place', width: 9, height: 5, frames, delay: 200, loop: true };
-}
+// --- Compose: object + motion ---
 
-function generateTyping(): Animation {
-  const text = 'Hello, World!';
-  const frames: string[] = [];
-  for (let i = 0; i <= text.length; i++) {
-    frames.push(text.slice(0, i) + '█');
+export function composeAnimation(art: string, motion: MotionType): Animation {
+  const lines = art.split('\n');
+  const width = Math.max(...lines.map((l) => l.length));
+  const height = lines.length;
+  const padded = padFrame(lines, width, height);
+
+  switch (motion) {
+    case 'bounce': return motionBounce(padded, width, height);
+    case 'shake': return motionShake(padded, width);
+    case 'blink': return motionBlink(padded);
+    case 'slide': return motionSlide(padded, width);
+    case 'reveal': return motionReveal(padded);
+    case 'fade': return motionFade(padded);
+    case 'pulse': return motionPulse(padded);
+    case 'rain': return motionRain(padded, width, height);
   }
-  // Blink cursor at end
-  frames.push(text + '█');
-  frames.push(text + ' ');
-  frames.push(text + '█');
-  frames.push(text + ' ');
-  return { id: 'typing', name: 'Typing', description: 'Typewriter text effect', width: text.length + 1, height: 1, frames, delay: 100, loop: false };
 }
 
-// --- Registry ---
+// --- Output formatting ---
 
-const BUILTIN_ANIMATIONS: (() => Animation)[] = [
-  generateBounce,
-  generatePulse,
-  generateSpin,
-  generateWave,
-  generateBlink,
-  generateLoading,
-  generateFirework,
-  generateRain,
-  generateCatWalk,
-  generateTyping,
-];
-
-export function loadAnimations(): void {
-  animations = BUILTIN_ANIMATIONS.map((gen) => gen());
-}
-
-export function listAnimations(): { id: string; name: string; description: string; frames: number; delay: number; loop: boolean }[] {
-  return animations.map((a) => ({
-    id: a.id,
-    name: a.name,
-    description: a.description,
-    frames: a.frames.length,
-    delay: a.delay,
-    loop: a.loop,
-  }));
-}
-
-export function getAnimation(id: string): Animation | undefined {
-  return animations.find((a) => a.id === id);
-}
-
-export function formatForTerminal(anim: Animation): string {
-  // Return a bash script that plays the animation
+export function formatScript(anim: Animation, name: string): string {
   const escaped = anim.frames.map((f) =>
     f.replace(/\\/g, '\\\\').replace(/'/g, "'\\''")
   );
@@ -250,8 +164,8 @@ export function formatForTerminal(anim: Animation): string {
 
   const lines = [
     '#!/bin/bash',
-    '# ' + anim.name + ' — ' + anim.description,
-    'tput civis 2>/dev/null  # hide cursor',
+    `# ${name}`,
+    'tput civis 2>/dev/null',
     `trap 'tput cnorm 2>/dev/null; exit' INT TERM`,
     'frames=(',
   ];
@@ -261,26 +175,19 @@ export function formatForTerminal(anim: Animation): string {
   }
 
   lines.push(')');
-
-  if (anim.loop) {
-    lines.push('while true; do');
-  } else {
-    lines.push('for i in 1; do');
-  }
-
+  lines.push(anim.loop ? 'while true; do' : 'for i in 1; do');
   lines.push('  for frame in "${frames[@]}"; do');
   lines.push('    tput home 2>/dev/null || printf "\\033[H"');
   lines.push('    printf "%s\\n" "$frame"');
   lines.push(`    sleep ${delayS}`);
   lines.push('  done');
   lines.push('done');
-  lines.push('tput cnorm 2>/dev/null  # restore cursor');
+  lines.push('tput cnorm 2>/dev/null');
 
   return lines.join('\n');
 }
 
-export function formatFrames(anim: Animation): string {
-  const header = `# ${anim.name} (${anim.frames.length} frames, ${anim.delay}ms, ${anim.loop ? 'loop' : 'once'})`;
-  const separator = '\n---\n';
-  return header + '\n\n' + anim.frames.join(separator);
+export function formatFrames(anim: Animation, name: string): string {
+  const header = `# ${name} (${anim.frames.length} frames, ${anim.delay}ms, ${anim.loop ? 'loop' : 'once'})`;
+  return header + '\n\n' + anim.frames.join('\n---\n');
 }
