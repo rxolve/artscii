@@ -2,9 +2,9 @@
 
 [![npm](https://img.shields.io/npm/v/artscii)](https://www.npmjs.com/package/artscii)
 
-ASCII art, kaomoji, diagrams, text styling & image conversion — all in one MCP server for AI agents.
+ASCII art, kaomoji, diagrams, charts & image conversion — all in one MCP server for AI agents.
 
-101 built-in arts + 100 kaomoji + 11 diagram types + sparklines + heatmaps + calendars + text composition + Unicode text styles + progress bars + box frames + image-to-ASCII (with braille mode).
+101 built-in arts + 100 kaomoji + 11 diagram types + charts (progress, sparkline, heatmap) + box frames + FIGlet banners + image-to-ASCII (with braille mode). 9 focused tools.
 
 ```
      .::-::.         .:-::.        --- apple (16w) ---
@@ -49,34 +49,15 @@ claude mcp add artscii -- npx -y artscii
 
 | Tool | Parameters | Description |
 |---|---|---|
-| `search` | `query?`, `type?`, `random?`, `mode?` | Search art + kaomoji. Omit query to list all. `random: true` for random entry. `mode: "categories"` to list categories |
-| `kaomoji` | `query?`, `category?` | Get kaomoji by emotion. Omit for random |
+| `search` | `query?`, `type?`, `random?`, `mode?` | Search art + kaomoji. Omit query to list all |
 | `get` | `id` | Get art by ID |
-| `banner` | `text`, `font?` | Render large ASCII text (FIGlet) |
-| `style` | `text`, `style` | Unicode text transforms (8 styles) |
-| `frame` | `text`, `style?`, `padding?`, `align?`, `title?` | Draw box/frame around text |
-| `progress` | `percent?`, `items?`, `width?`, `style?` | ASCII progress bars |
-| `sparkline` | `values`, `width?`, `labels?`, `style?` | Inline sparkline chart (3 styles) |
-| `heatmap` | `data`, `rowLabels?`, `colLabels?`, `showValues?`, `style?` | 2D heatmap grid (3 styles) |
-| `calendar` | `year`, `month`, `highlight?`, `firstDayOfWeek?` | ASCII monthly calendar |
-| `compose` | `blocks`, `mode?`, `gap?`, `align?`, `separator?` | Combine text blocks side-by-side or stacked |
-| `convert` | `url?`, `base64?`, `mode?`, `size?`, ... | Image → ASCII (with braille mode) |
+| `kaomoji` | `query?`, `category?` | Get kaomoji by emotion. Omit for random |
+| `banner` | `text`, `font?` | Render large ASCII text (FIGlet, 5 fonts) |
+| `frame` | `text`, `style?`, `padding?`, `align?`, `title?` | Draw box/frame around text (5 styles) |
+| `chart` | `type`, ... | Data visualization: progress, sparkline, heatmap |
+| `compose` | `blocks`, `mode?`, `gap?`, `align?` | Combine text blocks side-by-side or stacked |
+| `convert` | `url?`, `base64?`, `mode?`, `size?`, ... | Image → ASCII (ascii or braille mode) |
 | `diagram` | `type`, ... | Generate ASCII diagrams (11 types) |
-
-## Text Styling
-
-Transform text using 8 Unicode styles — no images, just characters.
-
-| Style | Example |
-|---|---|
-| `bubble` | `ⓗⓔⓛⓛⓞ` |
-| `fullwidth` | `ｈｅｌｌｏ` |
-| `bold` | `𝐡𝐞𝐥𝐥𝐨` |
-| `italic` | `𝘩𝘦𝘭𝘭𝘰` |
-| `monospace` | `𝚑𝚎𝚕𝚕𝚘` |
-| `smallcaps` | `ʜᴇʟʟᴏ` |
-| `upsidedown` | `oʃʃǝɥ` |
-| `strikethrough` | `h̶e̶l̶l̶o̶` |
 
 ## Box Frames
 
@@ -91,66 +72,17 @@ Draw borders around any text with 5 styles:
 
 Options: `padding`, `align` (left/center/right), `title` in top border.
 
-## Progress Bars
+## Charts
 
-Single or multiple bars with 5 visual styles:
-
-```
-████████████░░░░░░░░ 60%           block (default)
-▓▓▓▓▓▓▓▓▓▓▓▓░░░░░░░░ 60%         shade
-[============        ] 60%         arrow
-●●●●●●●●●●●●○○○○○○○○ 60%         dot
-[############--------] 60%         ascii
-```
-
-Multi-bar mode with labels:
+Unified `chart` tool with 3 types: **progress**, **sparkline**, **heatmap**.
 
 ```
-CPU    ████████████████░░░░ 80%
-Memory █████████░░░░░░░░░░░ 45%
-Disk   ██████████████░░░░░░ 70%
+Progress:   ███████████████░░░░░ 75%
+Sparkline:  ▁▂▃▄▅▆▇█▇▅▃▁
+Heatmap:     A B C
+           X ░▒█
+           Y ▓░▒
 ```
-
-## Sparklines
-
-Inline sparkline charts from numeric values with 3 styles:
-
-```
-▁▂▃▄▅▆▇█▇▅▃▁   default (block)
-_.-~=*#@*~-._   ascii
-⠀⡀⣀⣄⣤⣦⣶⣷⣿⣷⣶⣤⣀   dot (braille)
-```
-
-Options: `width` (auto-scale), `labels` (show min/max), `style`.
-
-## Heatmaps
-
-2D grid visualization with 5 intensity levels and 3 styles:
-
-```
- ░▒▓█   default (blocks)
- .oO#   ascii
- ·•●⬤   dot
-```
-
-Options: `rowLabels`, `colLabels`, `showValues`, `style`.
-
-## Calendar
-
-ASCII monthly calendar with highlight support:
-
-```
-   January 2025
-Su Mo Tu We Th Fr Sa
-          *1  2  3  4
- 5  6  7  8  9 10 11
-12 13 14 15 16 17 18
-19 20 21 22 23 24 25
-26 27 28 29 30 31
-* 15
-```
-
-Options: `highlight` (dates to mark), `firstDayOfWeek` (0=Sunday, 1=Monday).
 
 ## Compose
 

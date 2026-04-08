@@ -10,12 +10,10 @@ import { resolveImageInput } from './resolve.js';
 import { convertImage } from './converter.js';
 import { renderBanner, BANNER_FONTS } from './banner.js';
 import { renderDiagram, type TreeNode } from './diagram.js';
-import { styleText, TEXT_STYLES } from './style.js';
 import { frame, FRAME_STYLES } from './frame.js';
 import { renderProgress, renderMultiProgress, PROGRESS_STYLES } from './progress.js';
 import { renderSparkline, SPARKLINE_STYLES } from './sparkline.js';
 import { renderHeatmap, HEATMAP_STYLES } from './heatmap.js';
-import { renderCalendar } from './calendar.js';
 import { compose } from './compose.js';
 import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH, MAX_SPARKLINE_VALUES, MAX_SPARKLINE_WIDTH, MAX_HEATMAP_ROWS, MAX_HEATMAP_COLS, MAX_COMPOSE_BLOCKS, MAX_COMPOSE_GAP } from './constants.js';
 import type { ArtSize } from './types.js';
@@ -160,19 +158,6 @@ server.tool(
 );
 
 server.tool(
-  'style',
-  `Style text using Unicode transforms. Styles: ${TEXT_STYLES.join(', ')}.`,
-  {
-    text: z.string().max(200).describe('Text to style (max 200 chars)'),
-    style: z.enum(TEXT_STYLES as [string, ...string[]]).describe('Style to apply'),
-  },
-  async ({ text, style }) => {
-    const styled = styleText(text, style as any);
-    return { content: [{ type: 'text', text: styled }] };
-  }
-);
-
-server.tool(
   'frame',
   `Draw a box/frame around text. Styles: ${FRAME_STYLES.join(', ')}.`,
   {
@@ -189,81 +174,52 @@ server.tool(
 );
 
 server.tool(
-  'progress',
-  `Render ASCII progress bars. Styles: ${PROGRESS_STYLES.join(', ')}.`,
+  'chart',
+  'Render data as ASCII charts. Types: progress (bar), sparkline (trend), heatmap (2D grid).',
   {
-    percent: z.number().min(0).max(100).optional().describe('Completion percentage (0-100). Use for single bar.'),
-    items: z.array(z.object({
-      label: z.string(),
-      percent: z.number().min(0).max(100),
-    })).max(20).optional().describe('Multiple labeled progress bars'),
-    width: z.number().min(5).max(50).default(20).describe('Bar width in characters'),
-    style: z.enum(PROGRESS_STYLES as [string, ...string[]]).default('block').describe('Visual style'),
-    label: z.string().max(30).optional().describe('Label for single bar'),
-    showPercent: z.boolean().default(true).describe('Show percentage number'),
+    type: z.enum(['progress', 'sparkline', 'heatmap']).describe('Chart type'),
+    // progress
+    percent: z.number().min(0).max(100).optional().describe('Progress: completion % (0-100)'),
+    items: z.array(z.object({ label: z.string(), percent: z.number().min(0).max(100) })).max(20).optional().describe('Progress: multiple labeled bars'),
+    // sparkline
+    values: z.array(z.number()).max(MAX_SPARKLINE_VALUES).optional().describe('Sparkline: numeric values to chart'),
+    // heatmap
+    data: z.array(z.array(z.number()).max(MAX_HEATMAP_COLS)).max(MAX_HEATMAP_ROWS).optional().describe('Heatmap: 2D array of numeric values'),
+    rowLabels: z.array(z.string()).optional().describe('Heatmap: row labels'),
+    colLabels: z.array(z.string()).optional().describe('Heatmap: column labels'),
+    // shared
+    width: z.number().min(1).max(50).default(20).describe('Width in characters'),
+    style: z.string().default('default').describe('Visual style (varies by type)'),
+    label: z.string().max(30).optional().describe('Progress: label for single bar'),
   },
-  async ({ percent, items, width, style, label, showPercent }) => {
-    if (items && items.length > 0) {
-      const result = renderMultiProgress(items, width, style as any);
-      return { content: [{ type: 'text', text: result }] };
-    }
-    if (percent === undefined) {
-      return { content: [{ type: 'text', text: 'Error: provide "percent" or "items"' }], isError: true };
-    }
-    const result = renderProgress({ percent, width, style: style as any, showPercent, label });
-    return { content: [{ type: 'text', text: result }] };
-  }
-);
+  async ({ type, percent, items, values, data, rowLabels, colLabels, width, style, label }) => {
+    // Map 'default' to each chart type's actual default style
+    const progressStyle = (style === 'default' ? 'block' : style) as any;
+    const sparkStyle = (style === 'default' ? 'default' : style) as any;
+    const heatStyle = (style === 'default' ? 'default' : style) as any;
 
-server.tool(
-  'sparkline',
-  `Render an inline sparkline chart from numeric values. Styles: ${SPARKLINE_STYLES.join(', ')}.`,
-  {
-    values: z.array(z.number()).max(MAX_SPARKLINE_VALUES).describe('Numeric values to chart'),
-    width: z.number().min(1).max(MAX_SPARKLINE_WIDTH).optional().describe('Output width in characters (auto-scales values)'),
-    labels: z.boolean().default(false).describe('Show min/max labels'),
-    style: z.enum(SPARKLINE_STYLES as [string, ...string[]]).default('default').describe('Visual style'),
-  },
-  async ({ values, width, labels, style }) => {
-    const result = renderSparkline(values, { width, labels, style: style as any });
-    if (!result) {
-      return { content: [{ type: 'text', text: 'Error: provide at least one value' }], isError: true };
+    if (type === 'progress') {
+      if (items && items.length > 0) {
+        return { content: [{ type: 'text', text: renderMultiProgress(items, width, progressStyle) }] };
+      }
+      if (percent === undefined) {
+        return { content: [{ type: 'text', text: 'Error: provide "percent" or "items" for progress chart' }], isError: true };
+      }
+      return { content: [{ type: 'text', text: renderProgress({ percent, width, style: progressStyle, showPercent: true, label }) }] };
     }
-    return { content: [{ type: 'text', text: result }] };
-  }
-);
-
-server.tool(
-  'heatmap',
-  `Render a 2D heatmap grid from numeric data. Styles: ${HEATMAP_STYLES.join(', ')}.`,
-  {
-    data: z.array(z.array(z.number()).max(MAX_HEATMAP_COLS)).max(MAX_HEATMAP_ROWS).describe('2D array of numeric values'),
-    rowLabels: z.array(z.string()).optional().describe('Labels for each row'),
-    colLabels: z.array(z.string()).optional().describe('Labels for each column'),
-    showValues: z.boolean().default(false).describe('Show numeric values alongside intensity'),
-    style: z.enum(HEATMAP_STYLES as [string, ...string[]]).default('default').describe('Visual style'),
-  },
-  async ({ data, rowLabels, colLabels, showValues, style }) => {
-    const result = renderHeatmap(data, { rowLabels, colLabels, showValues, style: style as any });
-    if (!result) {
-      return { content: [{ type: 'text', text: 'Error: provide at least one row of data' }], isError: true };
+    if (type === 'sparkline') {
+      if (!values || values.length === 0) {
+        return { content: [{ type: 'text', text: 'Error: provide "values" for sparkline chart' }], isError: true };
+      }
+      return { content: [{ type: 'text', text: renderSparkline(values, { width, style: sparkStyle }) }] };
     }
-    return { content: [{ type: 'text', text: result }] };
-  }
-);
-
-server.tool(
-  'calendar',
-  'Render an ASCII monthly calendar.',
-  {
-    year: z.number().min(1970).max(2100).describe('Year'),
-    month: z.number().min(1).max(12).describe('Month (1-12)'),
-    highlight: z.array(z.number().min(1).max(31)).optional().describe('Dates to highlight with *'),
-    firstDayOfWeek: z.enum(['0', '1']).default('0').describe('First day of week: "0" = Sunday (default), "1" = Monday'),
-  },
-  async ({ year, month, highlight, firstDayOfWeek }) => {
-    const result = renderCalendar(year, month, { highlight, firstDayOfWeek: Number(firstDayOfWeek) as 0 | 1 });
-    return { content: [{ type: 'text', text: result }] };
+    if (type === 'heatmap') {
+      if (!data || data.length === 0) {
+        return { content: [{ type: 'text', text: 'Error: provide "data" for heatmap chart' }], isError: true };
+      }
+      return { content: [{ type: 'text', text: renderHeatmap(data, { rowLabels, colLabels, style: heatStyle }) }] };
+    }
+    return { content: [{ type: 'text', text: 'Unknown chart type' }], isError: true };
   }
 );
 
