@@ -15,6 +15,7 @@ import { renderProgress, renderMultiProgress, PROGRESS_STYLES } from './progress
 import { renderSparkline, SPARKLINE_STYLES } from './sparkline.js';
 import { renderHeatmap, HEATMAP_STYLES } from './heatmap.js';
 import { compose } from './compose.js';
+import { loadAnimations, listAnimations, getAnimation, formatForTerminal, formatFrames } from './animate.js';
 import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH, MAX_SPARKLINE_VALUES, MAX_SPARKLINE_WIDTH, MAX_HEATMAP_ROWS, MAX_HEATMAP_COLS, MAX_COMPOSE_BLOCKS, MAX_COMPOSE_GAP } from './constants.js';
 import type { ArtSize } from './types.js';
 
@@ -240,6 +241,34 @@ server.tool(
 );
 
 server.tool(
+  'animate',
+  'Play ASCII animations in the terminal. Returns animation frames or a bash script to play them. Available: bounce, pulse, spin, wave, blink, loading, firework, rain, cat-walk, typing.',
+  {
+    id: z.string().optional().describe('Animation ID (e.g. "bounce", "cat-walk", "rain"). Omit to list all.'),
+    output: z.enum(['frames', 'script']).default('script').describe('"script" returns a bash script to play in terminal. "frames" returns raw frames.'),
+  },
+  async ({ id, output }) => {
+    if (!id) {
+      const list = listAnimations();
+      const text = list.map((a) => `${a.id} — ${a.name} (${a.frames} frames, ${a.delay}ms${a.loop ? ', loop' : ''})`).join('\n');
+      return { content: [{ type: 'text', text }] };
+    }
+
+    const anim = getAnimation(id);
+    if (!anim) {
+      const available = listAnimations().map((a) => a.id).join(', ');
+      return { content: [{ type: 'text', text: `Animation "${id}" not found. Available: ${available}` }], isError: true };
+    }
+
+    if (output === 'script') {
+      return { content: [{ type: 'text', text: formatForTerminal(anim) }] };
+    }
+
+    return { content: [{ type: 'text', text: formatFrames(anim) }] };
+  }
+);
+
+server.tool(
   'convert',
   'Convert an image (URL or base64) to ASCII art. Modes: "ascii" (character ramp) or "braille" (2x4 dot grid, higher fidelity).',
   {
@@ -433,6 +462,7 @@ server.tool(
 
 async function main() {
   await Promise.all([loadIndex(), loadKaomoji()]);
+  loadAnimations();
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }
