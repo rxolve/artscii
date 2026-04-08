@@ -7,9 +7,9 @@ export interface Animation {
   loop: boolean;
 }
 
-export type MotionType = 'bounce' | 'shake' | 'blink' | 'slide' | 'reveal' | 'fade' | 'pulse' | 'rain';
+export type MotionType = 'bounce' | 'shake' | 'blink' | 'slide' | 'reveal' | 'fade' | 'pulse' | 'rain' | 'progress';
 
-export const MOTIONS: MotionType[] = ['bounce', 'shake', 'blink', 'slide', 'reveal', 'fade', 'pulse', 'rain'];
+export const MOTIONS: MotionType[] = ['bounce', 'shake', 'blink', 'slide', 'reveal', 'fade', 'pulse', 'rain', 'progress'];
 
 // --- Motion functions: transform art text into animation frames ---
 
@@ -134,6 +134,39 @@ function motionRain(lines: string[], width: number, height: number): Animation {
   return { frames, delay: 150, loop: true };
 }
 
+function motionProgress(lines: string[], artWidth: number): Animation {
+  const barWidth = 20;
+  const steps = 21; // 0% to 100%
+  const artTag = lines.filter(l => l.trim()).length > 1 ? lines[0].trim().slice(0, 3) || '>' : lines[0].trim() || '>';
+  const frames: string[] = [];
+
+  for (let i = 0; i < steps; i++) {
+    const pct = Math.round((i / (steps - 1)) * 100);
+    const filled = Math.round((pct / 100) * barWidth);
+    const pos = Math.min(filled, barWidth - 1);
+
+    // Build bar with art marker riding on the fill edge
+    const before = '█'.repeat(pos);
+    const after = '░'.repeat(barWidth - pos - 1);
+    const bar = `[${before}${artTag}${after}]`;
+
+    // Show art above bar at matching position on final frames
+    const artLines: string[] = [];
+    if (pct >= 80) {
+      const indent = ' '.repeat(Math.max(0, pos - Math.floor(artWidth / 2) + 1));
+      for (const line of lines) {
+        artLines.push(indent + line);
+      }
+    }
+
+    const label = ` ${pct}%`;
+    const frame = [...artLines, bar + label].join('\n');
+    frames.push(frame);
+  }
+
+  return { frames, delay: 80, loop: false };
+}
+
 // --- Compose: object + motion ---
 
 export function composeAnimation(art: string, motion: MotionType): Animation {
@@ -151,6 +184,7 @@ export function composeAnimation(art: string, motion: MotionType): Animation {
     case 'fade': return motionFade(padded);
     case 'pulse': return motionPulse(padded);
     case 'rain': return motionRain(padded, width, height);
+    case 'progress': return motionProgress(lines, width);
   }
 }
 
