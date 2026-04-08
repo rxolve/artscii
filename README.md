@@ -4,7 +4,7 @@
 
 ASCII art, kaomoji, diagrams, charts & image conversion — all in one MCP server for AI agents.
 
-81 curated arts + 100 kaomoji + 11 diagram types + charts + box frames + FIGlet banners + image-to-ASCII (with braille mode). 9 focused tools.
+81 curated arts + 100 kaomoji + terminal animations + 11 diagram types + charts + FIGlet banners + image-to-ASCII. 10 focused tools.
 
 ```
      .::-::.         .:-::.        --- apple (16w) ---
@@ -55,6 +55,7 @@ claude mcp add artscii -- npx -y artscii
 | `banner` | `text`, `font?` | Render large ASCII text (FIGlet, 5 fonts) |
 | `frame` | `text`, `style?`, `padding?`, `align?`, `title?` | Draw box/frame around text (5 styles) |
 | `chart` | `type`, ... | Data visualization: progress, sparkline, heatmap |
+| `animate` | `art`, `motion`, `output?` | Compose art + motion → terminal animation |
 | `compose` | `blocks`, `mode?`, `gap?`, `align?` | Combine text blocks side-by-side or stacked |
 | `convert` | `url?`, `base64?`, `mode?`, `size?`, ... | Image → ASCII (ascii or braille mode) |
 | `diagram` | `type`, ... | Generate ASCII diagrams (11 types) |
@@ -83,6 +84,25 @@ Heatmap:     A B C
            X ░▒█
            Y ▓░▒
 ```
+
+## Animations
+
+Compose any art with a motion to create terminal animations. **81 arts × 8 motions = 648+ combinations.**
+
+```
+animate("apple", "bounce")   → bouncing apple
+animate("trophy", "shake")   → shaking trophy
+animate("lock", "reveal")    → line-by-line reveal
+animate("heart", "blink")    → blinking heart
+```
+
+Motions: `bounce`, `shake`, `blink`, `slide`, `reveal`, `fade`, `pulse`, `rain`
+
+Output modes:
+- `script` (default) — bash script that plays the animation in terminal
+- `frames` — raw frame data separated by `---`
+
+Custom text works too: `animate("GAME OVER", "blink")`
 
 ## Compose
 
