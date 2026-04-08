@@ -2,9 +2,11 @@
 
 [![npm](https://img.shields.io/npm/v/artscii)](https://www.npmjs.com/package/artscii)
 
-ASCII art, kaomoji, diagrams, charts & image conversion — all in one MCP server for AI agents.
+**LLMs can't draw. This MCP can.**
 
-81 curated arts + 100 kaomoji + terminal animations + 11 diagram types + charts + FIGlet banners + image-to-ASCII. 10 focused tools.
+ASCII art, kaomoji, animations, diagrams, charts & image conversion — 10 focused tools for AI agents.
+
+81 curated arts × 9 motions = 729 terminal animations. Plus 100 kaomoji, 11 diagram types, FIGlet banners, and image-to-ASCII with braille mode.
 
 ```
      .::-::.         .:-::.        --- apple (16w) ---
@@ -87,22 +89,18 @@ Heatmap:     A B C
 
 ## Animations
 
-Compose any art with a motion to create terminal animations. **81 arts × 8 motions = 648+ combinations.**
+Compose any art (noun) with a motion (verb) to create terminal animations. **81 arts × 9 motions = 729 combinations.** Custom text works too.
 
 ```
-animate("apple", "bounce")   → bouncing apple
-animate("trophy", "shake")   → shaking trophy
-animate("lock", "reveal")    → line-by-line reveal
-animate("heart", "blink")    → blinking heart
+animate("apple", "bounce")     → bouncing apple
+animate("trophy", "progress")  → trophy rides a progress bar 0→100%
+animate("lock", "reveal")      → line-by-line reveal
+animate("GAME OVER", "blink")  → blinking custom text
 ```
 
-Motions: `bounce`, `shake`, `blink`, `slide`, `reveal`, `fade`, `pulse`, `rain`
+Motions: `bounce`, `shake`, `blink`, `slide`, `reveal`, `fade`, `pulse`, `rain`, `progress`
 
-Output modes:
-- `script` (default) — bash script that plays the animation in terminal
-- `frames` — raw frame data separated by `---`
-
-Custom text works too: `animate("GAME OVER", "blink")`
+Output: `script` (bash for terminal playback) or `frames` (raw data)
 
 ## Compose
 
