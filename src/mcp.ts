@@ -15,7 +15,8 @@ import { renderProgress, renderMultiProgress, PROGRESS_STYLES } from './progress
 import { renderSparkline, SPARKLINE_STYLES } from './sparkline.js';
 import { renderHeatmap, HEATMAP_STYLES } from './heatmap.js';
 import { compose } from './compose.js';
-import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH, MAX_SPARKLINE_VALUES, MAX_SPARKLINE_WIDTH, MAX_HEATMAP_ROWS, MAX_HEATMAP_COLS, MAX_COMPOSE_BLOCKS, MAX_COMPOSE_GAP } from './constants.js';
+import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH, MAX_SPARKLINE_VALUES, MAX_SPARKLINE_WIDTH, MAX_HEATMAP_ROWS, MAX_HEATMAP_COLS, MAX_COMPOSE_BLOCKS, MAX_COMPOSE_GAP, MAX_ANIMATION_FRAMES, MAX_ANIMATION_WIDTH, MAX_ANIMATION_HEIGHT, MAX_ANIMATION_TEXT } from './constants.js';
+import { renderAnimation, ANIMATION_TYPES, SPINNER_STYLE_NAMES, LIFE_STYLE_NAMES } from './animate.js';
 import type { ArtSize } from './types.js';
 
 const server = new McpServer({
@@ -427,6 +428,29 @@ server.tool(
     } catch (err: unknown) {
       const e = err as { message?: string };
       return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Diagram generation failed'}` }], isError: true };
+    }
+  }
+);
+
+server.tool(
+  'animate',
+  `Generate ASCII animations as a sequence of frames. Types: ${ANIMATION_TYPES.join(', ')}. Returns numbered frames for playback.`,
+  {
+    type: z.enum(ANIMATION_TYPES as [string, ...string[]]).describe('Animation type: typing (typewriter reveal), matrix (falling characters), spinner (loading indicator), fire (flame effect), wave (sinusoidal text), rain (falling drops), life (Conway\'s Game of Life), bounce (bouncing text in box)'),
+    text: z.string().max(MAX_ANIMATION_TEXT).optional().describe('Input text (for typing, wave, bounce, spinner)'),
+    frames: z.number().min(1).max(MAX_ANIMATION_FRAMES).default(10).describe('Number of frames to generate (1-30)'),
+    width: z.number().min(10).max(MAX_ANIMATION_WIDTH).default(40).describe('Canvas width (for matrix, fire, rain, life, bounce)'),
+    height: z.number().min(4).max(MAX_ANIMATION_HEIGHT).default(12).describe('Canvas height (for matrix, fire, rain, life, bounce)'),
+    seed: z.number().optional().describe('Random seed for deterministic output (matrix, fire, rain, life)'),
+    style: z.string().optional().describe(`Sub-style. spinner: ${SPINNER_STYLE_NAMES.join(', ')}. life: ${LIFE_STYLE_NAMES.join(', ')}.`),
+  },
+  async ({ type, text, frames, width, height, seed, style }) => {
+    try {
+      const result = renderAnimation({ type: type as any, text, frames, width, height, seed, style });
+      return { content: [{ type: 'text', text: result }] };
+    } catch (err: unknown) {
+      const e = err as { message?: string };
+      return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Animation failed'}` }], isError: true };
     }
   }
 );

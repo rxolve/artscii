@@ -27,3 +27,8 @@ export const MAX_HEATMAP_ROWS = 20;
 export const MAX_HEATMAP_COLS = 20;
 export const MAX_COMPOSE_BLOCKS = 10;
 export const MAX_COMPOSE_GAP = 10;
+
+export const MAX_ANIMATION_FRAMES = 30;
+export const MAX_ANIMATION_WIDTH = 80;
+export const MAX_ANIMATION_HEIGHT = 24;
+export const MAX_ANIMATION_TEXT = 200;
