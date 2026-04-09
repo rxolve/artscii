@@ -7,9 +7,9 @@ export interface Animation {
   loop: boolean;
 }
 
-export type MotionType = 'bounce' | 'shake' | 'blink' | 'slide' | 'reveal' | 'fade' | 'pulse' | 'rain' | 'progress';
+export type MotionType = 'bounce' | 'shake' | 'blink' | 'slide' | 'reveal' | 'fade' | 'pulse' | 'rain' | 'progress' | 'wave' | 'jump' | 'talk';
 
-export const MOTIONS: MotionType[] = ['bounce', 'shake', 'blink', 'slide', 'reveal', 'fade', 'pulse', 'rain', 'progress'];
+export const MOTIONS: MotionType[] = ['bounce', 'shake', 'blink', 'slide', 'reveal', 'fade', 'pulse', 'rain', 'progress', 'wave', 'jump', 'talk'];
 
 // --- Motion functions: transform art text into animation frames ---
 
@@ -167,6 +167,48 @@ function motionProgress(lines: string[], artWidth: number): Animation {
   return { frames, delay: 80, loop: false };
 }
 
+function motionWave(lines: string[], width: number): Animation {
+  const arms = ['\\', '_/', '|', '_\\', '/', '|'];
+  const padded = lines.map((l) => l.padEnd(width));
+  const frames = arms.map((arm) => {
+    return padded.map((line, i) => {
+      if (i === 0) return line + ' ' + arm;
+      return line;
+    }).join('\n');
+  });
+  return { frames, delay: 150, loop: true };
+}
+
+function motionJump(lines: string[], width: number, height: number): Animation {
+  const totalH = height + 3;
+  // squish: compress bottom line at landing
+  const squished = [...lines];
+  if (squished.length >= 2) {
+    const last = squished[squished.length - 1];
+    squished[squished.length - 1] = ' ' + last.slice(1, -1).replace(/ /g, '_') + ' ';
+  }
+  const frames = [
+    shiftY(lines, width, totalH, 2),       // ground
+    shiftY(lines, width, totalH, 1),       // rising
+    shiftY(lines, width, totalH, 0),       // peak
+    shiftY(lines, width, totalH, 1),       // falling
+    shiftY(squished, width, totalH, 3),    // squish on landing
+    shiftY(lines, width, totalH, 2),       // recover
+  ];
+  return { frames, delay: 120, loop: true };
+}
+
+function motionTalk(lines: string[]): Animation {
+  const art = lines.join('\n');
+  const bubbles = ['. . .', 'o o o', '* * *', '     '];
+  const w = Math.max(...lines.map((l) => l.length));
+  const frames = bubbles.map((b) => {
+    const pad = Math.max(0, Math.floor((w - b.length) / 2));
+    return ' '.repeat(pad) + b + '\n' + art;
+  });
+  return { frames, delay: 250, loop: true };
+}
+
 // --- Compose: object + motion ---
 
 export function composeAnimation(art: string, motion: MotionType): Animation {
@@ -185,6 +227,9 @@ export function composeAnimation(art: string, motion: MotionType): Animation {
     case 'pulse': return motionPulse(padded);
     case 'rain': return motionRain(padded, width, height);
     case 'progress': return motionProgress(lines, width);
+    case 'wave': return motionWave(padded, width);
+    case 'jump': return motionJump(padded, width, height);
+    case 'talk': return motionTalk(padded);
   }
 }
 

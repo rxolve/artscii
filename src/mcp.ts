@@ -16,7 +16,8 @@ import { renderSparkline, SPARKLINE_STYLES } from './sparkline.js';
 import { renderHeatmap, HEATMAP_STYLES } from './heatmap.js';
 import { compose } from './compose.js';
 import { composeAnimation, formatScript, formatFrames, MOTIONS } from './animate.js';
-import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH, MAX_SPARKLINE_VALUES, MAX_SPARKLINE_WIDTH, MAX_HEATMAP_ROWS, MAX_HEATMAP_COLS, MAX_COMPOSE_BLOCKS, MAX_COMPOSE_GAP } from './constants.js';
+import { generateBuddy, SPECIES, EYES, MOUTHS, HATS, ACCESSORIES, MOODS, SIZES } from './buddy.js';
+import { MAX_DIAGRAM_NODES, MAX_DIAGRAM_ROWS, MAX_TREE_DEPTH, MAX_SEQUENCE_ACTORS, MAX_SEQUENCE_MESSAGES, MAX_TIMELINE_EVENTS, MAX_BAR_ITEMS, MAX_BAR_WIDTH, MAX_SPARKLINE_VALUES, MAX_SPARKLINE_WIDTH, MAX_HEATMAP_ROWS, MAX_HEATMAP_COLS, MAX_COMPOSE_BLOCKS, MAX_COMPOSE_GAP, MAX_BUDDY_SEED_LENGTH } from './constants.js';
 import type { ArtSize } from './types.js';
 
 const server = new McpServer({
@@ -301,6 +302,34 @@ server.tool(
       const e = err as { message?: string };
       return { content: [{ type: 'text', text: `Error: ${e.message ?? 'Conversion failed'}` }], isError: true };
     }
+  }
+);
+
+server.tool(
+  'buddy',
+  `Generate a unique ASCII character from a seed. ${SPECIES.length * EYES.length * MOUTHS.length * HATS.length * ACCESSORIES.length} possible combinations (${SPECIES.length} species × ${EYES.length} eyes × ${MOUTHS.length} mouths × ${HATS.length} hats × ${ACCESSORIES.length} accessories). Same seed always produces the same buddy. Use mood for quick expression presets. Output can be piped to the animate tool.`,
+  {
+    seed: z.string().min(1).max(MAX_BUDDY_SEED_LENGTH).describe('Deterministic seed string — same seed = same character'),
+    species: z.enum(SPECIES as unknown as [string, ...string[]]).optional().describe('Body override'),
+    eyes: z.enum(EYES as unknown as [string, ...string[]]).optional().describe('Eyes override'),
+    mouth: z.enum(MOUTHS as unknown as [string, ...string[]]).optional().describe('Mouth override'),
+    hat: z.enum(HATS as unknown as [string, ...string[]]).optional().describe('Hat override'),
+    accessory: z.enum(ACCESSORIES as unknown as [string, ...string[]]).optional().describe('Accessory override'),
+    mood: z.enum(MOODS as unknown as [string, ...string[]]).optional().describe('Expression preset (overrides eyes+mouth). Explicit eyes/mouth still take priority.'),
+    size: z.enum(SIZES as unknown as [string, ...string[]]).default('standard').describe('Size: "standard" (full character) or "mini" (2-line inline, no hat/accessory)'),
+  },
+  async ({ seed, species, eyes, mouth, hat, accessory, mood, size }) => {
+    const buddy = generateBuddy({
+      seed,
+      species: species as any,
+      eyes: eyes as any,
+      mouth: mouth as any,
+      hat: hat as any,
+      accessory: accessory as any,
+      mood: mood as any,
+      size: size as any,
+    });
+    return { content: [{ type: 'text', text: buddy }] };
   }
 );
 
