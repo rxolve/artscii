@@ -4,9 +4,9 @@
 
 **LLMs can't draw. This MCP can.**
 
-ASCII art, kaomoji, animations, diagrams, charts & image conversion — 10 focused tools for AI agents.
+ASCII art, kaomoji, animations, diagrams, charts, image conversion & procedural characters — 11 focused tools for AI agents.
 
-81 curated arts × 9 motions = 729 terminal animations. Plus 100 kaomoji, 11 diagram types, FIGlet banners, and image-to-ASCII with braille mode.
+81 curated arts × 12 motions = 972 terminal animations. 153,600 unique buddy characters from a single seed. Plus 100 kaomoji, 11 diagram types, FIGlet banners, and image-to-ASCII with braille mode.
 
 ```
      .::-::.         .:-::.        --- apple (16w) ---
@@ -58,6 +58,7 @@ claude mcp add artscii -- npx -y artscii
 | `frame` | `text`, `style?`, `padding?`, `align?`, `title?` | Draw box/frame around text (5 styles) |
 | `chart` | `type`, ... | Data visualization: progress, sparkline, heatmap |
 | `animate` | `art`, `motion`, `output?` | Compose art + motion → terminal animation |
+| `buddy` | `seed`, `species?`, `eyes?`, `mouth?`, `hat?`, `accessory?`, `mood?`, `size?` | Generate unique ASCII character from seed |
 | `compose` | `blocks`, `mode?`, `gap?`, `align?` | Combine text blocks side-by-side or stacked |
 | `convert` | `url?`, `base64?`, `mode?`, `size?`, ... | Image → ASCII (ascii or braille mode) |
 | `diagram` | `type`, ... | Generate ASCII diagrams (11 types) |
@@ -89,7 +90,7 @@ Heatmap:     A B C
 
 ## Animations
 
-Compose any art (noun) with a motion (verb) to create terminal animations. **81 arts × 9 motions = 729 combinations.** Custom text works too.
+Compose any art (noun) with a motion (verb) to create terminal animations. **81 arts × 12 motions = 972 combinations.** Custom text works too.
 
 ```
 animate("apple", "bounce")     → bouncing apple
@@ -98,9 +99,39 @@ animate("lock", "reveal")      → line-by-line reveal
 animate("GAME OVER", "blink")  → blinking custom text
 ```
 
-Motions: `bounce`, `shake`, `blink`, `slide`, `reveal`, `fade`, `pulse`, `rain`, `progress`
+Motions: `bounce`, `shake`, `blink`, `slide`, `reveal`, `fade`, `pulse`, `rain`, `progress`, `wave`, `jump`, `talk`
 
 Output: `script` (bash for terminal playback) or `frames` (raw data)
+
+## Buddy
+
+Procedural ASCII character generator. One seed → one unique buddy. **153,600 standard combinations** (16 species × 10 eyes × 8 mouths × 10 hats × 12 accessories).
+
+```
+buddy("alice")                       buddy("bob", mood: "happy")
+
+   ____                                  /\_/\
+  ]==== )                                ( ^ ^ )
+  _____                                  ( u )
+ / * * \                                  \_^_/
+|   u   |
+ \_____/
+  |||||
+   ~~o=o~~
+```
+
+**Species**: blob, cat, bear, robot, bird, bunny, ghost, alien, fox, frog, penguin, octopus, dragon, mushroom, cactus, skull
+
+**Mood presets**: happy, sad, angry, surprised, sleepy, cool, love, silly — sets eyes+mouth in one param. Explicit eyes/mouth still override.
+
+**Mini mode**: 2-line inline buddies for chat and status lines.
+
+```
+mini blob: (^ ^)    mini cat: /^ ^\    mini robot: [^ ^]
+            (u)                >u<                  [u]
+```
+
+Same seed always produces the same buddy. Output works directly with the `animate` tool — try `wave`, `jump`, or `talk` motions.
 
 ## Compose
 
