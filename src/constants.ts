@@ -28,4 +28,4 @@ export const MAX_HEATMAP_COLS = 20;
 export const MAX_COMPOSE_BLOCKS = 10;
 export const MAX_COMPOSE_GAP = 10;
 
-export const MAX_BUDDY_SEED_LENGTH = 200;
+export const MAX_CHARACTER_SEED_LENGTH = 200;

@@ -14,9 +14,9 @@ export type Mouth = (typeof MOUTHS)[number];
 export type Hat = (typeof HATS)[number];
 export type Accessory = (typeof ACCESSORIES)[number];
 export type Mood = (typeof MOODS)[number];
-export type BuddySize = (typeof SIZES)[number];
+export type CharacterSize = (typeof SIZES)[number];
 
-export interface BuddyOptions {
+export interface CharacterOptions {
   seed: string;
   species?: Species;
   eyes?: Eyes;
@@ -24,7 +24,7 @@ export interface BuddyOptions {
   hat?: Hat;
   accessory?: Accessory;
   mood?: Mood;
-  size?: BuddySize;
+  size?: CharacterSize;
 }
 
 // --- FNV-1a 32-bit hash (no dependencies, deterministic) ---
@@ -324,7 +324,7 @@ function attachAccessory(body: string[], acc: { position: 'below' | 'left' | 'ri
 
 // --- Main API ---
 
-export function generateBuddy(options: BuddyOptions): string {
+export function generateCharacter(options: CharacterOptions): string {
   const hash = hashSeed(options.seed);
   const size = options.size ?? 'standard';
 

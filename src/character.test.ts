@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateBuddy, hashSeed, selectIndex, SPECIES, EYES, MOUTHS, HATS, ACCESSORIES, MOODS, SIZES } from './buddy.js';
+import { generateCharacter, hashSeed, selectIndex, SPECIES, EYES, MOUTHS, HATS, ACCESSORIES, MOODS, SIZES } from './character.js';
 
 describe('hashSeed', () => {
   it('returns a 32-bit unsigned integer', () => {
@@ -38,21 +38,21 @@ describe('selectIndex', () => {
   });
 });
 
-describe('generateBuddy', () => {
+describe('generateCharacter', () => {
   it('is deterministic — same seed produces same output', () => {
-    const a = generateBuddy({ seed: 'alice' });
-    const b = generateBuddy({ seed: 'alice' });
+    const a = generateCharacter({ seed: 'alice' });
+    const b = generateCharacter({ seed: 'alice' });
     expect(a).toBe(b);
   });
 
   it('different seeds produce different output', () => {
-    const a = generateBuddy({ seed: 'alice' });
-    const b = generateBuddy({ seed: 'bob' });
+    const a = generateCharacter({ seed: 'alice' });
+    const b = generateCharacter({ seed: 'bob' });
     expect(a).not.toBe(b);
   });
 
   it('returns non-empty multi-line string', () => {
-    const result = generateBuddy({ seed: 'test' });
+    const result = generateCharacter({ seed: 'test' });
     expect(result).toBeTruthy();
     expect(result.split('\n').length).toBeGreaterThan(1);
   });
@@ -60,7 +60,7 @@ describe('generateBuddy', () => {
   it('no marker characters remain in output', () => {
     // Test many seeds to ensure L, R, M markers are always replaced
     for (const seed of ['a', 'b', 'c', 'test', 'hello', 'world', '123', 'zzz']) {
-      const result = generateBuddy({ seed });
+      const result = generateCharacter({ seed });
       const lines = result.split('\n');
       for (const line of lines) {
         // Check that standalone L, R, M markers are replaced
@@ -74,38 +74,38 @@ describe('generateBuddy', () => {
 
   it('renders all species without error', () => {
     for (const species of SPECIES) {
-      const result = generateBuddy({ seed: 'test', species });
+      const result = generateCharacter({ seed: 'test', species });
       expect(result).toBeTruthy();
       expect(result.split('\n').length).toBeGreaterThan(1);
     }
   });
 
   it('applies eye override', () => {
-    const a = generateBuddy({ seed: 'x', eyes: 'star' });
+    const a = generateCharacter({ seed: 'x', eyes: 'star' });
     expect(a).toContain('*');
   });
 
   it('applies mouth override', () => {
-    const a = generateBuddy({ seed: 'x', mouth: 'grin' });
+    const a = generateCharacter({ seed: 'x', mouth: 'grin' });
     expect(a).toContain('D');
   });
 
   it('applies hat override — tophat adds lines above body', () => {
-    const noHat = generateBuddy({ seed: 'x', hat: 'none' });
-    const withHat = generateBuddy({ seed: 'x', hat: 'tophat' });
+    const noHat = generateCharacter({ seed: 'x', hat: 'none' });
+    const withHat = generateCharacter({ seed: 'x', hat: 'tophat' });
     expect(withHat.split('\n').length).toBeGreaterThan(noHat.split('\n').length);
   });
 
   it('applies accessory override — bowtie adds line below', () => {
-    const noAcc = generateBuddy({ seed: 'x', accessory: 'none' });
-    const withAcc = generateBuddy({ seed: 'x', accessory: 'bowtie' });
+    const noAcc = generateCharacter({ seed: 'x', accessory: 'none' });
+    const withAcc = generateCharacter({ seed: 'x', accessory: 'bowtie' });
     expect(withAcc).toContain('{=}');
     expect(noAcc).not.toContain('{=}');
   });
 
   it('species override is respected', () => {
-    const blob = generateBuddy({ seed: 'x', species: 'blob' });
-    const cat = generateBuddy({ seed: 'x', species: 'cat' });
+    const blob = generateCharacter({ seed: 'x', species: 'blob' });
+    const cat = generateCharacter({ seed: 'x', species: 'cat' });
     expect(blob).not.toBe(cat);
   });
 
@@ -125,21 +125,21 @@ describe('generateBuddy', () => {
   });
 
   it('mood sets eyes and mouth', () => {
-    const happy = generateBuddy({ seed: 'x', species: 'blob', hat: 'none', accessory: 'none', mood: 'happy' });
+    const happy = generateCharacter({ seed: 'x', species: 'blob', hat: 'none', accessory: 'none', mood: 'happy' });
     // happy mood → happy eyes (^) + smile mouth (u)
     expect(happy).toContain('^');
     expect(happy).toContain('u');
   });
 
   it('mood is overridden by explicit eyes', () => {
-    const result = generateBuddy({ seed: 'x', species: 'blob', hat: 'none', accessory: 'none', mood: 'happy', eyes: 'star' });
+    const result = generateCharacter({ seed: 'x', species: 'blob', hat: 'none', accessory: 'none', mood: 'happy', eyes: 'star' });
     // eyes override: star (*), but mouth from mood: smile (u)
     expect(result).toContain('*');
     expect(result).toContain('u');
   });
 
   it('mood is overridden by explicit mouth', () => {
-    const result = generateBuddy({ seed: 'x', species: 'blob', hat: 'none', accessory: 'none', mood: 'happy', mouth: 'teeth' });
+    const result = generateCharacter({ seed: 'x', species: 'blob', hat: 'none', accessory: 'none', mood: 'happy', mouth: 'teeth' });
     // eyes from mood: happy (^), but mouth override: teeth (E)
     expect(result).toContain('^');
     expect(result).toContain('E');
@@ -147,46 +147,46 @@ describe('generateBuddy', () => {
 
   it('all moods render without error', () => {
     for (const mood of MOODS) {
-      const result = generateBuddy({ seed: 'test', mood });
+      const result = generateCharacter({ seed: 'test', mood });
       expect(result).toBeTruthy();
       expect(result.split('\n').length).toBeGreaterThan(1);
     }
   });
 
   it('mini size produces 2-line output', () => {
-    const result = generateBuddy({ seed: 'test', size: 'mini' });
+    const result = generateCharacter({ seed: 'test', size: 'mini' });
     expect(result.split('\n')).toHaveLength(2);
   });
 
   it('mini renders all species', () => {
     for (const species of SPECIES) {
-      const result = generateBuddy({ seed: 'test', species, size: 'mini' });
+      const result = generateCharacter({ seed: 'test', species, size: 'mini' });
       expect(result).toBeTruthy();
       expect(result.split('\n')).toHaveLength(2);
     }
   });
 
   it('mini ignores hat and accessory', () => {
-    const mini = generateBuddy({ seed: 'x', species: 'blob', size: 'mini', hat: 'tophat', accessory: 'sword' });
+    const mini = generateCharacter({ seed: 'x', species: 'blob', size: 'mini', hat: 'tophat', accessory: 'sword' });
     // mini should be 2 lines regardless of hat/accessory
     expect(mini.split('\n')).toHaveLength(2);
   });
 
   it('mini is deterministic', () => {
-    const a = generateBuddy({ seed: 'abc', size: 'mini' });
-    const b = generateBuddy({ seed: 'abc', size: 'mini' });
+    const a = generateCharacter({ seed: 'abc', size: 'mini' });
+    const b = generateCharacter({ seed: 'abc', size: 'mini' });
     expect(a).toBe(b);
   });
 
   it('mini with mood works', () => {
-    const result = generateBuddy({ seed: 'x', species: 'cat', size: 'mini', mood: 'love' });
+    const result = generateCharacter({ seed: 'x', species: 'cat', size: 'mini', mood: 'love' });
     expect(result).toContain('*'); // star eyes from love mood
   });
 
   it('new accessories render without error', () => {
     const newAccessories = ['glasses', 'cape', 'wings', 'staff', 'bag', 'flower'] as const;
     for (const acc of newAccessories) {
-      const result = generateBuddy({ seed: 'test', accessory: acc, hat: 'none' });
+      const result = generateCharacter({ seed: 'test', accessory: acc, hat: 'none' });
       expect(result).toBeTruthy();
       expect(result.split('\n').length).toBeGreaterThan(1);
     }
